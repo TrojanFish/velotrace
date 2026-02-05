@@ -238,6 +238,11 @@ body::before {
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
+.pro-card:active {
+  transform: scale(0.985);
+  border-color: rgba(0, 212, 255, 0.15);
+}
+
 /* ============================================
    🌊 Liquid Navigation Bar
    ============================================ */
@@ -309,7 +314,8 @@ body::before {
 }
 
 .liquid-button:active {
-  transform: translateY(0);
+  transform: scale(0.96);
+  filter: brightness(0.9);
 }
 
 /* Primary Liquid Button */
@@ -603,6 +609,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
   box-shadow:
     0 2px 8px rgba(0, 212, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.liquid-segment-button:active {
+  transform: scale(0.95);
 }
 
 /* ============================================

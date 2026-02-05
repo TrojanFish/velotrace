@@ -1,4 +1,5 @@
 import { NextAuthOptions } from "next-auth";
+import { env } from "@/config/env";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -27,8 +28,8 @@ export const authOptions: NextAuthOptions = {
                     image: profile.profile,
                 };
             },
-            clientId: process.env.STRAVA_CLIENT_ID,
-            clientSecret: process.env.STRAVA_CLIENT_SECRET,
+            clientId: env.STRAVA_CLIENT_ID,
+            clientSecret: env.STRAVA_CLIENT_SECRET,
         },
     ],
     callbacks: {
@@ -53,8 +54,8 @@ export const authOptions: NextAuthOptions = {
                 const response = await fetch("https://www.strava.com/api/v3/oauth/token", {
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams({
-                        client_id: process.env.STRAVA_CLIENT_ID!,
-                        client_secret: process.env.STRAVA_CLIENT_SECRET!,
+                        client_id: env.STRAVA_CLIENT_ID,
+                        client_secret: env.STRAVA_CLIENT_SECRET,
                         grant_type: "refresh_token",
                         refresh_token: token.refreshToken as string,
                     }),
@@ -82,6 +83,6 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
     },
-    secret: process.env.NEXTAUTH_SECRET,
-    debug: true,
+    secret: env.NEXTAUTH_SECRET,
+    debug: env.NODE_ENV === 'development',
 };

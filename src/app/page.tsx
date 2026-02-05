@@ -1,15 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useStore } from "@/store/useStore";
 import { WeatherCard } from "@/components/modules/WeatherCard";
 import { FuelCard } from "@/components/modules/FuelCard";
 import { BikeCard } from "@/components/modules/BikeCard";
 import { RouteWindForecastCard } from "@/components/modules/RouteWindForecastCard";
 import { AIBriefingCard } from "@/components/modules/AIBriefingCard";
-import { DynamicWindFieldMap } from "@/components/modules/DynamicWindFieldMap";
-import { Settings, Bike, Sparkles } from "lucide-react";
+import { Settings, Bike } from "lucide-react";
+import { toast } from "sonner";
 import Link from "next/link";
+import { Skeleton } from "@/lib/utils";
+
+// Lazy load heavy canvas component
+const DynamicWindFieldMap = dynamic(
+  () => import("@/components/modules/DynamicWindFieldMap").then(mod => ({ default: mod.DynamicWindFieldMap })),
+  {
+    loading: () => (
+      <div className="pro-card p-0 h-[320px] flex items-center justify-center">
+        <Skeleton className="w-full h-full rounded-3xl" />
+      </div>
+    ),
+    ssr: false
+  }
+);
 
 export default function Home() {
   const today = new Date().toLocaleDateString('zh-CN', {
@@ -27,7 +42,9 @@ export default function Home() {
     if (!isNaN(dist)) {
       addRideDistance(dist);
       setIsLogging(false);
-      alert(`已记录 ${dist}km，链条保养进度已更新。`);
+      toast.success(`已记录 ${dist}km`, {
+        description: "链条保养进度已更新"
+      });
     }
   };
 

@@ -2,10 +2,12 @@
 
 import { useStore, Wheelset } from "@/store/useStore";
 import { calculateBMR } from "@/lib/calculators/physiology";
+import { useStravaSync } from "@/hooks/useStravaSync";
 import Image from "next/image";
-import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, Sparkles } from "lucide-react";
+import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useMemo } from "react";
+import { toast } from "sonner";
 
 export default function GaragePage() {
     const { data: session } = useSession();
@@ -16,10 +18,9 @@ export default function GaragePage() {
     const [newWsName, setNewWsName] = useState("");
     const [newWsWidth, setNewWsWidth] = useState(25);
     const [newWsTubeless, setNewWsTubeless] = useState(false);
-    const [isSyncing, setIsSyncing] = useState(false);
     const [isPhysioLocked, setIsPhysioLocked] = useState(true);
-    const [syncSuccess, setSyncSuccess] = useState(false);
-    const [syncError, setSyncError] = useState(false);
+
+    const { isSyncing, syncSuccess, syncError, sync: handleStravaSync } = useStravaSync();
 
     const bmr = useMemo(() => calculateBMR(user.weight, user.height, user.age, user.sex), [user]);
 
@@ -44,7 +45,9 @@ export default function GaragePage() {
 
     const handleDeleteWheelset = (wsIndex: number) => {
         if (bike.wheelsets.length <= 1) {
-            alert("至少需要保留一套轮组。");
+            toast.error("操作失败", {
+                description: "至少需要保留一套轮组。"
+            });
             return;
         }
         if (confirm("确定要删除这套轮组吗？其里程记录将永久丢失。")) {
@@ -56,65 +59,17 @@ export default function GaragePage() {
         }
     };
 
-    const handleStravaSync = async () => {
+    const onSyncClick = async () => {
         if (!session) return;
-        setIsSyncing(true);
-        setSyncSuccess(false);
-        setSyncError(false);
-        try {
-            const res = await fetch('/api/strava/sync');
-            const data = await res.json();
-            if (data.error) throw new Error(data.error);
-
-            updateUser({
-                ftp: data.ftp || user.ftp,
-                weight: data.weight || user.weight,
-                sex: data.sex || user.sex,
-                lastSyncDate: new Date().toISOString()
+        const result = await handleStravaSync();
+        if (result.success) {
+            toast.success("同步成功", {
+                description: "个人生理数据与器材资产已更新"
             });
-
-            if (data.bikes && data.bikes.length > 0) {
-                const syncedBikes = data.bikes.map((b: any) => {
-                    const existing = bikes.find(eb => eb.stravaGearId === b.id);
-                    return {
-                        id: b.id,
-                        name: b.name,
-                        totalDistance: b.totalDistance,
-                        stravaGearId: b.id,
-                        weight: existing?.weight || 8.5,
-                        activeWheelsetIndex: existing?.activeWheelsetIndex || 0,
-                        wheelsets: existing?.wheelsets || [
-                            {
-                                id: `ws-${b.id}-default`,
-                                name: "默认轮组",
-                                tireWidth: 28,
-                                isTubeless: false,
-                                mileage: b.totalDistance,
-                                lastLubeMileage: 0
-                            }
-                        ],
-                        maintenance: existing?.maintenance || {
-                            chainLube: 0,
-                            chainWear: 0,
-                            tires: 0,
-                            brakePads: 0,
-                            service: 0
-                        }
-                    };
-                });
-                setBikes(syncedBikes);
-
-                const primaryIndex = syncedBikes.findIndex((sb: any) => data.bikes.find((db: any) => db.id === sb.id && db.primary));
-                if (primaryIndex !== -1) setActiveBikeIndex(primaryIndex);
-            }
-            setSyncSuccess(true);
-            setTimeout(() => setSyncSuccess(false), 3000);
-        } catch (e) {
-            console.error(e);
-            setSyncError(true);
-            setTimeout(() => setSyncError(false), 3000);
-        } finally {
-            setIsSyncing(false);
+        } else {
+            toast.error("同步失败", {
+                description: result.error || "无法从 Strava 获取数据"
+            });
         }
     };
 
@@ -162,7 +117,7 @@ export default function GaragePage() {
                             {session && (
                                 <button
                                     disabled={isSyncing}
-                                    onClick={handleStravaSync}
+                                    onClick={onSyncClick}
                                     className={`liquid-icon w-10 h-10 aspect-square flex items-center justify-center transition-all duration-300 ${isSyncing
                                         ? 'warning animate-spin'
                                         : syncSuccess
@@ -187,6 +142,26 @@ export default function GaragePage() {
                         </div>
                     </div>
                 </div>
+
+                {!session && (
+                    <div className="pro-card p-6 border-orange-500/20 bg-orange-500/5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                            <RefreshCw size={80} className="text-orange-400 rotate-12" />
+                        </div>
+                        <div className="space-y-3 relative z-10">
+                            <h3 className="text-sm font-bold text-orange-400">数据同步已中断</h3>
+                            <p className="text-xs text-white/50 leading-relaxed">
+                                连接 Strava 账号以自动同步您的<b>器材使用里程</b>、<b>生理指标</b> (FTP/体重) 以及<b>最近训练负荷</b>。离线模式下数据将仅保存在本地浏览器中。
+                            </p>
+                            <button
+                                onClick={() => signIn("strava", { callbackUrl: window.location.href })}
+                                className="flex items-center gap-1.5 text-[10px] font-black text-orange-400 uppercase tracking-widest hover:gap-2 transition-all mt-2"
+                            >
+                                立即启用同步 <ChevronRight size={10} />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </section>
 
             {/* 2. 生理参数设置 [PHYSIO CONFIG] */}

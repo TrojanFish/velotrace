@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { env } from "@/config/env";
 
 export async function POST(req: Request) {
     try {
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
                 "session": "15字以内的课表标题，例如：'Z2耐力 + Z4间歇' (必须中文)",
                 "intensity": "核心强度指标，例如：'240W / 3x3分钟' (必须中文)",
                 "goal": "生理训练目标，例如：'提高热耐受 / 乳酸缓冲能力' (必须中文)",
-                "advice": "深度的专业战术简报 (2-3句中文)。侧重于身体适应和安全建议。",
+                "advice": "深度的专业战术简报 (2-3句中文)。侧重于身体适应 and 安全建议。",
                 "logic": "该策略背后的推导逻辑，引用具体数据进行分析 (中文)。"
             }
             Strategy Rules:
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
 
         try {
             // 1. Check for Qwen (DashScope) API
-            const qwenKey = process.env.QWEN_API_KEY;
+            const qwenKey = env.QWEN_API_KEY;
             if (qwenKey) {
                 const res = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
                     method: 'POST',
@@ -85,7 +86,7 @@ export async function POST(req: Request) {
             }
 
             // 2. Fallback to Gemini
-            const geminiKey = process.env.GEMINI_API_KEY;
+            const geminiKey = env.GEMINI_API_KEY;
             if (geminiKey) {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiKey}`, {
                     method: 'POST',

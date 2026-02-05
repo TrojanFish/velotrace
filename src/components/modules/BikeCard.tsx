@@ -1,28 +1,16 @@
 "use client";
 
-import { useStore, MaintenanceState, Wheelset } from "@/store/useStore";
+import { useStore, MaintenanceState } from "@/store/useStore";
 import { calculateTirePressure, SurfaceType } from "@/lib/calculators/tirePressure";
+import { MAINTENANCE_CONFIG, SURFACE_CONDITIONS } from "@/config/bike";
 import {
-    Bike,
-    CircleDot,
     AlertTriangle,
-    Droplets,
     Gauge,
-    Disc,
-    Wrench,
     ChevronRight,
-    History,
-    Layers
+    Layers,
+    History
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
-
-const MAINTENANCE_CONFIG: Record<keyof MaintenanceState, { label: string; icon: any; target: number; color: string; colorClass: string }> = {
-    chainLube: { label: "链条润滑", icon: Droplets, target: 300, color: "cyan", colorClass: "text-cyan-400" },
-    chainWear: { label: "链条磨损", icon: History, target: 3000, color: "warning", colorClass: "text-orange-400" },
-    tires: { label: "外胎寿命", icon: CircleDot, target: 4000, color: "success", colorClass: "text-emerald-400" },
-    brakePads: { label: "刹车皮", icon: Disc, target: 2500, color: "danger", colorClass: "text-rose-400" },
-    service: { label: "整车大保养", icon: Wrench, target: 5000, color: "purple", colorClass: "text-purple-400" }
-};
 
 export function BikeCard() {
     const { bikes, activeBikeIndex, user, resetMaintenance, setActiveWheelset } = useStore();
@@ -61,10 +49,11 @@ export function BikeCard() {
     ];
 
     const alerts = useMemo(() => {
-        return Object.entries(MAINTENANCE_CONFIG).filter(([key, config]) => {
-            const val = (maintenance as any)[key];
-            return val > (config as any).target * 0.8;
-        });
+        return (Object.keys(MAINTENANCE_CONFIG) as Array<keyof MaintenanceState>).filter((key) => {
+            const config = MAINTENANCE_CONFIG[key];
+            const val = maintenance[key];
+            return val > config.target * 0.8;
+        }).map((key) => [key, MAINTENANCE_CONFIG[key]] as const);
     }, [maintenance]);
 
     if (!bike) return null;

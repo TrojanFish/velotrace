@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Navigation } from "@/components/Navigation";
 import { Providers } from "@/components/Providers";
+import { Toaster } from "sonner";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
 
@@ -47,7 +48,20 @@ export default function RootLayout({
           </div>
           <Navigation />
         </Providers>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              background: 'rgba(10, 15, 26, 0.9)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#fff',
+              borderRadius: '1rem',
+            },
+          }}
+        />
       </body>
     </html>
   );
 }
+
