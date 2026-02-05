@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Trophy, Zap, ChevronRight, Activity } from "lucide-react";
+import { Trophy, ChevronRight, Activity } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
 
 interface SegmentEffort {

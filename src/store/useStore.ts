@@ -98,6 +98,14 @@ interface VeloState {
     addWheelset: (bikeIndex: number, wheelset: Wheelset) => void;
 }
 
+// Type for persisted state during migration
+interface PersistedState {
+    user?: Partial<UserSettings> & { mmp?: UserSettings['mmp'] };
+    bikes?: Array<Partial<BikeProfile> & { tireWidth?: number; isTubeless?: boolean }>;
+    activeBikeIndex?: number;
+    dailyLoads?: DailyLoad[];
+}
+
 const DEFAULT_MAINTENANCE: MaintenanceState = {
     chainLube: 0,
     chainWear: 0,
@@ -210,12 +218,13 @@ export const useStore = create<VeloState>()(
             name: 'velotrace-storage-v3', // New name for IndexedDB storage
             storage: createJSONStorage(() => idbStorage),
             version: 3,
-            migrate: (persistedState: any, version: number) => {
+            migrate: (persistedState: unknown, version: number) => {
+                const state = persistedState as PersistedState;
                 // Migration logic for older versions if needed
                 if (version < 3) {
                     // Initialize MMP for existing users
-                    if (persistedState.user && !persistedState.user.mmp) {
-                        persistedState.user.mmp = {
+                    if (state.user && !state.user.mmp) {
+                        state.user.mmp = {
                             "5s": 800,
                             "1m": 400,
                             "5m": 300,
@@ -223,8 +232,8 @@ export const useStore = create<VeloState>()(
                         };
                     }
                     // Initialize wheelsets for existing bikes during migration
-                    if (persistedState.bikes) {
-                        persistedState.bikes = persistedState.bikes.map((b: any) => ({
+                    if (state.bikes) {
+                        state.bikes = state.bikes.map((b) => ({
                             ...b,
                             activeWheelsetIndex: b.activeWheelsetIndex ?? 0,
                             wheelsets: b.wheelsets || [
@@ -240,7 +249,7 @@ export const useStore = create<VeloState>()(
                         }));
                     }
                 }
-                return persistedState;
+                return state as VeloState;
             }
         }
     )

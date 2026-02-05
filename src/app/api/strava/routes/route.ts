@@ -2,6 +2,17 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+interface StravaRoute {
+    id_str: string;
+    name: string;
+    distance: number;
+    elevation_gain: number;
+    map?: {
+        summary_polyline: string;
+    };
+    type: string;
+}
+
 export async function GET() {
     const session = await getServerSession(authOptions);
 
@@ -28,7 +39,7 @@ export async function GET() {
         }
 
         // Standardize the response to include the full list
-        const formattedRoutes = routes.map((r: any) => ({
+        const formattedRoutes = routes.map((r: StravaRoute) => ({
             id: r.id_str,
             name: r.name,
             distance: r.distance,

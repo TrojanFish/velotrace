@@ -36,7 +36,7 @@ export function useWeather() {
                     isRainy: current.precipitation > 0,
                     city: "我的位置"
                 });
-            } catch (err) {
+            } catch (_err) {
                 setError("Failed to fetch weather");
             } finally {
                 setLoading(false);

@@ -10,7 +10,7 @@ interface KitInput {
 }
 
 export function getKitRecommendation({
-    temp,
+    temp: _temp,
     apparentTemp,
     isRainy,
     isColdRunner

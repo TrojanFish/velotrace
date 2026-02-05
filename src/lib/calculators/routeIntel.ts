@@ -13,7 +13,8 @@ export interface Point {
  */
 export function decodePolyline(encoded: string): Point[] {
     const points: Point[] = [];
-    let index = 0, len = encoded.length;
+    let index = 0;
+    const len = encoded.length;
     let lat = 0, lng = 0;
 
     while (index < len) {
@@ -55,7 +56,7 @@ export function calculateBearing(start: Point, end: Point): number {
     const x = Math.cos(startLat) * Math.sin(endLat) -
         Math.sin(startLat) * Math.cos(endLat) * Math.cos(endLng - startLng);
 
-    let brng = Math.atan2(y, x) * 180 / Math.PI;
+    const brng = Math.atan2(y, x) * 180 / Math.PI;
     return (brng + 360) % 360;
 }
 

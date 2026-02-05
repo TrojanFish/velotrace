@@ -2,22 +2,23 @@
 
 import { useState, useMemo } from "react";
 import { useStore } from "@/store/useStore";
-import { calculateTirePressure } from "@/lib/calculators/tirePressure";
+import { calculateTirePressure, SurfaceType } from "@/lib/calculators/tirePressure";
 import { Gauge, Info, CloudRain, Sun, Activity } from "lucide-react";
 
 export function TirePressureCalculator() {
     const { user, bikes, activeBikeIndex } = useStore();
     const bike = bikes[activeBikeIndex];
+    const activeWheelset = bike.wheelsets[bike.activeWheelsetIndex];
 
-    const [surface, setSurface] = useState<'perfect' | 'normal' | 'rough' | 'wet'>('normal');
+    const [surface, setSurface] = useState<SurfaceType>('normal');
 
     const pressure = useMemo(() => calculateTirePressure({
         riderWeight: user.weight,
         bikeWeight: bike.weight,
-        tireWidth: bike.tireWidth,
-        isTubeless: bike.isTubeless,
-        surfaceType: surface as any
-    }), [user.weight, bike.weight, bike.tireWidth, bike.isTubeless, surface]);
+        tireWidth: activeWheelset.tireWidth,
+        isTubeless: activeWheelset.isTubeless,
+        surfaceType: surface
+    }), [user.weight, bike.weight, activeWheelset.tireWidth, activeWheelset.isTubeless, surface]);
 
     const surfaceOptions = useMemo(() => [
         { id: 'perfect', label: '极佳 (赛道)', icon: <Sun size={12} /> },
@@ -61,7 +62,7 @@ export function TirePressureCalculator() {
                     {surfaceOptions.map((opt) => (
                         <button
                             key={opt.id}
-                            onClick={() => setSurface(opt.id as any)}
+                            onClick={() => setSurface(opt.id as SurfaceType)}
                             className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-[10px] font-bold transition-all ${surface === opt.id
                                 ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
                                 : 'bg-slate-900 border-slate-800 text-slate-500 grayscale'
@@ -78,7 +79,7 @@ export function TirePressureCalculator() {
                 <Info size={14} className="text-slate-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                     <p className="text-[10px] text-slate-500 leading-normal">
-                        系统已自动关联: <strong>{user.weight}kg</strong> 骑手 + <strong>{bike.tireWidth}mm</strong> {bike.isTubeless ? '真空' : '开口'}胎。
+                        系统已自动关联: <strong>{user.weight}kg</strong> 骑手 + <strong>{activeWheelset.tireWidth}mm</strong> {activeWheelset.isTubeless ? '真空' : '开口'}胎。
                     </p>
                     <p className="text-[10px] text-slate-600 leading-normal italic">
                         * 建议仅供参考，请勿超过轮组/外胎标称最大值。

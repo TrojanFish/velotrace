@@ -5,10 +5,10 @@ const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: true,
-  skipWaiting: true,
 });
 
 const nextConfig: NextConfig = {
+  turbopack: {}, // Silence the Next.js 16 Turbopack warning for PWA webpack integration
   images: {
     remotePatterns: [
       {

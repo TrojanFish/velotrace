@@ -1,8 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState, useMemo } from "react";
-import { Wind, Map, Navigation, ChevronLeft, ChevronRight, Gauge, Shield } from "lucide-react";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { Wind, Navigation, ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
 import { decodePolyline, calculateBearing, scoreWindAlignment } from "@/lib/calculators/routeIntel";
 
@@ -22,6 +22,12 @@ export function RouteWindForecastCard() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [loading, setLoading] = useState(false);
     const [windInfo, setWindInfo] = useState<{ speed: number; deg: number; label: string } | null>(null);
+
+    // Move function declaration BEFORE useEffect to fix "accessed before declared" error
+    const getWindDirectionLabel = useCallback((deg: number) => {
+        const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
+        return directions[Math.round(deg / 45) % 8];
+    }, []);
 
     useEffect(() => {
         if (session) {
@@ -53,12 +59,7 @@ export function RouteWindForecastCard() {
                     });
                 });
         }
-    }, [routes, activeIndex]);
-
-    const getWindDirectionLabel = (deg: number) => {
-        const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
-        return directions[Math.round(deg / 45) % 8];
-    };
+    }, [routes, activeIndex, getWindDirectionLabel]);
 
     const routeAnalysis = useMemo(() => {
         if (!routes.length || !windInfo) return null;
