@@ -32,7 +32,8 @@ export function WeatherCard() {
         );
     }
 
-    if (error || !data) return <div className="pro-card text-red-500 border-red-500/20 bg-red-500/5 py-8 text-center text-xs font-bold uppercase">定位失败，请检查浏览器权限。</div>;
+    if (error && !data) return <div className="pro-card text-red-500 border-red-500/20 bg-red-500/5 py-8 text-center text-xs font-bold uppercase">定位失败，请检查浏览器权限。</div>;
+    if (!data) return null;
 
     const kit = getKitRecommendation({
         temp: data.temp,
@@ -53,7 +54,14 @@ export function WeatherCard() {
         <div className="pro-card space-y-6">
             <div className="flex justify-between items-start">
                 <div>
-                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">今日预警</h2>
+                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                        今日预警
+                        {error && (
+                            <span className="text-[8px] font-black bg-orange-500/10 text-orange-400 px-1.5 py-0.5 rounded border border-orange-500/20 italic">
+                                DEFAULT
+                            </span>
+                        )}
+                    </h2>
                     <p className="text-2xl font-bold flex items-center gap-2">
                         {data.temp}°C
                         <span className="text-sm font-normal text-muted-foreground">(体感 {data.apparentTemp}°)</span>

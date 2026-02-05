@@ -12,7 +12,7 @@ export default function AnalyticsPage() {
     return (
         <main className="space-y-6 pb-12">
             <header className="mb-8">
-                <h1 className="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent italic tracking-tighter pb-1 leading-none">
+                <h1 className="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
                     DATA HUB
                 </h1>
                 <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest mt-1">

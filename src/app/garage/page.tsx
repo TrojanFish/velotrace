@@ -121,8 +121,8 @@ export default function GaragePage() {
 
     return (
         <main className="space-y-8 pb-32">
-            <header className="mb-4">
-                <h1 className="text-2xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent italic tracking-tight pr-4">
+            <header className="mb-8">
+                <h1 className="text-3xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
                     PILOT OFFICE
                 </h1>
                 <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.2em] mt-1">
