@@ -115,7 +115,7 @@ export default function Home() {
       )}
 
       {/* Bottom Action */}
-      <div className="fixed bottom-24 right-6 z-50">
+      <div className="fixed bottom-32 right-6 z-50">
         <button
           onClick={() => setIsLogging(true)}
           className="w-14 h-14 bg-emerald-500 rounded-full shadow-2xl shadow-emerald-500/20 flex items-center justify-center text-slate-950 hover:scale-105 transition-transform active:scale-95"

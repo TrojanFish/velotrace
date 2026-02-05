@@ -46,7 +46,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950 text-slate-50 min-h-[100dvh] selection:bg-cyan-500/30`}
       >
         <Providers>
-          <div className="max-w-md mx-auto min-h-[100dvh] flex flex-col pt-[calc(env(safe-area-inset-top)+1rem)] pb-24 px-4 overflow-x-hidden">
+          <div className="max-w-md mx-auto min-h-[100dvh] flex flex-col pt-[calc(env(safe-area-inset-top)+1rem)] pb-32 px-4 overflow-x-hidden">
             {children}
           </div>
           <Navigation />
