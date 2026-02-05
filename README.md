@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚴 VeloTrace: Pro Cycling Decision Cockpit
 
-## Getting Started
+**VeloTrace** is a high-performance dashboard designed for hardcore cyclists, focusing on "pre-ride decision making" and "long-term physiological analysis." It transforms raw cycling data into actionable tactical insights by integrating Strava API, real-time meteorological forecasts, and advanced physiological models.
 
-First, run the development server:
+[![Status](https://img.shields.io/badge/Status-Beta-purple?style=for-the-badge)](https://github.com/TrojanFish/velotrace)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
+![PWA](https://img.shields.io/badge/PWA-Ready-orange?style=for-the-badge)
+![IndexedDB](https://img.shields.io/badge/Storage-IndexedDB-blue?style=for-the-badge)
 
+---
+
+## 💎 Core Innovation Modules
+
+### 🌬️ 1. Tactical Environment Sensor
+*   **Intelligent Weather Strategy**: Real-time monitoring of temperature, wind speed, and precipitation alerts.
+*   **Dynamic Apparel Recommendation**: Algorithm-driven clothing advice (Inner, Jersey, Accessories) based on aero-drag and rider's cold tolerance.
+*   **Strategic Route Wind Scoring**: Decodes route polylines and scores "Wind Match" (Tailwind vs. Headwind) to help you choose the best route for today's wind.
+
+### 📊 2. Deep Physiology Analytics Hub
+*   **PMC (Performance Management Chart)**: Tracks your **CTL** (Fitness), **ATL** (Fatigue), and **TSB** (Form) over a 90-day window.
+*   **Activity Insights**:
+    *   **Metabolism Engine**: Estimates Fat vs. Carb consumption based on power zones.
+    *   **Virtual CdA**: Calculates your aerodynamic efficiency (CdA) and provides a rating.
+*   **Segment Challenges**: Integrated Strava segment tracking for post-ride performance review.
+
+### 🎡 3. Advanced Tactical Preparation (Multi-Wheelset aware)
+*   **Garage Management**: Full lifecycle tracking of multiple bikes synced from Strava.
+*   **Multi-Wheelset Infrastructure**: Manage different wheelsets (e.g., Aero Carbon vs. Training Alloy) for the same bike with independent:
+    *   **Tire Pressure Calculation**: Precision PSI advice based on surface, tubeless status, and tire width.
+    *   **Mileage Tracking**: Each wheelset has its own ODO, separate from the bike's frame ODO.
+*   **Maintenance Alerts**: Proactive notifications for chain lubrication, tire wear, and deep services based on mileage.
+
+---
+
+## 🎨 Design Language & UX
+
+*   **Cyber Cockpit Aesthetic**: High-contrast, dark-mode UI (Cyber Black / Neon Cyan) inspired by F1 data telemetry.
+*   **Local-First Architecture**: Powered by **IndexedDB** (`idb-keyval`) for ultra-fast, high-capacity local storage.
+*   **Progressive Web App (PWA)**: Installable on mobile devices with offline-first capabilities.
+*   **Micro-interactions**: Smooth transitions and skeletons for a premium, lightweight feel.
+
+---
+
+## 🛠️ Technical Stack
+
+*   **Framework**: [Next.js 15 (App Router)](https://nextjs.org/)
+*   **Persistence**: Zustand + `idb-keyval` (IndexedDB)
+*   **Authentication**: [Next-Auth](https://next-auth.js.org/) + Strava OAuth
+*   **Visualization**: [Recharts](https://recharts.org/) for PMC trends
+*   **Calculators**: Custom physics-based models for CdA, TSS, Metabolism, and Tire Pressure.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone & Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/TrojanFish/velotrace.git
+cd velotrace
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configuration
+Create a `.env` file in the root:
+```env
+STRAVA_CLIENT_ID=your_id
+STRAVA_CLIENT_SECRET=your_secret
+NEXTAUTH_SECRET=your_secret
+NEXTAUTH_URL=http://localhost:3000
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Launch
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📈 Roadmap
 
-To learn more about Next.js, take a look at the following resources:
+- [x] Version 1: Strava Sync & Basic Metrics
+- [x] Version 2: PMC Trends & Virtual CdA
+- [x] Version 3: IndexedDB & Multi-Wheelset Support
+- [ ] Version 4: AI Tactical Briefing (GPT-powered)
+- [ ] Version 5: 3D Wind-Field Mapping
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**VeloTrace Pro Engine** - Making every watt traceble.

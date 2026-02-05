@@ -1,0 +1,212 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
+import { get, set, del } from 'idb-keyval';
+
+// Custom IndexedDB storage for local-first architecture
+const idbStorage: StateStorage = {
+    getItem: async (name: string): Promise<string | null> => {
+        return (await get(name)) || null;
+    },
+    setItem: async (name: string, value: string): Promise<void> => {
+        await set(name, value);
+    },
+    removeItem: async (name: string): Promise<void> => {
+        await del(name);
+    },
+};
+
+export interface Wheelset {
+    id: string;
+    name: string;
+    tireWidth: number;
+    isTubeless: boolean;
+    mileage: number;
+    lastLubeMileage: number; // For specific wheelset components if needed
+}
+
+export interface MaintenanceState {
+    chainLube: number;      // km since last lube (Target: 300km)
+    chainWear: number;      // km since last replacement (Target: 3000km)
+    tires: number;          // km since last replacement (Target: 4000km)
+    brakePads: number;      // km since last replacement (Target: 2500km)
+    service: number;        // km since last deep service (Target: 5000km)
+}
+
+export interface DailyLoad {
+    date: string; // YYYY-MM-DD
+    tss: number;
+}
+
+export interface PMCData {
+    date: string;
+    ctl: number;
+    atl: number;
+    tsb: number;
+}
+
+export interface BikeProfile {
+    id: string;
+    name: string;
+    weight: number;
+    totalDistance: number;
+    stravaGearId?: string;
+    maintenance: MaintenanceState;
+    wheelsets: Wheelset[];
+    activeWheelsetIndex: number;
+}
+
+interface UserSettings {
+    weight: number;
+    ftp: number;
+    isColdRunner: boolean;
+    stravaConnected: boolean;
+    lastSyncDate?: string;
+}
+
+interface VeloState {
+    user: UserSettings;
+    bikes: BikeProfile[];
+    activeBikeIndex: number;
+    dailyLoads: DailyLoad[];
+
+    // Actions
+    updateUser: (user: Partial<UserSettings>) => void;
+    updateBike: (index: number, bike: Partial<BikeProfile>) => void;
+    setBikes: (bikes: BikeProfile[]) => void;
+    setActiveBikeIndex: (index: number) => void;
+    addBike: (bike: BikeProfile) => void;
+    addRideDistance: (distance: number) => void;
+    connectStrava: (status: boolean) => void;
+    resetMaintenance: (bikeIndex: number, component: keyof MaintenanceState) => void;
+    setDailyLoads: (loads: DailyLoad[]) => void;
+
+    // Wheelset Actions
+    setActiveWheelset: (bikeIndex: number, wheelsetIndex: number) => void;
+    addWheelset: (bikeIndex: number, wheelset: Wheelset) => void;
+}
+
+const DEFAULT_MAINTENANCE: MaintenanceState = {
+    chainLube: 0,
+    chainWear: 0,
+    tires: 0,
+    brakePads: 0,
+    service: 0
+};
+
+export const useStore = create<VeloState>()(
+    persist(
+        (set) => ({
+            user: {
+                weight: 70,
+                ftp: 200,
+                isColdRunner: false,
+                stravaConnected: false,
+            },
+            bikes: [
+                {
+                    id: 'default-bike',
+                    name: "My Road Bike",
+                    weight: 8.5,
+                    totalDistance: 0,
+                    maintenance: { ...DEFAULT_MAINTENANCE },
+                    activeWheelsetIndex: 0,
+                    wheelsets: [
+                        {
+                            id: 'wh-1',
+                            name: "Training Wheels (Allroad)",
+                            tireWidth: 28,
+                            isTubeless: true,
+                            mileage: 0,
+                            lastLubeMileage: 0
+                        }
+                    ]
+                }
+            ],
+            activeBikeIndex: 0,
+            dailyLoads: [],
+
+            updateUser: (newUser) => set((state) => ({ user: { ...state.user, ...newUser } })),
+            updateBike: (index, newBike) => set((state) => {
+                const newBikes = [...state.bikes];
+                newBikes[index] = { ...newBikes[index], ...newBike };
+                return { bikes: newBikes };
+            }),
+            setBikes: (bikes) => set({ bikes }),
+            setActiveBikeIndex: (index) => set({ activeBikeIndex: index }),
+            addBike: (bike) => set((state) => ({ bikes: [...state.bikes, bike] })),
+            addRideDistance: (distance) => set((state) => {
+                const newBikes = [...state.bikes];
+                const bike = newBikes[state.activeBikeIndex];
+
+                if (!bike.maintenance) {
+                    bike.maintenance = { ...DEFAULT_MAINTENANCE };
+                }
+
+                bike.totalDistance += distance;
+
+                // Update active wheelset mileage
+                if (bike.wheelsets && bike.wheelsets[bike.activeWheelsetIndex]) {
+                    bike.wheelsets[bike.activeWheelsetIndex].mileage += distance;
+                }
+
+                bike.maintenance.chainLube += distance;
+                bike.maintenance.chainWear += distance;
+                bike.maintenance.tires += distance;
+                bike.maintenance.brakePads += distance;
+                bike.maintenance.service += distance;
+
+                return { bikes: newBikes };
+            }),
+            connectStrava: (status) => set((state) => ({
+                user: { ...state.user, stravaConnected: status, lastSyncDate: status ? new Date().toISOString() : undefined }
+            })),
+            resetMaintenance: (bikeIndex, component) => set((state) => {
+                const newBikes = [...state.bikes];
+                if (newBikes[bikeIndex].maintenance) {
+                    newBikes[bikeIndex].maintenance[component] = 0;
+                }
+                return { bikes: newBikes };
+            }),
+            setDailyLoads: (loads) => set({ dailyLoads: loads }),
+
+            setActiveWheelset: (bikeIndex, wheelsetIndex) => set((state) => {
+                const newBikes = [...state.bikes];
+                newBikes[bikeIndex].activeWheelsetIndex = wheelsetIndex;
+                return { bikes: newBikes };
+            }),
+            addWheelset: (bikeIndex, wheelset) => set((state) => {
+                const newBikes = [...state.bikes];
+                newBikes[bikeIndex].wheelsets.push(wheelset);
+                return { bikes: newBikes };
+            }),
+        }),
+        {
+            name: 'velotrace-storage-v3', // New name for IndexedDB storage
+            storage: createJSONStorage(() => idbStorage),
+            version: 3,
+            migrate: (persistedState: any, version: number) => {
+                // Migration logic for older versions if needed
+                if (version < 3) {
+                    // Initialize wheelsets for existing bikes during migration
+                    if (persistedState.bikes) {
+                        persistedState.bikes = persistedState.bikes.map((b: any) => ({
+                            ...b,
+                            activeWheelsetIndex: 0,
+                            wheelsets: b.wheelsets || [
+                                {
+                                    id: 'wh-migrated',
+                                    name: "Default Wheelset",
+                                    tireWidth: b.tireWidth || 28,
+                                    isTubeless: b.isTubeless || false,
+                                    mileage: b.totalDistance || 0,
+                                    lastLubeMileage: 0
+                                }
+                            ]
+                        }));
+                    }
+                }
+                return persistedState;
+            }
+        }
+    )
+);
