@@ -1,5 +1,7 @@
 # 🚴 VeloTrace: Pro Cycling Decision Cockpit
 
+[English] | [简体中文](./README_ZH.md)
+
 **VeloTrace** is a high-performance dashboard designed for hardcore cyclists, focusing on "pre-ride decision making" and "long-term physiological analysis." It transforms raw cycling data into actionable tactical insights by integrating Strava API, real-time meteorological forecasts, and advanced physiological models.
 
 [![Status](https://img.shields.io/badge/Status-Beta-purple?style=for-the-badge)](https://github.com/TrojanFish/velotrace)

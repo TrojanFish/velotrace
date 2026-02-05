@@ -1,13 +1,13 @@
 # 🚴 VeloTrace: 专业骑行决策指挥台
 
+[English](./README.md) | [简体中文]
+
 **VeloTrace** 是一款专为硬核骑行者设计的“飞行前决策”与“深度体能分析”仪表盘。它通过集成 Strava API、实时高精气象预报和自研生理算法，将原始骑行数据转化为具有实战价值的战术建议。
 
 [![状态](https://img.shields.io/badge/状态-测试版-purple?style=for-the-badge)](https://github.com/TrojanFish/velotrace)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![PWA](https://img.shields.io/badge/PWA-已就绪-orange?style=for-the-badge)
 ![IndexedDB](https://img.shields.io/badge/存储-IndexedDB-blue?style=for-the-badge)
-
-[English Version](./README.md)
 
 ---
 
