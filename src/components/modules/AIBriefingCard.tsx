@@ -52,10 +52,10 @@ export function AIBriefingCard() {
     };
 
     useEffect(() => {
-        if (!structuredData && !weatherLoading && weather) {
+        if (!structuredData && !weatherLoading) {
             generateBriefing();
         }
-    }, [weatherLoading, weather]);
+    }, [weatherLoading, structuredData]);
 
     return (
         <>
@@ -106,7 +106,16 @@ export function AIBriefingCard() {
                                 </span>
                             </div>
                         </div>
-                    ) : null}
+                    ) : (
+                        <div className="py-4 text-center">
+                            <button
+                                onClick={generateBriefing}
+                                className="px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-full text-[10px] font-black text-purple-400 uppercase tracking-widest hover:bg-purple-500/20 transition-all"
+                            >
+                                点击推演今日战术
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Sub Metrics */}
