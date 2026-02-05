@@ -6,64 +6,61 @@ import { PMCTrendCard } from "@/components/modules/PMCTrendCard";
 import { SegmentChallengeCard } from "@/components/modules/SegmentChallengeCard";
 import { MMPTrendCard } from "@/components/modules/MMPTrendCard";
 import { HeartRateZoneCard } from "@/components/modules/HeartRateZoneCard";
-import { BarChart3, TrendingUp, History, Zap, Activity } from "lucide-react";
+import { BarChart3, TrendingUp, Activity, Sparkles } from "lucide-react";
 
 export default function AnalyticsPage() {
     return (
-        <main className="space-y-6 pb-12">
-            <header className="mb-8">
-                <h1 className="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
+        <main className="space-y-8 pb-12">
+            {/* Header */}
+            <header className="mb-6">
+                <h1 className="text-3xl font-black text-gradient-aurora italic tracking-tighter leading-none mb-1">
                     DATA HUB
                 </h1>
-                <p className="text-xs text-muted-foreground font-black uppercase tracking-widest mt-1">
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] ml-0.5">
                     生理洞察与长周期分析
                 </p>
             </header>
 
-            {/* 1. 训练负荷 [TRAINING LOAD] - Highest Frequency */}
-            <section className="space-y-4">
-                <div className="flex items-center gap-2 px-1">
-                    <div className="w-1 h-3 bg-purple-500 rounded-full" />
-                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
-                        训练负荷 / Training Load
-                    </h2>
+            {/* 1. 训练负荷 [TRAINING LOAD] */}
+            <section className="space-y-5">
+                <div className="section-header">
+                    <div className="section-indicator purple" />
+                    <h2 className="section-title">训练负荷 / Training Load</h2>
                 </div>
                 <PMCTrendCard />
                 <WeeklyStatsCard />
             </section>
 
-            {/* 2. 复盘与挑战 [RECAP & GOALS] - Medium Frequency */}
-            <section className="space-y-4">
-                <div className="flex items-center gap-2 px-1">
-                    <div className="w-1 h-3 bg-pink-500 rounded-full" />
-                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
-                        活动复盘 / Activity Insights
-                    </h2>
+            {/* 2. 复盘与挑战 [RECAP & GOALS] */}
+            <section className="space-y-5">
+                <div className="section-header">
+                    <div className="section-indicator pink" />
+                    <h2 className="section-title">活动复盘 / Activity Insights</h2>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-5">
                     <RideInsightCard />
                     <SegmentChallengeCard />
                 </div>
             </section>
 
-            {/* 3. 生理引擎 [PHYSIOLOGICAL ENGINE] - Reference */}
-            <section className="space-y-4">
-                <div className="flex items-center gap-2 px-1">
-                    <Activity size={16} className="text-rose-500" />
-                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
-                        生理引擎 / Physiological Engine
-                    </h2>
+            {/* 3. 生理引擎 [PHYSIOLOGICAL ENGINE] */}
+            <section className="space-y-5">
+                <div className="section-header">
+                    <div className="liquid-icon danger p-1.5">
+                        <Activity size={12} />
+                    </div>
+                    <h2 className="section-title">生理引擎 / Physiological Engine</h2>
                 </div>
                 <HeartRateZoneCard />
             </section>
 
-            {/* 4. 战力解构 [POWER PROFILE] - Periodic Review */}
-            <section className="space-y-4">
-                <div className="flex items-center gap-2 px-1">
-                    <TrendingUp size={16} className="text-orange-500" />
-                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
-                        战力解构 / Power Profile
-                    </h2>
+            {/* 4. 战力解构 [POWER PROFILE] */}
+            <section className="space-y-5">
+                <div className="section-header">
+                    <div className="liquid-icon warning p-1.5">
+                        <TrendingUp size={12} />
+                    </div>
+                    <h2 className="section-title">战力解构 / Power Profile</h2>
                 </div>
                 <MMPTrendCard />
             </section>

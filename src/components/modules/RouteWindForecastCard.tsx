@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { Wind, Navigation, ChevronLeft, ChevronRight, Shield } from "lucide-react";
+import { Wind, Navigation, ChevronLeft, ChevronRight, Shield, MapPin } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
 import { decodePolyline, calculateBearing, scoreWindAlignment } from "@/lib/calculators/routeIntel";
 
@@ -23,7 +23,6 @@ export function RouteWindForecastCard() {
     const [loading, setLoading] = useState(false);
     const [windInfo, setWindInfo] = useState<{ speed: number; deg: number; label: string } | null>(null);
 
-    // Move function declaration BEFORE useEffect to fix "accessed before declared" error
     const getWindDirectionLabel = useCallback((deg: number) => {
         const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
         return directions[Math.round(deg / 45) % 8];
@@ -43,11 +42,9 @@ export function RouteWindForecastCard() {
 
     useEffect(() => {
         if (routes.length > 0) {
-            // 1. Decode polyline to get the starting coordinates of the route
             const decoded = decodePolyline(routes[activeIndex].map.summary_polyline);
-            const startPoint = decoded[0] || { lat: 31.23, lng: 121.47 }; // Fallback to SH if no points
+            const startPoint = decoded[0] || { lat: 31.23, lng: 121.47 };
 
-            // 2. Fetch real weather for the route's specific location
             fetch(`https://api.open-meteo.com/v1/forecast?latitude=${startPoint.lat}&longitude=${startPoint.lng}&current_weather=true`)
                 .then(res => res.json())
                 .then(data => {
@@ -67,8 +64,6 @@ export function RouteWindForecastCard() {
         const points = decodePolyline(current.map.summary_polyline);
         if (points.length < 2) return null;
 
-        // Use first and mid point to get general outbound direction
-        // Simple heuristic for "outbound" vs "loop"
         const start = points[0];
         const mid = points[Math.floor(points.length / 2)];
         const bearing = calculateBearing(start, mid);
@@ -77,7 +72,7 @@ export function RouteWindForecastCard() {
 
         return {
             bearing,
-            alignment, // -1 to 1
+            alignment,
             percent: Math.round(((alignment + 1) / 2) * 100)
         };
     }, [routes, activeIndex, windInfo]);
@@ -94,18 +89,18 @@ export function RouteWindForecastCard() {
 
     if (loading && routes.length === 0) {
         return (
-            <div className="pro-card border-slate-800 bg-slate-900/50 space-y-4 min-h-[160px]">
+            <div className="pro-card space-y-4 min-h-[180px]">
                 <div className="flex justify-between items-center">
-                    <Skeleton className="w-32 h-3" />
-                    <Skeleton className="w-16 h-4" />
+                    <div className="liquid-skeleton w-32 h-4" />
+                    <div className="liquid-skeleton w-16 h-5" />
                 </div>
                 <div className="space-y-2">
-                    <Skeleton className="w-48 h-4" />
-                    <Skeleton className="w-24 h-2" />
+                    <div className="liquid-skeleton w-48 h-5" />
+                    <div className="liquid-skeleton w-24 h-3" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                    <Skeleton className="w-full h-16 rounded-xl" />
-                    <Skeleton className="w-full h-16 rounded-xl" />
+                    <div className="liquid-skeleton w-full h-20 rounded-xl" />
+                    <div className="liquid-skeleton w-full h-20 rounded-xl" />
                 </div>
             </div>
         );
@@ -117,64 +112,81 @@ export function RouteWindForecastCard() {
     if (!currentRoute) return null;
 
     return (
-        <div className="pro-card border-cyan-500/20 bg-cyan-500/5 space-y-4">
-            <div className="flex justify-between items-center">
+        <div className="pro-card space-y-5 overflow-hidden relative">
+            {/* Subtle Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 opacity-60" />
+
+            {/* Header */}
+            <div className="flex justify-between items-center relative z-10">
                 <div className="flex items-center gap-2">
-                    <Navigation size={14} className="text-cyan-400" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">明日路线巡检</h2>
+                    <div className="liquid-icon p-1.5">
+                        <Navigation size={12} />
+                    </div>
+                    <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">明日路线巡检</h2>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                     <button
                         disabled={activeIndex === 0}
                         onClick={() => setActiveIndex(i => i - 1)}
-                        className="p-1 hover:bg-slate-800 rounded-md disabled:opacity-30"
+                        className="p-1.5 rounded-lg hover:bg-white/5 disabled:opacity-30 transition-colors"
                     >
-                        <ChevronLeft size={16} />
+                        <ChevronLeft size={14} className="text-white/60" />
                     </button>
-                    <span className="text-[10px] font-mono font-bold">{activeIndex + 1}/{routes.length}</span>
+                    <span className="text-[10px] font-mono font-bold text-white/50 min-w-[2.5rem] text-center">{activeIndex + 1}/{routes.length}</span>
                     <button
                         disabled={activeIndex === routes.length - 1}
                         onClick={() => setActiveIndex(i => i + 1)}
-                        className="p-1 hover:bg-slate-800 rounded-md disabled:opacity-30"
+                        className="p-1.5 rounded-lg hover:bg-white/5 disabled:opacity-30 transition-colors"
                     >
-                        <ChevronRight size={16} />
+                        <ChevronRight size={14} className="text-white/60" />
                     </button>
                 </div>
             </div>
 
-            <div className="space-y-1">
-                <h3 className="text-sm font-black italic uppercase text-slate-100 truncate">{currentRoute.name}</h3>
-                <div className="flex gap-3 text-[10px] text-muted-foreground font-bold uppercase">
-                    <span>{currentRoute.distance} KM</span>
-                    <span>+{currentRoute.elevation} M爬升</span>
+            {/* Route Info */}
+            <div className="space-y-2 relative z-10">
+                <div className="flex items-start gap-2">
+                    <MapPin size={14} className="text-cyan-400 mt-0.5 flex-shrink-0" />
+                    <h3 className="text-sm font-bold text-white/90 uppercase truncate leading-tight">{currentRoute.name}</h3>
+                </div>
+                <div className="flex gap-3 text-[10px] text-white/40 font-bold uppercase ml-5">
+                    <span className="liquid-tag text-[8px] py-0.5">{currentRoute.distance} KM</span>
+                    <span className="liquid-tag success text-[8px] py-0.5">+{currentRoute.elevation} M</span>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
-                    <div className="flex justify-between items-center mb-2">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-3 pt-2 relative z-10">
+                {/* Wind Card */}
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="flex justify-between items-center mb-3">
                         <div className="flex items-center gap-2">
-                            <Wind size={12} className="text-cyan-400" />
-                            <span className="text-[8px] font-bold text-muted-foreground uppercase">气流环境</span>
+                            <div className="liquid-icon p-1.5">
+                                <Wind size={12} />
+                            </div>
+                            <span className="text-[8px] font-bold text-white/40 uppercase">气流环境</span>
                         </div>
                         {routeAnalysis && (
-                            <div className={`px-1.5 py-0.5 rounded text-[8px] font-black italic ${routeAnalysis.alignment > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                            <div className={`liquid-tag ${routeAnalysis.alignment > 0 ? 'success' : 'danger'} text-[7px] py-0.5 px-1.5`}>
                                 MATCH {routeAnalysis.percent}%
                             </div>
                         )}
                     </div>
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-black italic">{windInfo?.label}风</span>
-                        <span className="text-[10px] font-mono text-muted-foreground">{windInfo?.speed}km/h</span>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-lg font-bold text-gradient-cyan">{windInfo?.label}风</span>
+                        <span className="text-[10px] font-mono text-white/40">{windInfo?.speed}km/h</span>
                     </div>
                 </div>
 
-                <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex flex-col justify-center">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                        <Shield size={10} className="text-cyan-500" />
-                        <span className="text-[8px] font-bold text-muted-foreground uppercase">战术建议</span>
+                {/* Advice Card */}
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] flex flex-col">
+                    <div className="flex items-center gap-1.5 mb-2">
+                        <div className="liquid-icon success p-1">
+                            <Shield size={10} />
+                        </div>
+                        <span className="text-[8px] font-bold text-white/40 uppercase">战术建议</span>
                     </div>
-                    <p className="text-[9px] font-bold text-slate-300 leading-[1.3] uppercase italic">
+                    <p className="text-[9px] font-medium text-white/60 leading-relaxed flex-1">
                         {windInfo && getAdvice(routeAnalysis?.alignment || 0, windInfo.speed)}
                     </p>
                 </div>

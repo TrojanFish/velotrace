@@ -8,7 +8,7 @@ import { BikeCard } from "@/components/modules/BikeCard";
 import { RouteWindForecastCard } from "@/components/modules/RouteWindForecastCard";
 import { AIBriefingCard } from "@/components/modules/AIBriefingCard";
 import { DynamicWindFieldMap } from "@/components/modules/DynamicWindFieldMap";
-import { Settings, Zap, Bike, Navigation } from "lucide-react";
+import { Settings, Bike, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -32,19 +32,22 @@ export default function Home() {
   };
 
   return (
-    <main className="space-y-6 pb-12">
+    <main className="space-y-8 pb-12">
       {/* Header */}
-      <header className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
+      <header className="flex justify-between items-center mb-6">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-black text-gradient-aurora italic tracking-tighter leading-none">
             VELOTRACE
           </h1>
-          <p className="text-xs text-muted-foreground font-black uppercase tracking-widest mt-1">
+          <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] ml-0.5">
             {today}
           </p>
         </div>
-        <Link href="/garage" className="p-2 bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors">
-          <Settings size={20} />
+        <Link
+          href="/garage"
+          className="liquid-icon p-3 hover:scale-105 transition-transform"
+        >
+          <Settings size={18} />
         </Link>
       </header>
 
@@ -52,14 +55,14 @@ export default function Home() {
       <AIBriefingCard />
 
       {/* 1. 环境感知 [ENVIRONMENT] */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2 px-1">
-          <div className="w-1 h-3 bg-cyan-400 rounded-full" />
-          <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+      <section className="space-y-5">
+        <div className="section-header">
+          <div className="section-indicator" />
+          <h2 className="section-title">
             战术气象 / Environment
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-5">
           <WeatherCard />
           <RouteWindForecastCard />
           <DynamicWindFieldMap />
@@ -67,14 +70,14 @@ export default function Home() {
       </section>
 
       {/* 2. 战术准备 [TACTICAL] */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2 px-1">
-          <div className="w-1 h-3 bg-orange-500 rounded-full" />
-          <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+      <section className="space-y-5">
+        <div className="section-header">
+          <div className="section-indicator orange" />
+          <h2 className="section-title">
             准备就绪 / Prep
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-5">
           <BikeCard />
           <FuelCard />
         </div>
@@ -83,29 +86,40 @@ export default function Home() {
 
       {/* Logging Overlay */}
       {isLogging && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm px-6">
-          <div className="pro-card w-full max-w-xs space-y-4 border-emerald-500/30">
-            <h3 className="text-lg font-bold italic">记录今日骑行</h3>
-            <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">骑行总里程 (km)</p>
+        <div className="liquid-overlay">
+          <div className="liquid-modal space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="liquid-icon success p-2.5">
+                <Bike size={20} />
+              </div>
+              <h3 className="text-lg font-bold">记录今日骑行</h3>
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-xs text-white/50 font-medium uppercase tracking-wider">
+                骑行总里程 (km)
+              </label>
               <input
                 type="number"
                 autoFocus
                 value={distance}
                 onChange={(e) => setDistance(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-xl font-mono focus:border-emerald-500 outline-none"
+                className="liquid-input text-2xl font-mono font-bold text-center"
               />
             </div>
-            <div className="flex gap-3 pt-2">
+
+            <div className="liquid-divider" />
+
+            <div className="flex gap-3">
               <button
                 onClick={() => setIsLogging(false)}
-                className="flex-1 py-3 text-sm font-bold text-muted-foreground hover:text-white transition-colors"
+                className="flex-1 py-3 text-sm font-bold text-white/50 hover:text-white transition-colors rounded-xl hover:bg-white/5"
               >
                 取消
               </button>
               <button
                 onClick={handleLogRide}
-                className="flex-1 py-3 bg-emerald-500 text-slate-950 rounded-lg text-sm font-bold shadow-lg shadow-emerald-500/20"
+                className="liquid-button-primary flex-1 py-3 text-sm font-bold rounded-xl"
               >
                 确认记录
               </button>
@@ -114,11 +128,11 @@ export default function Home() {
         </div>
       )}
 
-      {/* Bottom Action */}
+      {/* Floating Action Button */}
       <div className="fixed bottom-32 right-6 z-50">
         <button
           onClick={() => setIsLogging(true)}
-          className="w-14 h-14 bg-emerald-500 rounded-full shadow-2xl shadow-emerald-500/20 flex items-center justify-center text-slate-950 hover:scale-105 transition-transform active:scale-95"
+          className="liquid-fab w-14 h-14 flex items-center justify-center text-white"
         >
           <Bike size={24} />
         </button>

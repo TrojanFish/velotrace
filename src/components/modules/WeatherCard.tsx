@@ -4,7 +4,7 @@ import { useWeather } from "@/hooks/useWeather";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { useStore } from "@/store/useStore";
 import { Skeleton } from "@/lib/utils";
-import { CloudRain, Wind, Thermometer, Shirt } from "lucide-react";
+import { CloudRain, Wind, Thermometer, Shirt, Droplets } from "lucide-react";
 
 export function WeatherCard() {
     const { data, loading, error } = useWeather();
@@ -12,27 +12,35 @@ export function WeatherCard() {
 
     if (loading) {
         return (
-            <div className="pro-card space-y-6 min-h-[220px]">
+            <div className="pro-card space-y-6 min-h-[240px]">
                 <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                        <Skeleton className="w-16 h-3" />
-                        <Skeleton className="w-24 h-8" />
+                    <div className="space-y-3">
+                        <div className="liquid-skeleton w-20 h-3" />
+                        <div className="liquid-skeleton w-28 h-8" />
                     </div>
-                    <Skeleton className="w-10 h-10 rounded-full" />
+                    <div className="liquid-skeleton w-12 h-12 rounded-2xl" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                    <Skeleton className="w-full h-12 rounded-lg" />
-                    <Skeleton className="w-full h-12 rounded-lg" />
+                    <div className="liquid-skeleton w-full h-14 rounded-xl" />
+                    <div className="liquid-skeleton w-full h-14 rounded-xl" />
                 </div>
-                <div className="pt-4 border-t border-slate-800 space-y-2">
-                    <Skeleton className="w-32 h-4" />
-                    <Skeleton className="w-full h-8" />
+                <div className="liquid-divider" />
+                <div className="space-y-3">
+                    <div className="liquid-skeleton w-24 h-4" />
+                    <div className="liquid-skeleton w-full h-10 rounded-xl" />
                 </div>
             </div>
         );
     }
 
-    if (error && !data) return <div className="pro-card text-red-500 border-red-500/20 bg-red-500/5 py-8 text-center text-xs font-bold uppercase">定位失败，请检查浏览器权限。</div>;
+    if (error && !data) return (
+        <div className="pro-card border-red-500/20 bg-red-500/5 py-10 text-center">
+            <div className="liquid-icon danger mx-auto mb-3">
+                <CloudRain size={20} />
+            </div>
+            <p className="text-xs font-bold uppercase text-red-400/80">定位失败，请检查浏览器权限</p>
+        </div>
+    );
     if (!data) return null;
 
     const kit = getKitRecommendation({
@@ -43,7 +51,7 @@ export function WeatherCard() {
     });
 
     // Calculate wind strategy
-    const windDir = data.windDirection; // 0-360
+    const windDir = data.windDirection;
     let windAdvice = "侧风";
     if (windDir > 315 || windDir < 45) windAdvice = "北风 (考虑向南骑行)";
     else if (windDir >= 45 && windDir <= 135) windAdvice = "东风 (考虑向西骑行)";
@@ -52,64 +60,73 @@ export function WeatherCard() {
 
     return (
         <div className="pro-card space-y-6">
+            {/* Header */}
             <div className="flex justify-between items-start">
-                <div>
-                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        今日预警
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">
+                            今日预警
+                        </h2>
                         {error && (
-                            <span className="text-[8px] font-black bg-orange-500/10 text-orange-400 px-1.5 py-0.5 rounded border border-orange-500/20 italic">
+                            <span className="liquid-tag warning text-[8px] py-0.5 px-2">
                                 DEFAULT
                             </span>
                         )}
-                    </h2>
-                    <p className="text-2xl font-bold flex items-center gap-2">
-                        {data.temp}°C
-                        <span className="text-sm font-normal text-muted-foreground">(体感 {data.apparentTemp}°)</span>
-                    </p>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                        <p className="liquid-stat-value text-3xl">{data.temp}°C</p>
+                        <span className="text-sm font-medium text-white/40">体感 {data.apparentTemp}°</span>
+                    </div>
                 </div>
-                <div className="p-2 bg-cyan-500/10 rounded-full text-cyan-400">
-                    <Thermometer size={24} />
+                <div className="liquid-icon p-3">
+                    <Thermometer size={22} />
                 </div>
             </div>
 
+            {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-slate-800 rounded-lg text-blue-400">
-                        <Wind size={18} />
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="liquid-icon p-2">
+                        <Wind size={16} />
                     </div>
                     <div>
-                        <p className="text-xs text-muted-foreground">风向策略</p>
-                        <p className="text-sm font-medium">{windAdvice}</p>
+                        <p className="text-[10px] text-white/40 font-medium">风向策略</p>
+                        <p className="text-xs font-semibold text-white/90">{windAdvice}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-slate-800 rounded-lg text-emerald-400">
-                        <CloudRain size={18} />
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="liquid-icon success p-2">
+                        <Droplets size={16} />
                     </div>
                     <div>
-                        <p className="text-xs text-muted-foreground">降水概率</p>
-                        <p className="text-sm font-medium">{data.isRainy ? "有雨" : "干爽"}</p>
+                        <p className="text-[10px] text-white/40 font-medium">降水概率</p>
+                        <p className="text-xs font-semibold text-white/90">{data.isRainy ? "有雨 💧" : "干爽 ☀️"}</p>
                     </div>
                 </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-800">
-                <div className="flex items-center gap-2 mb-3">
-                    <Shirt size={16} className="text-cyan-400" />
-                    <h3 className="text-sm font-semibold uppercase tracking-tight">建议穿戴</h3>
+            {/* Kit Recommendation */}
+            <div className="liquid-divider" />
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <div className="liquid-icon purple p-1.5">
+                        <Shirt size={14} />
+                    </div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-white/60">建议穿戴</h3>
                 </div>
-                <div className="space-y-2">
+
+                <div className="space-y-2.5">
                     <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">内层</span>
-                        <span>{kit.baseLayer}</span>
+                        <span className="text-white/40 font-medium">内层</span>
+                        <span className="text-white/90 font-medium">{kit.baseLayer}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">车衣</span>
-                        <span>{kit.jersey}</span>
+                        <span className="text-white/40 font-medium">车衣</span>
+                        <span className="text-white/90 font-medium">{kit.jersey}</span>
                     </div>
-                    <div className="flex flex-wrap gap-1 mt-2">
+                    <div className="flex flex-wrap gap-1.5 mt-3">
                         {kit.accessories.map((acc, i) => (
-                            <span key={i} className="px-2 py-0.5 bg-cyan-500/10 text-cyan-400 rounded-md text-[10px] font-bold uppercase">
+                            <span key={i} className="liquid-tag text-[9px]">
                                 {acc}
                             </span>
                         ))}

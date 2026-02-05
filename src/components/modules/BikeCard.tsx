@@ -16,12 +16,12 @@ import {
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 
-const MAINTENANCE_CONFIG: Record<keyof MaintenanceState, { label: string; icon: any; target: number; color: string }> = {
-    chainLube: { label: "链条润滑", icon: Droplets, target: 300, color: "text-cyan-400" },
-    chainWear: { label: "链条磨损", icon: History, target: 3000, color: "text-orange-400" },
-    tires: { label: "外胎寿命", icon: CircleDot, target: 4000, color: "text-emerald-400" },
-    brakePads: { label: "刹车皮", icon: Disc, target: 2500, color: "text-rose-400" },
-    service: { label: "整车大保养", icon: Wrench, target: 5000, color: "text-purple-400" }
+const MAINTENANCE_CONFIG: Record<keyof MaintenanceState, { label: string; icon: any; target: number; color: string; colorClass: string }> = {
+    chainLube: { label: "链条润滑", icon: Droplets, target: 300, color: "cyan", colorClass: "text-cyan-400" },
+    chainWear: { label: "链条磨损", icon: History, target: 3000, color: "warning", colorClass: "text-orange-400" },
+    tires: { label: "外胎寿命", icon: CircleDot, target: 4000, color: "success", colorClass: "text-emerald-400" },
+    brakePads: { label: "刹车皮", icon: Disc, target: 2500, color: "danger", colorClass: "text-rose-400" },
+    service: { label: "整车大保养", icon: Wrench, target: 5000, color: "purple", colorClass: "text-purple-400" }
 };
 
 export function BikeCard() {
@@ -37,7 +37,6 @@ export function BikeCard() {
     const bike = bikes[activeBikeIndex];
     const wheelset = bike?.wheelsets?.[bike.activeWheelsetIndex] || bike?.wheelsets?.[0];
 
-    // Safety check for maintenance object
     const maintenance = bike?.maintenance || {
         chainLube: 0,
         chainWear: 0,
@@ -71,152 +70,161 @@ export function BikeCard() {
     if (!bike) return null;
 
     return (
-        <div className="pro-card border-slate-800/40 bg-slate-900/20 space-y-5 overflow-hidden">
+        <div className="pro-card space-y-5 overflow-hidden">
             {/* Header with Switcher */}
             <div className="flex justify-between items-center">
-                <div className="flex gap-2 p-1 bg-slate-950/50 rounded-lg border border-slate-800/50">
+                <div className="liquid-segment p-0.5">
                     <button
                         onClick={() => setView('pressure')}
-                        className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${view === 'pressure' ? 'bg-cyan-500 text-slate-950' : 'text-slate-500'}`}
+                        className={`liquid-segment-button py-1.5 px-4 whitespace-nowrap ${view === 'pressure' ? 'active' : ''}`}
                     >
                         胎压策略
                     </button>
                     <button
                         onClick={() => setView('lifecycle')}
-                        className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${view === 'lifecycle' ? 'bg-orange-500 text-slate-950' : 'text-slate-500'}`}
+                        className={`liquid-segment-button py-1.5 px-4 whitespace-nowrap ${view === 'lifecycle' ? 'active' : ''}`}
+                        style={view === 'lifecycle' ? {
+                            background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.9) 0%, rgba(249, 115, 22, 0.8) 100%)',
+                        } : {}}
                     >
-                        全生命周期
+                        生命周期
                     </button>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-slate-500 italic uppercase">SN: {bike.id.slice(-6)}</span>
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                    <span className="text-[9px] font-bold text-white/30 italic uppercase">SN: {bike.id.slice(-6)}</span>
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)] animate-pulse" />
                 </div>
             </div>
 
             {view === 'pressure' ? (
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    {/* Wheelset Selection Selector */}
-                    <div className="flex items-center justify-between p-2 bg-slate-950/40 rounded-xl border border-slate-800/50">
+                <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    {/* Wheelset Selection */}
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                         <div className="flex items-center gap-2">
-                            <Layers size={14} className="text-cyan-400" />
-                            <span className="text-[10px] font-black uppercase text-slate-400">活动轮组</span>
+                            <div className="liquid-icon p-1.5">
+                                <Layers size={12} />
+                            </div>
+                            <span className="text-[10px] font-bold uppercase text-white/40">活动轮组</span>
                         </div>
                         <select
                             value={bike.activeWheelsetIndex}
                             onChange={(e) => setActiveWheelset(activeBikeIndex, parseInt(e.target.value))}
-                            className="bg-transparent text-[10px] font-black uppercase text-cyan-400 focus:outline-none cursor-pointer"
+                            className="liquid-select bg-transparent"
                         >
                             {bike.wheelsets.map((ws, i) => (
-                                <option key={ws.id} value={i} className="bg-slate-900">{ws.name}</option>
+                                <option key={ws.id} value={i}>{ws.name}</option>
                             ))}
                         </select>
                     </div>
 
+                    {/* Pressure Display */}
                     <div className="flex justify-between items-end px-1">
                         <div className="space-y-1">
-                            <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">{bike.name}</h2>
+                            <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">{bike.name}</h2>
                             <div className="flex items-baseline gap-2">
-                                <p className="text-3xl font-black italic text-cyan-400">{pressure.front.psi}/{pressure.rear.psi}</p>
-                                <span className="text-[10px] text-slate-500 font-black uppercase italic">PSI (F/R)</span>
+                                <span className="liquid-stat-value text-4xl">{pressure.front.psi}/{pressure.rear.psi}</span>
+                                <span className="text-[10px] text-white/30 font-bold uppercase italic">PSI (F/R)</span>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <p className="text-[10px] font-bold text-slate-500 uppercase">当前配置</p>
-                            <p className="text-xs font-black italic text-slate-300">{wheelset?.tireWidth}MM / {wheelset?.isTubeless ? 'TL' : 'CL'}</p>
+                        <div className="text-right space-y-0.5">
+                            <p className="text-[9px] font-bold text-white/30 uppercase">当前配置</p>
+                            <p className="text-xs font-bold text-white/70">{wheelset?.tireWidth}MM / {wheelset?.isTubeless ? 'TL' : 'CL'}</p>
                         </div>
                     </div>
 
-                    <div className="space-y-3">
-                        <div className="flex bg-slate-950/40 p-1 rounded-xl border border-slate-800/50">
-                            {conditions.map((item) => (
-                                <button
-                                    key={item.value}
-                                    onClick={() => setCondition(item.value)}
-                                    className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${condition === item.value
-                                        ? "bg-gradient-to-br from-cyan-400 to-blue-500 text-slate-950"
-                                        : "text-slate-500 hover:text-slate-300"
-                                        }`}
-                                >
-                                    {item.label}
-                                </button>
-                            ))}
-                        </div>
+                    {/* Condition Selector */}
+                    <div className="liquid-segment">
+                        {conditions.map((item) => (
+                            <button
+                                key={item.value}
+                                onClick={() => setCondition(item.value)}
+                                className={`liquid-segment-button ${condition === item.value ? 'active' : ''}`}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
                     </div>
 
+                    {/* Alerts */}
                     {alerts.length > 0 && (
-                        <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
-                                <AlertTriangle size={16} className="text-orange-500" />
+                        <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center gap-3">
+                            <div className="liquid-icon warning p-2">
+                                <AlertTriangle size={16} />
                             </div>
                             <div className="flex-1">
-                                <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest">警告: 器材亚健康</p>
-                                <p className="text-[9px] font-medium text-orange-200/60 uppercase italic">共有 {alerts.length} 项维护任务接近临界值</p>
+                                <p className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">警告: 器材亚健康</p>
+                                <p className="text-[9px] font-medium text-orange-200/50 italic">共有 {alerts.length} 项维护任务接近临界值</p>
                             </div>
-                            <button onClick={() => setView('lifecycle')} className="p-1.5 hover:bg-orange-500/20 rounded-md transition-colors">
+                            <button
+                                onClick={() => setView('lifecycle')}
+                                className="p-2 hover:bg-orange-500/20 rounded-lg transition-colors"
+                            >
                                 <ChevronRight size={14} className="text-orange-500" />
                             </button>
                         </div>
                     )}
                 </div>
             ) : (
-                <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="grid grid-cols-1 gap-4">
-                        {(Object.entries(MAINTENANCE_CONFIG) as [keyof MaintenanceState, typeof MAINTENANCE_CONFIG['chainLube']][]).map(([key, config]) => {
-                            const val = (maintenance as any)[key] || 0;
-                            const percent = Math.min((val / config.target) * 100, 100);
-                            const Icon = config.icon;
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    {/* Maintenance Items */}
+                    {(Object.entries(MAINTENANCE_CONFIG) as [keyof MaintenanceState, typeof MAINTENANCE_CONFIG['chainLube']][]).map(([key, config]) => {
+                        const val = (maintenance as any)[key] || 0;
+                        const percent = Math.min((val / config.target) * 100, 100);
+                        const Icon = config.icon;
+                        const isWarning = percent > 70;
+                        const isDanger = percent > 90;
 
-                            return (
-                                <div key={key} className="space-y-2 group">
-                                    <div className="flex justify-between items-end">
-                                        <div className="flex items-center gap-2">
-                                            <div className={`p-1.5 rounded-lg bg-slate-950 border border-slate-800 ${config.color}`}>
-                                                <Icon size={14} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{config.label}</p>
-                                                <p className="text-[8px] text-slate-500 uppercase font-medium">{val.toFixed(0)}km / {config.target}km</p>
-                                            </div>
+                        return (
+                            <div key={key} className="space-y-2 group">
+                                <div className="flex justify-between items-end">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className={`liquid-icon ${config.color} p-1.5`}>
+                                            <Icon size={12} />
                                         </div>
-                                        <button
-                                            onClick={() => resetMaintenance(activeBikeIndex, key)}
-                                            className="text-[8px] font-black uppercase text-slate-600 hover:text-cyan-400 tracking-tighter transition-colors opacity-0 group-hover:opacity-100"
-                                        >
-                                            [ 重置 ]
-                                        </button>
+                                        <div>
+                                            <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">{config.label}</p>
+                                            <p className="text-[8px] text-white/30 uppercase font-medium">{val.toFixed(0)}km / {config.target}km</p>
+                                        </div>
                                     </div>
-                                    <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden border border-slate-900">
-                                        <div
-                                            className={`h-full transition-all duration-1000 ${percent > 90 ? 'bg-rose-500 ring-4 ring-rose-500/20' : percent > 70 ? 'bg-orange-500' : 'bg-cyan-500'}`}
-                                            style={{ width: `${percent}%` }}
-                                        />
-                                    </div>
+                                    <button
+                                        onClick={() => resetMaintenance(activeBikeIndex, key)}
+                                        className="text-[8px] font-bold uppercase text-white/20 hover:text-cyan-400 tracking-tighter transition-colors opacity-0 group-hover:opacity-100"
+                                    >
+                                        [ 重置 ]
+                                    </button>
                                 </div>
-                            );
-                        })}
-
-                        {/* Wheelset specific mileage in lifecycle view */}
-                        <div className="mt-2 pt-4 border-t border-slate-800/50">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Layers size={12} className="text-slate-500" />
-                                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">当前轮组损耗 ({wheelset?.name})</span>
+                                <div className="liquid-progress">
+                                    <div
+                                        className={`liquid-progress-bar ${isDanger ? 'danger' : isWarning ? 'warning' : ''}`}
+                                        style={{ width: `${percent}%` }}
+                                    />
+                                </div>
                             </div>
-                            <p className="text-xs font-black italic text-slate-200">{wheelset?.mileage.toFixed(0)} KM</p>
+                        );
+                    })}
+
+                    {/* Wheelset Mileage */}
+                    <div className="liquid-divider" />
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Layers size={12} className="text-white/30" />
+                            <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest">当前轮组损耗 ({wheelset?.name})</span>
                         </div>
+                        <p className="text-xs font-bold text-gradient-cyan">{wheelset?.mileage.toFixed(0)} KM</p>
                     </div>
                 </div>
             )}
 
-            {/* Simple Footer Meta */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800/50">
+            {/* Footer Meta */}
+            <div className="liquid-divider" />
+            <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                    <History size={12} className="text-slate-500" />
-                    <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">
+                    <History size={12} className="text-white/20" />
+                    <span className="text-[8px] font-bold text-white/20 uppercase tracking-widest">
                         最近同步: {mounted ? (user.lastSyncDate ? new Date(user.lastSyncDate).toLocaleDateString() : new Date().toLocaleDateString()) : "--"}
                     </span>
                 </div>
-                <div className="text-[8px] font-bold text-slate-700 uppercase italic">ODO: {bike.totalDistance.toFixed(0)} KM</div>
+                <div className="text-[8px] font-bold text-white/30 uppercase italic">ODO: {bike.totalDistance.toFixed(0)} KM</div>
             </div>
         </div>
     );

@@ -10,10 +10,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Simple Skeleton component for loading states
+ * Liquid Glass Skeleton component for loading states
  */
 export function Skeleton({ className }: { className?: string }) {
     return (
-        <div className={cn("animate-pulse bg-slate-800/50 rounded-md", className)} />
+        <div className={cn("liquid-skeleton", className)} />
     );
 }

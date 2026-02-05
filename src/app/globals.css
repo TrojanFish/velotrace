@@ -1,89 +1,790 @@
 @import "tailwindcss";
 
+/* ============================================
+   🌈 macOS 26 Liquid Glass Design System
+   ============================================ */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-primary: #06b6d4;
-  /* Cyan 500 */
-  --color-primary-foreground: #083344;
-  /* Cyan 950 */
+  /* Primary: Liquid Blue-Cyan Spectrum */
+  --color-primary: #00d4ff;
+  --color-primary-foreground: #001a1f;
 
-  --color-accent: #22c55e;
-  /* Green 500 */
-  --color-danger: #ef4444;
-  /* Red 500 */
+  /* Accent: Aurora Gradient Points */
+  --color-accent: #a855f7;
+  --color-accent-secondary: #ec4899;
+  --color-accent-tertiary: #22d3ee;
 
-  --color-card: #0f172a;
-  /* Slate 900 */
+  /* Status Colors - Softer, Glassy */
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+
+  /* Glassmorphism Base Colors */
+  --color-glass: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-highlight: rgba(255, 255, 255, 0.15);
+
+  /* Card Variations */
+  --color-card: rgba(15, 23, 42, 0.3);
   --color-card-foreground: #f8fafc;
-  /* Slate 50 */
 
-  --color-muted: #475569;
-  /* Slate 600 */
-  --color-muted-foreground: #94a3b8;
-  /* Slate 400 */
+  /* Muted Variations */
+  --color-muted: rgba(148, 163, 184, 0.4);
+  --color-muted-foreground: rgba(203, 213, 225, 0.8);
 
-  --radius-lg: 1rem;
-  --radius-md: 0.75rem;
-  --radius-sm: 0.5rem;
+  /* Radii - Extra Rounded */
+  --radius-xl: 1.5rem;
+  --radius-lg: 1.25rem;
+  --radius-md: 1rem;
+  --radius-sm: 0.75rem;
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #0a0f1a;
+  --foreground: #f8fafc;
 
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  /* Liquid Glass Core Variables */
+  --glass-blur: 24px;
+  --glass-saturation: 180%;
+  --glass-opacity: 0.6;
+
+  /* Aurora Gradient */
+  --aurora-gradient: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.15) 0%,
+      rgba(168, 85, 247, 0.12) 25%,
+      rgba(236, 72, 153, 0.1) 50%,
+      rgba(34, 211, 238, 0.12) 75%,
+      rgba(0, 212, 255, 0.15) 100%);
+
+  /* Liquid Border Gradient */
+  --liquid-border: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(255, 255, 255, 0.05) 30%,
+      rgba(255, 255, 255, 0.1) 60%,
+      rgba(255, 255, 255, 0.25) 100%);
+
+  /* Glow Effects */
+  --glow-cyan: 0 0 40px rgba(0, 212, 255, 0.3);
+  --glow-purple: 0 0 40px rgba(168, 85, 247, 0.3);
+  --glow-pink: 0 0 40px rgba(236, 72, 153, 0.3);
 }
 
 .dark {
-  --background: #020617;
-  /* Very dark blue-black */
+  --background: #050810;
   --foreground: #f8fafc;
-
-  --card: #0f172a;
-  --card-foreground: #f8fafc;
 }
 
-/* Force dark mode for ride aesthetics */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #020617;
-    --foreground: #f8fafc;
-  }
+/* ============================================
+   🎨 Base Styles
+   ============================================ */
+
+html {
+  height: -webkit-fill-available;
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100dvh;
   min-height: -webkit-fill-available;
   overscroll-behavior-y: none;
+  position: relative;
+  overflow-x: hidden;
 }
 
-html {
-  height: -webkit-fill-available;
+/* Animated Aurora Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse 100% 80% at 20% 0%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 80% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 100% 80% at 60% 100%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 60% at 10% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+  animation: aurora-drift 20s ease-in-out infinite;
 }
 
-/* Custom Utilities */
-.glass {
-  background: rgba(15, 23, 42, 0.8);
+@keyframes aurora-drift {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  25% {
+    opacity: 0.8;
+    transform: scale(1.02) rotate(1deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  75% {
+    opacity: 0.9;
+    transform: scale(1.01) rotate(-1deg);
+  }
+}
+
+/* ============================================
+   🪟 Liquid Glass Card System
+   ============================================ */
+
+.liquid-glass {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 20%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.3) 80%,
+      transparent 100%);
+  opacity: 0.6;
+}
+
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--liquid-border);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+.liquid-glass:hover {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.04) 50%,
+      rgba(255, 255, 255, 0.08) 100%);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 80px rgba(0, 212, 255, 0.1);
+}
+
+/* Pro Card - Enhanced Glass Card */
+.pro-card {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.pro-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.25) 30%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.25) 70%,
+      transparent 100%);
+}
+
+.pro-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   🌊 Liquid Navigation Bar
+   ============================================ */
+
+.liquid-nav {
+  background: linear-gradient(180deg,
+      rgba(10, 15, 26, 0.7) 0%,
+      rgba(10, 15, 26, 0.9) 100%);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.liquid-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0, 212, 255, 0.5) 50%,
+      transparent 100%);
+}
+
+/* ============================================
+   💫 Glowing Buttons
+   ============================================ */
+
+.liquid-button {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.2) 0%,
+      rgba(168, 85, 247, 0.15) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.liquid-button:hover {
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow:
+    0 0 24px rgba(0, 212, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.liquid-button:hover::before {
+  opacity: 1;
+}
+
+.liquid-button:active {
+  transform: translateY(0);
+}
+
+/* Primary Liquid Button */
+.liquid-button-primary {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.8) 0%,
+      rgba(34, 211, 238, 0.7) 100%);
+  border-color: rgba(0, 212, 255, 0.6);
+  color: #001a1f;
+  font-weight: 700;
+}
+
+.liquid-button-primary:hover {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.9) 0%,
+      rgba(34, 211, 238, 0.8) 100%);
+  box-shadow:
+    0 0 40px rgba(0, 212, 255, 0.5),
+    0 0 80px rgba(0, 212, 255, 0.2);
+}
+
+/* ============================================
+   🎭 Floating Action Button
+   ============================================ */
+
+.liquid-fab {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.9) 0%,
+      rgba(168, 85, 247, 0.8) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  box-shadow:
+    0 8px 32px rgba(0, 212, 255, 0.4),
+    0 0 60px rgba(168, 85, 247, 0.2),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fab-glow 3s ease-in-out infinite;
+}
+
+@keyframes fab-glow {
+
+  0%,
+  100% {
+    box-shadow:
+      0 8px 32px rgba(0, 212, 255, 0.4),
+      0 0 60px rgba(168, 85, 247, 0.2),
+      inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  }
+
+  50% {
+    box-shadow:
+      0 8px 40px rgba(0, 212, 255, 0.5),
+      0 0 80px rgba(168, 85, 247, 0.3),
+      inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  }
+}
+
+.liquid-fab:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow:
+    0 12px 48px rgba(0, 212, 255, 0.5),
+    0 0 100px rgba(168, 85, 247, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.liquid-fab:active {
+  transform: scale(1.02);
+}
+
+/* ============================================
+   📊 Liquid Progress Bars
+   ============================================ */
+
+.liquid-progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.liquid-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: inherit;
+}
+
+.liquid-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg,
+      rgba(0, 212, 255, 0.8) 0%,
+      rgba(34, 211, 238, 1) 50%,
+      rgba(0, 212, 255, 0.8) 100%);
+  border-radius: inherit;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  animation: progress-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes progress-shimmer {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.liquid-progress-bar.warning {
+  background: linear-gradient(90deg,
+      rgba(251, 191, 36, 0.8) 0%,
+      rgba(251, 191, 36, 1) 50%,
+      rgba(251, 191, 36, 0.8) 100%);
+}
+
+.liquid-progress-bar.danger {
+  background: linear-gradient(90deg,
+      rgba(248, 113, 113, 0.8) 0%,
+      rgba(248, 113, 113, 1) 50%,
+      rgba(248, 113, 113, 0.8) 100%);
+  animation: danger-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes danger-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(248, 113, 113, 0.6);
+  }
+}
+
+/* ============================================
+   🏷️ Liquid Tags & Badges
+   ============================================ */
+
+.liquid-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.15) 0%,
+      rgba(0, 212, 255, 0.05) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(0, 212, 255, 1);
+  backdrop-filter: blur(8px);
+}
+
+.liquid-tag.success {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.15) 0%, rgba(74, 222, 128, 0.05) 100%);
+  border-color: rgba(74, 222, 128, 0.3);
+  color: rgba(74, 222, 128, 1);
+}
+
+.liquid-tag.warning {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
+  border-color: rgba(251, 191, 36, 0.3);
+  color: rgba(251, 191, 36, 1);
+}
+
+.liquid-tag.danger {
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.15) 0%, rgba(248, 113, 113, 0.05) 100%);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: rgba(248, 113, 113, 1);
+}
+
+.liquid-tag.purple {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: rgba(168, 85, 247, 1);
+}
+
+/* ============================================
+   📝 Liquid Inputs
+   ============================================ */
+
+.liquid-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 0.875rem 1rem;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-.neo-shadow {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+.liquid-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
-.pro-card {
-  @apply bg-card text-card-foreground rounded-lg p-6 border border-slate-800 shadow-xl;
+.liquid-input:focus {
+  outline: none;
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow:
+    0 0 0 3px rgba(0, 212, 255, 0.1),
+    0 0 24px rgba(0, 212, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
 }
 
+/* Liquid Range Slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 1) 0%,
+      rgba(34, 211, 238, 1) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow:
+    0 0 16px rgba(0, 212, 255, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 24px rgba(0, 212, 255, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================
+   🔘 Liquid Segmented Control
+   ============================================ */
+
+.liquid-segment {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.liquid-segment-button {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.liquid-segment-button:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.liquid-segment-button.active {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.9) 0%,
+      rgba(34, 211, 238, 0.8) 100%);
+  color: #001a1f;
+  box-shadow:
+    0 2px 8px rgba(0, 212, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   🔤 Liquid Input
+   ============================================ */
+
+.liquid-input {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 0.625rem 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.liquid-input:focus {
+  outline: none;
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.2);
+}
+
+.liquid-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   🪄 Liquid Select
+   ============================================ */
+
+.liquid-select {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  color: rgba(0, 212, 255, 1);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.liquid-select:focus {
+  outline: none;
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.2);
+}
+
+.liquid-select option {
+  background: #0a0f1a;
+  color: #fff;
+}
+
+/* ============================================
+   🌟 Icon Containers
+   ============================================ */
+
+.liquid-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.15) 0%,
+      rgba(0, 212, 255, 0.05) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+  color: rgba(0, 212, 255, 1);
+}
+
+.liquid-icon.success {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.15) 0%, rgba(74, 222, 128, 0.05) 100%);
+  border-color: rgba(74, 222, 128, 0.2);
+  color: rgba(74, 222, 128, 1);
+}
+
+.liquid-icon.warning {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
+  border-color: rgba(251, 191, 36, 0.2);
+  color: rgba(251, 191, 36, 1);
+}
+
+.liquid-icon.danger {
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.15) 0%, rgba(248, 113, 113, 0.05) 100%);
+  border-color: rgba(248, 113, 113, 0.2);
+  color: rgba(248, 113, 113, 1);
+}
+
+.liquid-icon.purple {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%);
+  border-color: rgba(168, 85, 247, 0.2);
+  color: rgba(168, 85, 247, 1);
+}
+
+/* ============================================
+   ✨ Glow & Animation Utilities
+   ============================================ */
+
+.glow-cyan {
+  box-shadow: 0 0 32px rgba(0, 212, 255, 0.4);
+}
+
+.glow-purple {
+  box-shadow: 0 0 32px rgba(168, 85, 247, 0.4);
+}
+
+.glow-pink {
+  box-shadow: 0 0 32px rgba(236, 72, 153, 0.4);
+}
+
+.glow-success {
+  box-shadow: 0 0 32px rgba(74, 222, 128, 0.4);
+}
+
+.glow-warning {
+  box-shadow: 0 0 32px rgba(251, 191, 36, 0.4);
+}
+
+.glow-danger {
+  box-shadow: 0 0 32px rgba(248, 113, 113, 0.4);
+}
+
+/* Breathing Animation */
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+/* Float Animation */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Shimmer Animation */
+.animate-shimmer {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Route Drawing Animation */
 @keyframes draw-route {
   from {
     stroke-dashoffset: 2000;
@@ -98,4 +799,230 @@ html {
   stroke-dasharray: 2000;
   stroke-dashoffset: 2000;
   animation: draw-route 3s ease-out forwards;
+}
+
+/* ============================================
+   📱 Liquid Modal/Overlay
+   ============================================ */
+
+.liquid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 16, 0.8);
+  backdrop-filter: blur(16px);
+  padding: 1.5rem;
+}
+
+.liquid-modal {
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 20rem;
+  animation: modal-appear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.liquid-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 30%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.4) 70%,
+      transparent 100%);
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ============================================
+   🔗 Liquid Dividers
+   ============================================ */
+
+.liquid-divider {
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 20%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.1) 80%,
+      transparent 100%);
+  border: none;
+  margin: 1rem 0;
+}
+
+/* ============================================
+   📊 Liquid Stats Display
+   ============================================ */
+
+.liquid-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.liquid-stat-value {
+  font-size: 2rem;
+  font-weight: 900;
+  font-style: italic;
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 1) 0%,
+      rgba(34, 211, 238, 1) 50%,
+      rgba(168, 85, 247, 0.8) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.liquid-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================
+   🎯 Section Headers
+   ============================================ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.section-indicator {
+  width: 3px;
+  height: 16px;
+  background: linear-gradient(180deg,
+      rgba(0, 212, 255, 1) 0%,
+      rgba(0, 212, 255, 0.5) 100%);
+  border-radius: 9999px;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+}
+
+.section-indicator.orange {
+  background: linear-gradient(180deg, rgba(251, 146, 60, 1) 0%, rgba(251, 146, 60, 0.5) 100%);
+  box-shadow: 0 0 12px rgba(251, 146, 60, 0.4);
+}
+
+.section-indicator.purple {
+  background: linear-gradient(180deg, rgba(168, 85, 247, 1) 0%, rgba(168, 85, 247, 0.5) 100%);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+}
+
+.section-indicator.pink {
+  background: linear-gradient(180deg, rgba(236, 72, 153, 1) 0%, rgba(236, 72, 153, 0.5) 100%);
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.4);
+}
+
+.section-title {
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================
+   🖼️ Skeleton Loading
+   ============================================ */
+
+.liquid-skeleton {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 0%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.03) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================
+   🎨 Text Gradients
+   ============================================ */
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #00d4ff 0%, #22d3ee 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-aurora {
+  background: linear-gradient(135deg, #00d4ff 0%, #a855f7 50%, #ec4899 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-sunset {
+  background: linear-gradient(135deg, #fb923c 0%, #f472b6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ============================================
+   ♿ Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   📱 Safe Area Insets
+   ============================================ */
+
+.safe-area-top {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+.safe-area-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
