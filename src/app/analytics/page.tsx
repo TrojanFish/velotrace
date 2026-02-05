@@ -4,7 +4,9 @@ import { WeeklyStatsCard } from "@/components/modules/WeeklyStatsCard";
 import { RideInsightCard } from "@/components/modules/RideInsightCard";
 import { PMCTrendCard } from "@/components/modules/PMCTrendCard";
 import { SegmentChallengeCard } from "@/components/modules/SegmentChallengeCard";
-import { BarChart3, TrendingUp, Target } from "lucide-react";
+import { MMPTrendCard } from "@/components/modules/MMPTrendCard";
+import { HeartRateZoneCard } from "@/components/modules/HeartRateZoneCard";
+import { BarChart3, TrendingUp, History, Zap, Activity } from "lucide-react";
 
 export default function AnalyticsPage() {
     return (
@@ -18,7 +20,7 @@ export default function AnalyticsPage() {
                 </p>
             </header>
 
-            {/* 1. 体能趋势 [TRAINING LOAD] */}
+            {/* 1. 训练负荷 [TRAINING LOAD] - Highest Frequency */}
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <div className="w-1 h-3 bg-purple-500 rounded-full" />
@@ -30,7 +32,7 @@ export default function AnalyticsPage() {
                 <WeeklyStatsCard />
             </section>
 
-            {/* 2. 复盘与挑战 [RECAP & GOALS] */}
+            {/* 2. 复盘与挑战 [RECAP & GOALS] - Medium Frequency */}
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <div className="w-1 h-3 bg-pink-500 rounded-full" />
@@ -44,11 +46,28 @@ export default function AnalyticsPage() {
                 </div>
             </section>
 
-            <footer className="pt-8 text-center">
-                <p className="text-[10px] text-slate-600 font-medium uppercase tracking-widest">
-                    VeloTrace Intelligence Engine • Analytics Center
-                </p>
-            </footer>
+            {/* 3. 生理引擎 [PHYSIOLOGICAL ENGINE] - Reference */}
+            <section className="space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                    <Activity size={16} className="text-rose-500" />
+                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                        生理引擎 / Physiological Engine
+                    </h2>
+                </div>
+                <HeartRateZoneCard />
+            </section>
+
+            {/* 4. 战力解构 [POWER PROFILE] - Periodic Review */}
+            <section className="space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                    <TrendingUp size={16} className="text-orange-500" />
+                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                        战力解构 / Power Profile
+                    </h2>
+                </div>
+                <MMPTrendCard />
+            </section>
+
         </main>
     );
 }

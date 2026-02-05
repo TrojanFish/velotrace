@@ -9,11 +9,16 @@ export async function GET() {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Timeout Controller
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
     try {
         const response = await fetch("https://www.strava.com/api/v3/athlete", {
             headers: {
                 Authorization: `Bearer ${session.accessToken}`,
             },
+            signal: controller.signal
         });
 
         if (!response.ok) {
@@ -22,7 +27,7 @@ export async function GET() {
 
         const data = await response.json();
 
-        // Extract bikes and shoes info
+        // Sync gear: Combine bikes and shoes into a unified equipment list
         const bikes = data.bikes?.map((b: any) => ({
             id: b.id,
             name: b.name,
@@ -40,9 +45,15 @@ export async function GET() {
         return NextResponse.json({
             ftp: data.ftp,
             weight: data.weight,
-            bikes: [...bikes, ...shoes], // Combine as equipment
+            sex: data.sex === 'M' ? 'male' : data.sex === 'F' ? 'female' : 'other',
+            bikes: [...bikes, ...shoes],
         });
-    } catch (error) {
-        return NextResponse.json({ error: "Failed to sync with Strava" }, { status: 500 });
+    } catch (error: any) {
+        const isTimeout = error.name === 'AbortError';
+        return NextResponse.json({
+            error: isTimeout ? "Sync timeout" : "Failed to sync with Strava"
+        }, { status: isTimeout ? 504 : 500 });
+    } finally {
+        clearTimeout(timeout);
     }
 }

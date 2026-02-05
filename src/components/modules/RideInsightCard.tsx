@@ -179,8 +179,12 @@ export function RideInsightCard() {
         day: 'numeric'
     });
 
-    // Mocking training status
-    const trainingStatus = { fitness: 42, fatigue: 28, form: 14 };
+    // Using real training status from store
+    const trainingStatus = {
+        fitness: user.ctl || 0,
+        fatigue: user.atl || 0,
+        form: user.tsb || 0
+    };
     const zoneColors = ['bg-slate-500', 'bg-blue-500', 'bg-emerald-500', 'bg-yellow-500', 'bg-orange-500', 'bg-red-500', 'bg-purple-600'];
 
     return (

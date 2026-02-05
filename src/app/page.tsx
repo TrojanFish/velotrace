@@ -6,6 +6,8 @@ import { WeatherCard } from "@/components/modules/WeatherCard";
 import { FuelCard } from "@/components/modules/FuelCard";
 import { BikeCard } from "@/components/modules/BikeCard";
 import { RouteWindForecastCard } from "@/components/modules/RouteWindForecastCard";
+import { AIBriefingCard } from "@/components/modules/AIBriefingCard";
+import { DynamicWindFieldMap } from "@/components/modules/DynamicWindFieldMap";
 import { Settings, Zap, Bike, Navigation } from "lucide-react";
 import Link from "next/link";
 
@@ -46,6 +48,9 @@ export default function Home() {
         </Link>
       </header>
 
+      {/* 0. 战术智脑 [AI BRIEFING] */}
+      <AIBriefingCard />
+
       {/* 1. 环境感知 [ENVIRONMENT] */}
       <section className="space-y-4">
         <div className="flex items-center gap-2 px-1">
@@ -57,6 +62,7 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-4">
           <WeatherCard />
           <RouteWindForecastCard />
+          <DynamicWindFieldMap />
         </div>
       </section>
 
@@ -74,10 +80,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer Meta */}
-      <footer className="pt-8 text-center text-[10px] text-slate-600 font-medium uppercase tracking-widest">
-        Powered by VeloTrace Pro Engine • Ready to Fly
-      </footer>
 
       {/* Logging Overlay */}
       {isLogging && (

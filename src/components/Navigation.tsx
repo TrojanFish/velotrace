@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BarChart3, Wrench, Bike } from "lucide-react";
+import { LayoutDashboard, BarChart3, Wrench, UserCog } from "lucide-react";
 
 export function Navigation() {
     const pathname = usePathname();
@@ -11,7 +11,7 @@ export function Navigation() {
         { href: "/", label: "战术", icon: LayoutDashboard },
         { href: "/analytics", label: "数据", icon: BarChart3 },
         { href: "/tools", label: "工具", icon: Wrench },
-        { href: "/garage", label: "车库", icon: Bike },
+        { href: "/garage", label: "车手", icon: UserCog },
     ];
 
     return (

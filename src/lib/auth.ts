@@ -9,7 +9,7 @@ export const authOptions: NextAuthOptions = {
             authorization: {
                 url: "https://www.strava.com/api/v3/oauth/authorize",
                 params: {
-                    scope: "read,activity:read_all,profile:read_all",
+                    scope: "read,activity:read,activity:read_all,profile:read_all",
                     response_type: "code",
                 },
             },

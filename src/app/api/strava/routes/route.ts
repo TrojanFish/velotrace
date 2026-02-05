@@ -1,5 +1,5 @@
-import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -10,29 +10,36 @@ export async function GET() {
     }
 
     try {
-        const response = await fetch("https://www.strava.com/api/v3/athlete/routes", {
+        // Fetch athlete's routes from Strava
+        const res = await fetch(`https://www.strava.com/api/v3/athletes/${session.user?.id || 'me'}/routes`, {
             headers: {
                 Authorization: `Bearer ${session.accessToken}`,
             },
         });
 
-        if (!response.ok) {
-            // Fallback or log error
-            return NextResponse.json({ error: "Failed to fetch routes" }, { status: response.status });
+        if (!res.ok) {
+            throw new Error(`Strava API returned ${res.status}`);
         }
 
-        const routes = await response.json();
+        const routes = await res.json();
 
+        if (routes.length === 0) {
+            return NextResponse.json({ message: "No routes found", routes: [] });
+        }
+
+        // Standardize the response to include the full list
         const formattedRoutes = routes.map((r: any) => ({
-            id: r.id,
+            id: r.id_str,
             name: r.name,
-            distance: Math.round(r.distance / 100) / 10,
-            elevation: Math.round(r.elevation_gain),
-            map: r.map, // Contains summary_polyline
+            distance: r.distance,
+            elevation: r.elevation_gain,
+            polyline: r.map?.summary_polyline,
+            type: r.type,
         }));
 
-        return NextResponse.json(formattedRoutes);
+        return NextResponse.json({ routes: formattedRoutes });
     } catch (error) {
-        return NextResponse.json({ error: "Failed to fetch Strava routes" }, { status: 500 });
+        console.error("Failed to fetch Strava routes:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

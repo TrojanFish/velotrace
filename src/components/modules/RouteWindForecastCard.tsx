@@ -37,10 +37,12 @@ export function RouteWindForecastCard() {
 
     useEffect(() => {
         if (routes.length > 0) {
-            // Mocking a fetch to a weather API for the specific region of the route
-            // In a real app, we'd decode the polyline to get lat/lng
-            // Here we just fetch general wind for the "forecast"
-            fetch('https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&current_weather=true')
+            // 1. Decode polyline to get the starting coordinates of the route
+            const decoded = decodePolyline(routes[activeIndex].map.summary_polyline);
+            const startPoint = decoded[0] || { lat: 31.23, lng: 121.47 }; // Fallback to SH if no points
+
+            // 2. Fetch real weather for the route's specific location
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${startPoint.lat}&longitude=${startPoint.lng}&current_weather=true`)
                 .then(res => res.json())
                 .then(data => {
                     const wind = data.current_weather;

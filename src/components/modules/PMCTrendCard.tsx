@@ -22,9 +22,32 @@ export function PMCTrendCard() {
     const { data: session } = useSession();
     const { dailyLoads, setDailyLoads } = useStore();
     const [isSyncing, setIsSyncing] = useState(false);
+    const [syncSuccess, setSyncSuccess] = useState(false);
 
     const pmcData = useMemo(() => calculatePMC(dailyLoads), [dailyLoads]);
     const latest = pmcData.length > 0 ? pmcData[pmcData.length - 1] : null;
+
+    const user = useStore(state => state.user);
+    const updateUser = useStore(state => state.updateUser);
+
+    // Sync latest metrics back to global store for AI and other modules
+    useEffect(() => {
+        if (latest) {
+            // Performance optimization: Only update store if values actually changed
+            const hasChanged =
+                latest.ctl !== user.ctl ||
+                latest.atl !== user.atl ||
+                latest.tsb !== user.tsb;
+
+            if (hasChanged) {
+                updateUser({
+                    ctl: latest.ctl,
+                    atl: latest.atl,
+                    tsb: latest.tsb
+                });
+            }
+        }
+    }, [latest, user.ctl, user.atl, user.tsb, updateUser]);
 
     // Last 30 days for the chart to keep it clean on mobile
     const chartData = useMemo(() => pmcData.slice(-30), [pmcData]);
@@ -32,11 +55,15 @@ export function PMCTrendCard() {
     const syncHistory = async () => {
         if (!session) return;
         setIsSyncing(true);
+        setSyncSuccess(false);
         try {
-            const res = await fetch("/api/strava/history");
+            // Pass current FTP to the backend for accurate TSS estimation
+            const res = await fetch(`/api/strava/history?ftp=${user.ftp}`);
             const data = await res.json();
             if (data.dailyLoads) {
                 setDailyLoads(data.dailyLoads);
+                setSyncSuccess(true);
+                setTimeout(() => setSyncSuccess(false), 3000);
             }
         } catch (err) {
             console.error("Sync history failed:", err);
@@ -60,27 +87,39 @@ export function PMCTrendCard() {
                 <button
                     onClick={syncHistory}
                     disabled={isSyncing}
-                    className="p-1 px-2 bg-emerald-500/10 hover:bg-emerald-500/20 rounded text-[9px] font-black uppercase text-emerald-400 flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                    className={`p-1 px-2 rounded text-[9px] font-black uppercase flex items-center gap-1.5 transition-all duration-300 disabled:opacity-50 ${syncSuccess
+                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                        : "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400"
+                        }`}
                 >
-                    <RefreshCw size={10} className={isSyncing ? "animate-spin" : ""} />
-                    {isSyncing ? "同步中" : "同步历史"}
+                    {isSyncing ? (
+                        <RefreshCw size={10} className="animate-spin" />
+                    ) : syncSuccess ? (
+                        <div className="flex items-center gap-1 animate-in zoom-in duration-300">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span>已同步</span>
+                        </div>
+                    ) : (
+                        <RefreshCw size={10} />
+                    )}
+                    {isSyncing ? "同步中" : !syncSuccess && "同步历史"}
                 </button>
             </div>
 
             {/* Top Metrics Row */}
-            <div className="grid grid-cols-3 gap-3 relative z-10">
+            <div className={`grid grid-cols-3 gap-3 relative z-10 transition-opacity duration-500 ${isSyncing ? 'opacity-40 animate-pulse' : 'opacity-100'}`}>
                 <div className="p-3 bg-slate-900/40 rounded-xl border border-slate-800/40 text-center">
                     <p className="text-[7px] text-slate-500 font-black uppercase tracking-widest mb-1">Fitness (CTL)</p>
-                    <p className="text-xl font-black italic text-purple-400">{latest?.ctl || '--'}</p>
+                    <p className="text-xl font-black italic text-purple-400">{latest?.ctl ?? '--'}</p>
                 </div>
                 <div className="p-3 bg-slate-900/40 rounded-xl border border-slate-800/40 text-center">
                     <p className="text-[7px] text-slate-500 font-black uppercase tracking-widest mb-1">Fatigue (ATL)</p>
-                    <p className="text-xl font-black italic text-orange-400">{latest?.atl || '--'}</p>
+                    <p className="text-xl font-black italic text-orange-400">{latest?.atl ?? '--'}</p>
                 </div>
                 <div className="p-3 bg-slate-900/40 rounded-xl border border-slate-800/40 text-center">
                     <p className="text-[7px] text-slate-500 font-black uppercase tracking-widest mb-1">Form (TSB)</p>
-                    <p className={`text-xl font-black italic ${latest && latest.tsb > 5 ? 'text-emerald-400' : latest && latest.tsb < -10 ? 'text-rose-500' : 'text-slate-200'}`}>
-                        {latest ? (latest.tsb > 0 ? `+${latest.tsb}` : latest.tsb) : '--'}
+                    <p className={`text-xl font-black italic ${latest && (latest.tsb ?? 0) > 5 ? 'text-emerald-400' : latest && (latest.tsb ?? 0) < -10 ? 'text-rose-500' : 'text-slate-200'}`}>
+                        {latest ? ((latest.tsb ?? 0) > 0 ? `+${latest.tsb}` : latest.tsb) : '--'}
                     </p>
                 </div>
             </div>

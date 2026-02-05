@@ -60,7 +60,20 @@ interface UserSettings {
     ftp: number;
     isColdRunner: boolean;
     stravaConnected: boolean;
+    age: number;
+    sex: 'male' | 'female' | 'other';
+    height: number;
+    restingHR: number;
     lastSyncDate?: string;
+    ctl?: number;
+    atl?: number;
+    tsb?: number;
+    mmp: {
+        "5s": number;
+        "1m": number;
+        "5m": number;
+        "20m": number;
+    };
 }
 
 interface VeloState {
@@ -101,6 +114,19 @@ export const useStore = create<VeloState>()(
                 ftp: 200,
                 isColdRunner: false,
                 stravaConnected: false,
+                age: 30,
+                sex: 'male',
+                height: 175,
+                restingHR: 60,
+                ctl: 45,
+                atl: 30,
+                tsb: 15,
+                mmp: {
+                    "5s": 800,
+                    "1m": 400,
+                    "5m": 300,
+                    "20m": 240
+                }
             },
             bikes: [
                 {
@@ -187,11 +213,20 @@ export const useStore = create<VeloState>()(
             migrate: (persistedState: any, version: number) => {
                 // Migration logic for older versions if needed
                 if (version < 3) {
+                    // Initialize MMP for existing users
+                    if (persistedState.user && !persistedState.user.mmp) {
+                        persistedState.user.mmp = {
+                            "5s": 800,
+                            "1m": 400,
+                            "5m": 300,
+                            "20m": 240
+                        };
+                    }
                     // Initialize wheelsets for existing bikes during migration
                     if (persistedState.bikes) {
                         persistedState.bikes = persistedState.bikes.map((b: any) => ({
                             ...b,
-                            activeWheelsetIndex: 0,
+                            activeWheelsetIndex: b.activeWheelsetIndex ?? 0,
                             wheelsets: b.wheelsets || [
                                 {
                                     id: 'wh-migrated',
