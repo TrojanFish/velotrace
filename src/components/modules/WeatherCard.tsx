@@ -74,7 +74,7 @@ export function WeatherCard() {
                         )}
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <p className="liquid-stat-value text-3xl">{data.temp}°C</p>
+                        <p className="liquid-stat-value text-3xl pr-2">{data.temp}°C</p>
                         <span className="text-sm font-medium text-white/40">体感 {data.apparentTemp}°</span>
                     </div>
                 </div>

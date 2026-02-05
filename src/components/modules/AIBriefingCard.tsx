@@ -138,22 +138,22 @@ export function AIBriefingCard() {
                 {/* Sub Metrics */}
                 <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/[0.06] relative z-10">
                     <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center">
-                        <span className="block text-[7px] text-white/30 uppercase font-bold mb-1 tracking-widest">形态</span>
+                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">形态</span>
                         <span className="text-xs text-gradient-cyan font-bold">{(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0} TSB</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center">
-                        <span className="block text-[7px] text-white/30 uppercase font-bold mb-1 tracking-widest">体感</span>
+                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">体感</span>
                         <span className="text-xs text-gradient-sunset font-bold">{weather?.temp || '--'}°C</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center">
-                        <span className="block text-[7px] text-white/30 uppercase font-bold mb-1 tracking-widest">风阻</span>
+                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">风阻</span>
                         <span className="text-xs font-bold text-blue-400">{(weather?.windSpeed || 0).toFixed(0)} KM/H</span>
                     </div>
                 </div>
 
                 {/* Footer */}
                 <div className="mt-5 pt-4 border-t border-purple-500/10 flex justify-between items-center relative z-10">
-                    <span className="text-[8px] font-bold text-purple-400/50 uppercase tracking-[0.2em] italic flex items-center gap-1.5">
+                    <span className="text-[8px] font-bold text-purple-400/50 uppercase tracking-[0.2em] italic flex items-center gap-1.5 pr-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-purple-400/50 animate-pulse" />
                         BIO-SYNC DATA
                     </span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useStore } from "@/store/useStore";
 import { WeatherCard } from "@/components/modules/WeatherCard";
@@ -27,6 +27,8 @@ const DynamicWindFieldMap = dynamic(
 );
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+
   const today = new Date().toLocaleDateString('zh-CN', {
     month: 'long',
     day: 'numeric',
@@ -36,6 +38,10 @@ export default function Home() {
   const { addRideDistance } = useStore();
   const [isLogging, setIsLogging] = useState(false);
   const [distance, setDistance] = useState("40");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogRide = () => {
     const dist = parseFloat(distance);
@@ -53,11 +59,11 @@ export default function Home() {
       {/* Header */}
       <header className="flex justify-between items-center mb-6">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black text-gradient-aurora italic tracking-tighter leading-none">
+          <h1 className="text-3xl font-black text-gradient-aurora italic tracking-tighter leading-none pr-4">
             VELOTRACE
           </h1>
           <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] ml-0.5">
-            {today}
+            {mounted ? today : "--"}
           </p>
         </div>
         <Link

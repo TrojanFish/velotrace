@@ -111,8 +111,8 @@ export function BikeCard() {
                         <div className="space-y-1">
                             <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">{bike.name}</h2>
                             <div className="flex items-baseline gap-2">
-                                <span className="liquid-stat-value text-4xl">{pressure.front.psi}/{pressure.rear.psi}</span>
-                                <span className="text-[10px] text-white/30 font-bold uppercase italic">PSI (F/R)</span>
+                                <span className="liquid-stat-value text-4xl pr-2">{pressure.front.psi}/{pressure.rear.psi}</span>
+                                <span className="text-[10px] text-white/30 font-bold uppercase italic pr-1">PSI (F/R)</span>
                             </div>
                         </div>
                         <div className="text-right space-y-0.5">

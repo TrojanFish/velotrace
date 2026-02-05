@@ -906,6 +906,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.1;
+  padding-right: 0.1em;
+  margin-right: -0.1em;
 }
 
 .liquid-stat-label {
@@ -994,6 +996,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  padding-right: 0.15em;
+  margin-right: -0.15em;
 }
 
 .text-gradient-aurora {
@@ -1001,6 +1005,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  padding-right: 0.15em;
+  margin-right: -0.15em;
 }
 
 .text-gradient-sunset {
@@ -1008,6 +1014,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  padding-right: 0.15em;
+  margin-right: -0.15em;
 }
 
 /* ============================================
