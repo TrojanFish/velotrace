@@ -70,7 +70,7 @@ export function AIBriefingCard() {
                         <div className="p-1.5 bg-purple-500/20 rounded-lg border border-purple-500/30">
                             <Sparkles size={14} className="text-purple-400 animate-pulse" />
                         </div>
-                        <h2 className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em]">
+                        <h2 className="text-xs font-black text-purple-400 uppercase tracking-widest">
                             AI 战术简报 / Tactical Briefing
                         </h2>
                     </div>

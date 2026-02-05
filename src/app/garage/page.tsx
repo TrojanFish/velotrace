@@ -125,7 +125,7 @@ export default function GaragePage() {
                 <h1 className="text-3xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
                     PILOT OFFICE
                 </h1>
-                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.2em] mt-1">
+                <p className="text-xs text-muted-foreground font-black uppercase tracking-widest mt-1">
                     生理特征、体能模型与器材资产管理
                 </p>
             </header>
@@ -134,7 +134,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <RefreshCw size={14} className="text-orange-500" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">数据同步</h2>
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">数据同步</h2>
                 </div>
 
                 <div className="pro-card border-orange-500/20 bg-orange-500/5 space-y-4">
@@ -189,7 +189,7 @@ export default function GaragePage() {
                 <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
                         <Activity size={14} className="text-rose-400" />
-                        <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">生理参数 ( PHYSIOLOGICAL )</h2>
+                        <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">生理参数 ( PHYSIOLOGICAL )</h2>
                     </div>
                     <button
                         onClick={handleToggleLock}
@@ -294,7 +294,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <User size={14} className="text-emerald-400" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">权重与功率</h2>
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">权重与功率</h2>
                 </div>
                 <div className="pro-card space-y-5">
                     <div className="flex items-center justify-between">
@@ -318,7 +318,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <Bike size={14} className="text-blue-400" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">已注册单车 ({bikes.length})</h2>
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">已注册单车 ({bikes.length})</h2>
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                     {bikes.map((b, idx) => (
@@ -335,7 +335,7 @@ export default function GaragePage() {
                 <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
                         <Layers size={14} className="text-cyan-400" />
-                        <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">轮组资产库</h2>
+                        <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">轮组资产库</h2>
                     </div>
                     <button onClick={() => setIsAddingWheelset(true)} className="p-1 px-2.5 bg-cyan-400/10 hover:bg-cyan-400/20 rounded text-[9px] font-black uppercase text-cyan-400 flex items-center gap-1.5"><Plus size={10} /> 新增</button>
                 </div>

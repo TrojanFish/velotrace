@@ -27,8 +27,8 @@ export function FuelCard() {
         <div className="pro-card space-y-6">
             <div className="flex justify-between items-start">
                 <div>
-                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">补给计算</h2>
-                    <p className="text-2xl font-bold">{fuel.carbs}g <span className="text-sm font-normal text-muted-foreground">CHO</span></p>
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">补给建议 / Fueling</h2>
+                    <p className="text-2xl font-black italic text-slate-100">{fuel.carbs}g <span className="text-sm font-normal text-muted-foreground not-italic">CHO</span></p>
                 </div>
                 <div className="p-2 bg-emerald-500/10 rounded-full text-emerald-400">
                     <Fuel size={24} />

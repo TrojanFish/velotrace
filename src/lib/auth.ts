@@ -13,7 +13,9 @@ export const authOptions: NextAuthOptions = {
                     response_type: "code",
                 },
             },
-            token: "https://www.strava.com/api/v3/oauth/token",
+            token: {
+                url: "https://www.strava.com/api/v3/oauth/token",
+            },
             userinfo: "https://www.strava.com/api/v3/athlete",
             client: {
                 token_endpoint_auth_method: "client_secret_post",
@@ -30,16 +32,56 @@ export const authOptions: NextAuthOptions = {
         },
     ],
     callbacks: {
-        async jwt({ token, account }) {
-            if (account) {
-                token.accessToken = account.access_token;
+        async jwt({ token, account, user }) {
+            // Initial sign in
+            if (account && user) {
+                return {
+                    ...token,
+                    accessToken: account.access_token,
+                    refreshToken: account.refresh_token,
+                    expiresAt: account.expires_at ? account.expires_at * 1000 : 0,
+                };
             }
-            return token;
+
+            // Return previous token if the access token has not expired yet
+            if (Date.now() < (token.expiresAt as number)) {
+                return token;
+            }
+
+            // If the access token has expired, try to refresh it
+            try {
+                const response = await fetch("https://www.strava.com/api/v3/oauth/token", {
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({
+                        client_id: process.env.STRAVA_CLIENT_ID!,
+                        client_secret: process.env.STRAVA_CLIENT_SECRET!,
+                        grant_type: "refresh_token",
+                        refresh_token: token.refreshToken as string,
+                    }),
+                    method: "POST",
+                });
+
+                const tokens = await response.json();
+
+                if (!response.ok) throw tokens;
+
+                return {
+                    ...token,
+                    accessToken: tokens.access_token,
+                    expiresAt: Date.now() + tokens.expires_in * 1000,
+                    refreshToken: tokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+                };
+            } catch (error) {
+                console.error("RefreshAccessTokenError", error);
+                return { ...token, error: "RefreshAccessTokenError" };
+            }
         },
         async session({ session, token }) {
             session.accessToken = token.accessToken as string;
+            session.error = token.error as string;
             return session;
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
+    debug: true,
 };

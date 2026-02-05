@@ -22,7 +22,9 @@ export async function GET() {
         });
 
         if (!response.ok) {
-            throw new Error("Failed to fetch athlete data");
+            const errorMsg = await response.text();
+            console.error("Strava Sync Error:", response.status, errorMsg);
+            throw new Error(`Failed to fetch athlete data: ${response.status}`);
         }
 
         const data = await response.json();

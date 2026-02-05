@@ -76,7 +76,11 @@ NEXTAUTH_URL=http://localhost:3000
 npm run dev
 ```
 
----
+### 4. Troubleshooting (Strava Sync)
+If you encounter "Failed to sync" or "Sign in error":
+*   **Callback Domain**: Ensure your [Strava API Dashboard](https://www.strava.com/settings/api) has the "Authorization Callback Domain" set to match your access URL (e.g., `localhost` for local development, or your VPS IP/Domain for deployment).
+*   **PWA Mode**: iPhone PWA requires HTTPS for geolocation. For Local testing on iPhone, use a tunnel like `cloudflared` or `ngrok`.
+*   **Cookie Issue**: If you see "Try signing in with a different account", clear your browser cookies for the site and try again.
 
 ## 📈 Roadmap
 

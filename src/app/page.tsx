@@ -39,7 +39,7 @@ export default function Home() {
           <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
             VELOTRACE
           </h1>
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
+          <p className="text-xs text-muted-foreground font-black uppercase tracking-widest mt-1">
             {today}
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function Home() {
       <section className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <div className="w-1 h-3 bg-cyan-400 rounded-full" />
-          <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+          <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
             战术气象 / Environment
           </h2>
         </div>
@@ -70,7 +70,7 @@ export default function Home() {
       <section className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <div className="w-1 h-3 bg-orange-500 rounded-full" />
-          <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+          <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
             准备就绪 / Prep
           </h2>
         </div>

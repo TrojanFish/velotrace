@@ -31,8 +31,8 @@ export function TirePressureCalculator() {
         <div className="pro-card space-y-6">
             <div className="flex justify-between items-start">
                 <div>
-                    <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">智能胎压建议</h2>
-                    <p className="text-[10px] text-muted-foreground uppercase mt-1">基于当前车辆与骑手档案</p>
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">胎压建议 / Pressure</h2>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1 tracking-tight">基于车辆负载与路况推演</p>
                 </div>
                 <div className="p-2 bg-emerald-500/10 rounded-full text-emerald-500">
                     <Gauge size={20} />

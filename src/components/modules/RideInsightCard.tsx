@@ -48,6 +48,7 @@ export function RideInsightCard() {
     const { user } = useStore();
     const [activity, setActivity] = useState<ActivityInsight | null>(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [isSharing, setIsSharing] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -55,17 +56,12 @@ export function RideInsightCard() {
         if (!cardRef.current) return;
         setIsSharing(true);
         try {
-            // Give it a tiny bit of time for any transition to settle
             await new Promise(r => setTimeout(r, 100));
-
             const dataUrl = await toPng(cardRef.current, {
                 cacheBust: true,
-                backgroundColor: '#0f172a', // Match theme background
-                style: {
-                    borderRadius: '0' // Cards usually don't want rounded corners when shared as full image
-                }
+                backgroundColor: '#0f172a',
+                style: { borderRadius: '0' }
             });
-
             const link = document.createElement('a');
             link.download = `VeloTrace-Insight-${activity?.id || 'Ride'}.png`;
             link.href = dataUrl;
@@ -81,18 +77,23 @@ export function RideInsightCard() {
     useEffect(() => {
         if (session) {
             setLoading(true);
+            setError(null);
             fetch("/api/strava/latest-activity")
                 .then(res => {
-                    if (res.status === 401) {
-                        // Handle session expiry
-                        return { error: "Session expired" };
-                    }
+                    if (res.status === 401) return { error: "Session expired" };
                     return res.json();
                 })
                 .then(data => {
-                    if (!data.error) setActivity(data);
-                    else if (data.count === 0) setActivity(null); // Explicitly empty
+                    if (!data.error) {
+                        setActivity(data);
+                    } else if (data.count === 0) {
+                        setActivity(null);
+                    } else {
+                        setError(data.error);
+                        setActivity(null);
+                    }
                 })
+                .catch(err => setError("Network error"))
                 .finally(() => setLoading(false));
         }
     }, [session]);
@@ -121,14 +122,11 @@ export function RideInsightCard() {
 
     const cdaData = useMemo(() => {
         if (!activity || !activity.averagePower || !activity.averageSpeed) return null;
-        const bike = user.ftp > 0 ? (user as any).activeBike : null; // Rough fallback
-        const bikeWeight = 8.5; // Default if not found
-
         const cda = calculateCdA({
             power: activity.averagePower,
             speed: activity.averageSpeed,
             riderWeight: user.weight,
-            bikeWeight: bikeWeight
+            bikeWeight: 8.5
         });
         const rating = getCdARating(cda);
         return { value: cda, rating };
@@ -149,20 +147,16 @@ export function RideInsightCard() {
     }
 
     if (!activity) {
-        if (loading) return (
-            <div className="pro-card min-h-[200px] flex items-center justify-center">
-                <div className="w-8 h-8 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin" />
-            </div>
-        );
-
         return (
             <div className="pro-card border-slate-800 bg-slate-900/40 p-12 text-center space-y-4">
-                <div className="mx-auto w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-600">
+                <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center ${error ? 'bg-rose-500/10 text-rose-500' : 'bg-slate-800 text-slate-600'}`}>
                     <Activity size={24} />
                 </div>
                 <div>
-                    <h3 className="text-sm font-bold text-slate-300">暂无骑行数据</h3>
-                    <p className="text-[10px] text-slate-500 uppercase mt-1">请完成首次运动同步或检查 Strava 连接</p>
+                    <h3 className="text-sm font-bold text-slate-300">{error ? "同步同步遇到问题" : "暂无骑行数据"}</h3>
+                    <p className="text-[10px] text-slate-500 uppercase mt-1">
+                        {error ? `错误详情: ${error}` : "请完成首次运动同步或检查 STRAVA 连接"}
+                    </p>
                 </div>
                 <button
                     onClick={() => window.location.reload()}
@@ -174,12 +168,6 @@ export function RideInsightCard() {
         );
     }
 
-    const formattedDate = new Date(activity.startTime).toLocaleDateString('zh-CN', {
-        month: 'short',
-        day: 'numeric'
-    });
-
-    // Using real training status from store
     const trainingStatus = {
         fitness: user.ctl || 0,
         fatigue: user.atl || 0,
@@ -234,7 +222,7 @@ export function RideInsightCard() {
                         <div>
                             <div className="flex items-center gap-2 mb-1">
                                 <Dna size={14} className="text-purple-400" />
-                                <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">物理引擎复盘</h2>
+                                <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">物理引擎复盘</h2>
                             </div>
                             <h3 className="text-sm font-black italic uppercase text-slate-100 truncate max-w-[180px]">
                                 {activity.name}

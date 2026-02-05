@@ -115,7 +115,7 @@ export function BikeCard() {
 
                     <div className="flex justify-between items-end px-1">
                         <div className="space-y-1">
-                            <h2 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">{bike.name}</h2>
+                            <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">{bike.name}</h2>
                             <div className="flex items-baseline gap-2">
                                 <p className="text-3xl font-black italic text-cyan-400">{pressure.front.psi}/{pressure.rear.psi}</p>
                                 <span className="text-[10px] text-slate-500 font-black uppercase italic">PSI (F/R)</span>

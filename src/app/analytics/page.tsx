@@ -15,7 +15,7 @@ export default function AnalyticsPage() {
                 <h1 className="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
                     DATA HUB
                 </h1>
-                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest mt-1">
+                <p className="text-xs text-muted-foreground font-black uppercase tracking-widest mt-1">
                     生理洞察与长周期分析
                 </p>
             </header>
@@ -24,7 +24,7 @@ export default function AnalyticsPage() {
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <div className="w-1 h-3 bg-purple-500 rounded-full" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                         训练负荷 / Training Load
                     </h2>
                 </div>
@@ -36,7 +36,7 @@ export default function AnalyticsPage() {
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <div className="w-1 h-3 bg-pink-500 rounded-full" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                         活动复盘 / Activity Insights
                     </h2>
                 </div>
@@ -50,7 +50,7 @@ export default function AnalyticsPage() {
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <Activity size={16} className="text-rose-500" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                         生理引擎 / Physiological Engine
                     </h2>
                 </div>
@@ -61,7 +61,7 @@ export default function AnalyticsPage() {
             <section className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                     <TrendingUp size={16} className="text-orange-500" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                         战力解构 / Power Profile
                     </h2>
                 </div>

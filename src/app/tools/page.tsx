@@ -15,7 +15,7 @@ export default function ToolsPage() {
                 <h1 className="text-3xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent italic tracking-tighter pb-1 pr-4 leading-none">
                     PRO TOOLBOX
                 </h1>
-                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.2em] mt-1">
+                <p className="text-xs text-muted-foreground font-black uppercase tracking-widest mt-1">
                     专业骑行计算工具
                 </p>
             </header>
