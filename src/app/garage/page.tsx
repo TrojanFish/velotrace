@@ -170,7 +170,13 @@ export default function GaragePage() {
                                     {syncSuccess ? <CheckCircle2 size={16} className="animate-in zoom-in" /> : <RefreshCw size={16} />}
                                 </button>
                             )}
-                            <button onClick={() => { if (session) signOut(); else signIn("strava"); }} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${session ? 'bg-slate-800 text-slate-400 border border-slate-700' : 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'}`}>
+                            <button
+                                onClick={() => {
+                                    if (session) signOut();
+                                    else signIn("strava", { callbackUrl: window.location.href });
+                                }}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${session ? 'bg-slate-800 text-slate-400 border border-slate-700' : 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'}`}
+                            >
                                 {session ? '退出' : 'Strava 登录'}
                             </button>
                         </div>

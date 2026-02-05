@@ -15,8 +15,8 @@ export function Navigation() {
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50">
-            <div className="max-w-md mx-auto bg-slate-950/80 backdrop-blur-xl border-t border-slate-800 px-6 py-3 pb-8 flex justify-between items-center">
+        <nav className="fixed bottom-0 left-0 right-0 z-[100] pb-[env(safe-area-inset-bottom)] bg-slate-950/80 backdrop-blur-xl border-t border-slate-800">
+            <div className="max-w-md mx-auto px-6 py-3 flex justify-between items-center">
                 {links.map((link) => {
                     const Icon = link.icon;
                     const isActive = pathname === link.href;

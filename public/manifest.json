@@ -3,7 +3,12 @@
     "short_name": "VeloTrace",
     "description": "Hardcore Cycling Intelligence Dashboard",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
+    "display_override": [
+        "standalone",
+        "minimal-ui"
+    ],
     "background_color": "#0f172a",
     "theme_color": "#0f172a",
     "icons": [
