@@ -31,8 +31,11 @@ export function useWeather() {
     const fetchWeatherData = async (latitude: number, longitude: number) => {
         try {
             const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto`);
-            const json = await res.json();
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            const text = await res.text();
+            const json = text ? JSON.parse(text) : null;
 
+            if (!json || !json.current) throw new Error("Invalid response from weather API");
             const current = json.current;
             setData({
                 temp: current.temperature_2m,

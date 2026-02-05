@@ -8,7 +8,7 @@ import { FuelCard } from "@/components/modules/FuelCard";
 import { BikeCard } from "@/components/modules/BikeCard";
 import { RouteWindForecastCard } from "@/components/modules/RouteWindForecastCard";
 import { AIBriefingCard } from "@/components/modules/AIBriefingCard";
-import { Settings, Bike } from "lucide-react";
+import { Settings, Bike, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Skeleton } from "@/lib/utils";
@@ -151,8 +151,14 @@ export default function Home() {
         </div>
       )}
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-32 right-6 z-50">
+      {/* Floating Action Button Section */}
+      <div className="fixed bottom-32 right-6 z-50 flex flex-col gap-4">
+        <Link
+          href="/ride"
+          className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-white shadow-[0_0_25px_rgba(0,212,255,0.4)] hover:scale-110 active:scale-95 transition-all border border-white/20"
+        >
+          <Maximize2 size={24} />
+        </Link>
         <button
           onClick={() => setIsLogging(true)}
           className="liquid-fab w-14 h-14 flex items-center justify-center text-white"

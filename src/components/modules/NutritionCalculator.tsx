@@ -3,7 +3,8 @@
 import { useState, useMemo } from "react";
 import { useStore } from "@/store/useStore";
 import { calculateNutrition } from "@/lib/calculators/nutrition";
-import { Utensils, Droplets, Zap, Clock, Thermometer, Info } from "lucide-react";
+import { FUEL_PRODUCTS, FuelProduct } from "@/config/nutrition";
+import { Utensils, Droplets, Zap, Clock, Thermometer, Info, Package, Check, ChevronRight } from "lucide-react";
 
 export function NutritionCalculator() {
     const { user } = useStore();
@@ -11,6 +12,7 @@ export function NutritionCalculator() {
     const [duration, setDuration] = useState(2);
     const [intensity, setIntensity] = useState(60); // %
     const [temp, setTemp] = useState(22);
+    const [selectedProductIds, setSelectedProductIds] = useState<string[]>(['maurten-100', 'drink-mix-40', 'salt-pill']);
 
     const result = useMemo(() => calculateNutrition({
         durationHours: duration,
@@ -19,6 +21,49 @@ export function NutritionCalculator() {
         weight: user.weight
     }), [duration, intensity, temp, user.weight]);
 
+    const toggleProduct = (id: string) => {
+        setSelectedProductIds(prev =>
+            prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
+        );
+    };
+
+    const fuelingPlan = useMemo(() => {
+        const selected = FUEL_PRODUCTS.filter(p => selectedProductIds.includes(p.id));
+        const drink = selected.find(p => p.type === 'drink');
+        const gels = selected.filter(p => p.type === 'gel');
+        const salts = selected.filter(p => p.type === 'salt-pill');
+
+        let remainingCarbs = result.totalCarbs;
+        const plan: { product: FuelProduct; count: number }[] = [];
+
+        // 1. Allocate Drink Mix (Cap at 1-2 bottles depending on duration)
+        if (drink) {
+            const maxBottles = Math.max(1, Math.round(duration));
+            const count = Math.min(maxBottles, Math.ceil(remainingCarbs / drink.carbs));
+            if (count > 0) {
+                plan.push({ product: drink, count });
+                remainingCarbs -= count * drink.carbs;
+            }
+        }
+
+        // 2. Allocate Gels (Distribute remaining carbs)
+        if (gels.length > 0 && remainingCarbs > 0) {
+            const primaryGel = gels[0]; // Take the first selected gel as primary
+            const count = Math.ceil(remainingCarbs / primaryGel.carbs);
+            if (count > 0) {
+                plan.push({ product: primaryGel, count });
+            }
+        }
+
+        // 3. Salt Pills (Based on heat/duration)
+        if (salts.length > 0 && result.needsElectrolytes) {
+            const count = Math.ceil(duration); // 1 pill per hour as rule of thumb
+            plan.push({ product: salts[0], count });
+        }
+
+        return plan;
+    }, [result, selectedProductIds, duration]);
+
     return (
         <div className="pro-card space-y-6">
             <div className="flex justify-between items-start">
@@ -26,81 +71,155 @@ export function NutritionCalculator() {
                     <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">补给战策 (GLYCOTANK)</h2>
                     <p className="text-[10px] text-muted-foreground uppercase mt-1">根据骑行时长与强度规划</p>
                 </div>
-                <div className="p-2 bg-yellow-500/10 rounded-full text-yellow-500">
+                <div className="p-2 bg-amber-500/10 rounded-full text-amber-500">
                     <Utensils size={20} />
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-2">
-                    <div className="flex items-center gap-2 text-yellow-500">
-                        <Zap size={14} />
-                        <span className="text-[10px] font-bold uppercase">碳水需求量</span>
-                    </div>
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-black italic tracking-tighter text-slate-100">{result.totalCarbs}</span>
-                        <span className="text-xs font-normal text-muted-foreground not-italic uppercase">g</span>
-                    </div>
-                    <p className="text-[10px] text-slate-500">约 {result.gelCount} 支能量胶</p>
-                </div>
-                <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-2">
-                    <div className="flex items-center gap-2 text-blue-400">
-                        <Droplets size={14} />
-                        <span className="text-[10px] font-bold uppercase">水分需求量</span>
-                    </div>
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-black italic tracking-tighter text-slate-100">{result.totalFluid}</span>
-                        <span className="text-xs font-normal text-muted-foreground not-italic uppercase">ml</span>
-                    </div>
-                    <p className="text-[10px] text-slate-500">约 {result.bottleCount} standard 支水壶</p>
-                </div>
-            </div>
-
-            <div className="space-y-5 px-1">
-                <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            {/* Input Sliders */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-3">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
                         <div className="flex items-center gap-1"><Clock size={10} /> 骑行时长</div>
-                        <span>{duration} 小时</span>
+                        <span className="text-amber-400">{duration}h</span>
                     </div>
                     <input
-                        type="range" min="1" max="8" step="0.5"
+                        type="range" min="0.5" max="8" step="0.5"
                         value={duration} onChange={(e) => setDuration(parseFloat(e.target.value))}
-                        className="w-full accent-yellow-500 bg-slate-800 rounded-lg h-1.5 cursor-pointer"
+                        className="w-full h-1.5"
                     />
                 </div>
 
-                <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="space-y-3">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
                         <div className="flex items-center gap-1"><Zap size={10} /> 强度 (RPE)</div>
-                        <span>{intensity}% (Z{Math.ceil(intensity / 20)})</span>
+                        <span className="text-amber-400">{intensity}%</span>
                     </div>
                     <input
                         type="range" min="20" max="100" step="5"
                         value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))}
-                        className="w-full accent-yellow-500 bg-slate-800 rounded-lg h-1.5 cursor-pointer"
+                        className="w-full h-1.5"
                     />
                 </div>
 
-                <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="space-y-3">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
                         <div className="flex items-center gap-1"><Thermometer size={10} /> 环境温度</div>
-                        <span>{temp} °C</span>
+                        <span className="text-amber-400">{temp}°C</span>
                     </div>
                     <input
                         type="range" min="0" max="40" step="1"
                         value={temp} onChange={(e) => setTemp(parseInt(e.target.value))}
-                        className="w-full accent-yellow-500 bg-slate-800 rounded-lg h-1.5 cursor-pointer"
+                        className="w-full h-1.5"
                     />
                 </div>
             </div>
 
-            <div className="p-3 bg-slate-950 rounded-xl border border-slate-900 flex gap-3">
-                <Info size={14} className="text-slate-600 shrink-0 mt-0.5" />
-                <p className="text-[10px] text-slate-500 leading-normal">
-                    {result.needsElectrolytes
-                        ? "💧 关键建议：环境炎热或时长过半，建议在水壶中加入电解质片以防抽筋。"
-                        : "✅ 本次骑行负荷适中，常规饮水及碳水摄入即可通过。"}
-                </p>
+            {/* Product Inventory Section */}
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <Package size={14} className="text-white/40" />
+                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">选择您拥有的补给品</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    {FUEL_PRODUCTS.map(product => (
+                        <button
+                            key={product.id}
+                            onClick={() => toggleProduct(product.id)}
+                            className={`px-3 py-1.5 rounded-full text-[10px] font-bold transition-all border ${selectedProductIds.includes(product.id)
+                                ? 'bg-amber-500/20 text-amber-400 border-amber-500/50 shelf-glow'
+                                : 'bg-white/5 text-white/30 border-white/10 hover:border-white/20'
+                                }`}
+                        >
+                            <span className="flex items-center gap-1.5">
+                                {selectedProductIds.includes(product.id) && <Check size={10} />}
+                                {product.name}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Results Display */}
+            <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-slate-900/60 rounded-2xl border border-slate-800 space-y-2 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
+                        <Zap size={40} className="text-amber-500" />
+                    </div>
+                    <div className="flex items-center gap-2 text-amber-500">
+                        <Zap size={14} />
+                        <span className="text-[10px] font-black uppercase">总碳水需求</span>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-black italic tracking-tighter text-white pr-2">{result.totalCarbs}</span>
+                        <span className="text-xs font-bold text-white/30 uppercase">g</span>
+                    </div>
+                </div>
+                <div className="p-4 bg-slate-900/60 rounded-2xl border border-slate-800 space-y-2 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
+                        <Droplets size={40} className="text-blue-400" />
+                    </div>
+                    <div className="flex items-center gap-2 text-blue-400">
+                        <Droplets size={14} />
+                        <span className="text-[10px] font-black uppercase">总水分需求</span>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-black italic tracking-tighter text-white pr-2">{result.totalFluid}</span>
+                        <span className="text-xs font-bold text-white/30 uppercase">ml</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Specific Packing List */}
+            <div className="space-y-3">
+                <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
+                    建议物资清单 (Packing List)
+                </h3>
+                <div className="space-y-2">
+                    {fuelingPlan.length > 0 ? fuelingPlan.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-3 bg-white/[0.02] border border-white/[0.05] rounded-xl hover:bg-white/[0.04] transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.product.type === 'drink' ? 'bg-blue-500/10 text-blue-400' :
+                                    item.product.type === 'gel' ? 'bg-amber-500/10 text-amber-400' : 'bg-purple-500/10 text-purple-400'
+                                    }`}>
+                                    {item.product.type === 'drink' ? <Droplets size={16} /> : <Zap size={16} />}
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-white/90">{item.product.name}</p>
+                                    <p className="text-[9px] text-white/30 font-medium uppercase tracking-tighter">
+                                        每{item.product.unit}含 {item.product.carbs}g 碳水
+                                        {item.product.sodium ? ` • ${item.product.sodium}mg 钠` : ''}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-lg font-black italic text-amber-400">x{item.count}</span>
+                                <span className="text-[9px] text-white/30 font-bold uppercase">{item.product.unit}</span>
+                            </div>
+                        </div>
+                    )) : (
+                        <div className="py-8 text-center border-2 border-dashed border-slate-800 rounded-xl">
+                            <p className="text-[10px] text-slate-500 uppercase font-bold">请从上方库存中选择补给品</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Insight Toast/Info */}
+            <div className="p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl flex gap-4 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:rotate-12 transition-transform">
+                    <Info size={40} className="text-amber-500" />
+                </div>
+                <div className="space-y-1 relative z-10">
+                    <p className="text-xs font-bold text-amber-400 flex items-center gap-2">
+                        智能建议 Intelligence
+                    </p>
+                    <p className="text-[10px] text-white/50 leading-relaxed font-medium">
+                        {result.needsElectrolytes
+                            ? "🔥 关键预警：当前气温偏高或时长处于抽筋风险区。强烈建议携带并按时补充电解质盐丸。"
+                            : "✅ 环境契合度良好。按每 45 分钟一支能量胶的频率稳定补充即可保持糖原输出。"}
+                    </p>
+                </div>
             </div>
         </div>
     );

@@ -32,9 +32,28 @@ export function RouteWindForecastCard() {
         if (session) {
             setLoading(true);
             fetch("/api/strava/routes")
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                    return res.text().then(text => text ? JSON.parse(text) : { routes: [] });
+                })
                 .then(data => {
-                    if (!data.error) setRoutes(data);
+                    if (data.routes && Array.isArray(data.routes)) {
+                        // Transform the API response to match the expected local interface
+                        const mappedRoutes = data.routes.map((r: any) => ({
+                            id: r.id,
+                            name: r.name,
+                            distance: Math.round(r.distance / 100) / 10,
+                            elevation: Math.round(r.elevation),
+                            map: {
+                                summary_polyline: r.polyline || ""
+                            }
+                        }));
+                        setRoutes(mappedRoutes);
+                    }
+                })
+                .catch(err => {
+                    console.error("Failed to fetch routes:", err);
+                    setRoutes([]);
                 })
                 .finally(() => setLoading(false));
         }

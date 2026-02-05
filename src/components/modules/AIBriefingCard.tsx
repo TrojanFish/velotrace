@@ -36,8 +36,10 @@ export function AIBriefingCard() {
                     tsb: user.tsb ?? 0
                 })
             });
-            const data = await res.json();
-            setStructuredData(data);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            const text = await res.text();
+            const data = text ? JSON.parse(text) : null;
+            if (data) setStructuredData(data);
         } catch (e) {
             setStructuredData({
                 session: "OFFLINE MODE",
