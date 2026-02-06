@@ -37,11 +37,37 @@ export default function ActiveRidePage() {
     const [targetDistance, setTargetDistance] = useState(100);
     const [intensity, setIntensity] = useState<Intensity>("tempo");
 
-    // Ride State
+    // Ride State - Persistent
     const [isActive, setIsActive] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [fuelingInterval, setFuelingInterval] = useState(45 * 60); // seconds
     const [hydrationInterval, setHydrationInterval] = useState(20 * 60); // seconds
+
+    // Add session persistence for timer
+    useEffect(() => {
+        const saved = localStorage.getItem('velotrace_ride_session');
+        if (saved) {
+            const { time, active, fuel, water, distance, level } = JSON.parse(saved);
+            setElapsedTime(time);
+            setIsActive(active);
+            setFuelingInterval(fuel);
+            setHydrationInterval(water);
+            setTargetDistance(distance);
+            setIntensity(level);
+            if (active) setIsSetup(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('velotrace_ride_session', JSON.stringify({
+            time: elapsedTime,
+            active: isActive,
+            fuel: fuelingInterval,
+            water: hydrationInterval,
+            distance: targetDistance,
+            level: intensity
+        }));
+    }, [elapsedTime, isActive, fuelingInterval, hydrationInterval, targetDistance, intensity]);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const wakeLockRef = useRef<any>(null);
@@ -234,6 +260,13 @@ export default function ActiveRidePage() {
         }
     };
 
+    const handleExit = () => {
+        if (isActive && !confirm("骑行正在进行中，确认要退出吗？数据将会暂停。")) {
+            return;
+        }
+        router.back();
+    };
+
     const handleCommitStrategy = () => {
         if (!isActive) {
             handleStartStop();
@@ -292,8 +325,8 @@ export default function ActiveRidePage() {
             {/* Exit Button - Safe Area Aware */}
             {!isActive && (
                 <button
-                    onClick={() => router.back()}
-                    className="absolute top-[env(safe-area-inset-top,3rem)] left-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all z-[1200] group"
+                    onClick={handleExit}
+                    className="absolute top-[env(safe-area-inset-top,3.5rem)] left-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all z-[1200] group"
                 >
                     <X size={24} className="group-hover:rotate-90 transition-transform" />
                 </button>
@@ -306,10 +339,10 @@ export default function ActiveRidePage() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, y: 20 }}
-                        className="fixed inset-0 z-[1100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-start p-6 pt-[env(safe-area-inset-top,4rem)] overflow-y-auto"
+                        className="fixed inset-0 z-[1100] bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-start p-6 pt-[env(safe-area-inset-top,5rem)] overflow-y-auto"
                     >
-                        <div className="w-full max-w-xl space-y-8 pb-10">
-                            <div className="text-center space-y-2 mt-4">
+                        <div className="w-full max-w-xl flex-1 flex flex-col gap-10 pb-10">
+                            <div className="text-center space-y-3 mt-4">
                                 <div className="flex items-center justify-center gap-2 text-cyan-400">
                                     <Target size={20} />
                                     <span className="text-xs font-black uppercase tracking-[0.4em]">Tactical Prep</span>
@@ -421,13 +454,18 @@ export default function ActiveRidePage() {
                                 </div>
                             </div>
 
-                            <button
-                                onClick={handleCommitStrategy}
-                                className="w-full py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/20 active:scale-95 transition-transform mt-4"
-                            >
-                                <Play size={24} fill="white" />
-                                {isActive ? "应用并返回" : "立即进入骑行模式"}
-                            </button>
+                            <div className="mt-auto pt-8">
+                                <button
+                                    onClick={handleCommitStrategy}
+                                    className="w-full py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_20px_50px_rgba(6,182,212,0.3)] active:scale-95 transition-transform"
+                                >
+                                    <Play size={24} fill="white" />
+                                    {isActive ? "应用并返回" : "立即进入骑行模式"}
+                                </button>
+                                <p className="text-center text-[8px] font-black text-white/20 uppercase tracking-[0.5em] mt-6 animate-pulse">
+                                    VeloTrace Tactical System v3.0
+                                </p>
+                            </div>
                         </div>
                     </motion.div>
                 )}
