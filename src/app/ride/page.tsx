@@ -35,13 +35,22 @@ export default function ActiveRidePage() {
     // UI state
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isReady, setIsReady] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const lastTimeRef = useRef<number>(0);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Add session persistence for timer
     useEffect(() => {
+        if (!mounted) return;
+
         if (!rideSession) {
-            router.replace('/ride/setup');
-            return;
+            const timer = setTimeout(() => {
+                if (!rideSession) router.replace('/ride/setup');
+            }, 500); // Give store a moment to hydrate
+            return () => clearTimeout(timer);
         }
 
         const updateTimer = () => {
@@ -71,7 +80,7 @@ export default function ActiveRidePage() {
         }
 
         return () => { if (interval) clearInterval(interval); };
-    }, [rideSession, router]);
+    }, [rideSession, router, mounted]);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const wakeLockRef = useRef<any>(null);
@@ -298,7 +307,7 @@ export default function ActiveRidePage() {
 
     const isHeadwind = weather && weather.windSpeed > 15;
 
-    if (!isReady || !rideSession) {
+    if (!mounted || !isReady || !rideSession) {
         return (
             <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden font-sans">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">

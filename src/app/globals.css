@@ -1144,3 +1144,29 @@ h6,
 .safe-area-bottom {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
+
+/* ============================================
+   ✨ Custom Animations
+   ============================================ */
+
+@keyframes cyan-breathing {
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.4));
+    opacity: 0.8;
+  }
+
+  50% {
+    filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.8));
+    opacity: 1;
+  }
+}
+
+.animate-cyan-breathing {
+  animation: cyan-breathing 2s ease-in-out infinite;
+}
+
+.glow-cyan {
+  text-shadow: 0 0 15px rgba(0, 212, 255, 0.8), 0 0 5px rgba(0, 212, 255, 0.4);
+}

@@ -21,7 +21,7 @@ export function Navigation() {
             href: rideSession ? "/ride" : "/ride/setup",
             label: isRideActive ? "进行中" : "部署",
             icon: isRideActive ? Activity : Target,
-            className: isRideActive ? "text-cyan-400 animate-pulse" : ""
+            className: isRideActive ? "text-cyan-400 animate-cyan-breathing glow-cyan" : ""
         },
         { href: "/tools", label: "工具", icon: Wrench },
         { href: "/garage", label: "车手", icon: UserCog },
@@ -51,7 +51,7 @@ export function Navigation() {
                             <div className={`relative p-2 rounded-2xl transition-all duration-300 ${isActive
                                 ? "bg-gradient-to-br from-cyan-500/20 to-purple-500/10 shadow-[0_0_20px_rgba(0,212,255,0.3)]"
                                 : "group-hover:bg-white/5"
-                                }`}>
+                                } ${isRideActive && link.href === (rideSession ? "/ride" : "/ride/setup") ? "animate-cyan-breathing" : ""}`}>
                                 {/* Glow effect for active state */}
                                 {isActive && (
                                     <div className="absolute inset-0 rounded-2xl bg-cyan-500/20 blur-xl animate-pulse" />
