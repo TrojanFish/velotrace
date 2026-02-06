@@ -254,14 +254,9 @@ export default function ActiveRidePage() {
             setIsActive(true);
             setIsSetup(false);
             requestWakeLock();
-            toast.success("战略部署完毕，骑行开始", {
-                icon: <Zap size={16} />,
-                position: "bottom-center",
-            });
         } else {
             setIsActive(false);
             releaseWakeLock();
-            toast.error("骑行已暂停", { position: "bottom-center" });
         }
     };
 
@@ -278,10 +273,6 @@ export default function ActiveRidePage() {
             handleStartStop();
         } else {
             setIsSetup(false);
-            toast.success("战术节奏已更新", {
-                icon: <Zap size={16} />,
-                position: "bottom-center"
-            });
         }
     };
 
