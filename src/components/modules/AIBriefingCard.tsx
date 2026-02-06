@@ -89,7 +89,7 @@ export function AIBriefingCard() {
 
                 {/* Main Actionable Area */}
                 <div className="space-y-3 relative z-10 mb-6 min-h-[90px]">
-                    {isLoading ? (
+                    {isLoading && !structuredData ? (
                         <div className="space-y-3 py-2">
                             <div className="liquid-skeleton h-6 w-full" />
                             <div className="liquid-skeleton h-6 w-4/5" />

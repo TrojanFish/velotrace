@@ -72,6 +72,11 @@ export default function ActiveRidePage() {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const wakeLockRef = useRef<any>(null);
 
+    // Prefetch Home for smoother exit
+    useEffect(() => {
+        router.prefetch('/');
+    }, [router]);
+
     // Reminder States
     const [showReminder, setShowReminder] = useState<'fuel' | 'water' | null>(null);
 
@@ -264,7 +269,8 @@ export default function ActiveRidePage() {
         if (isActive && !confirm("骑行正在进行中，确认要退出吗？数据将会暂停。")) {
             return;
         }
-        router.back();
+        // Use prefetch or direct push to make it smoother
+        router.push('/');
     };
 
     const handleCommitStrategy = () => {
@@ -322,17 +328,7 @@ export default function ActiveRidePage() {
                 <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
             </div>
 
-            {/* Exit Button - Safe Area Aware */}
-            {!isActive && (
-                <button
-                    onClick={handleExit}
-                    className="absolute top-[env(safe-area-inset-top,3.5rem)] left-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all z-[1200] group"
-                >
-                    <X size={24} className="group-hover:rotate-90 transition-transform" />
-                </button>
-            )}
-
-            {/* 1. Tactical Setup Overlay (Before Ride/Pause) */}
+            {/* Tactical Setup Overlay (Before Ride/Pause) */}
             <AnimatePresence mode="wait">
                 {isSetup && (
                     <motion.div
@@ -454,15 +450,23 @@ export default function ActiveRidePage() {
                                 </div>
                             </div>
 
-                            <div className="mt-auto pt-8">
-                                <button
-                                    onClick={handleCommitStrategy}
-                                    className="w-full py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_20px_50px_rgba(6,182,212,0.3)] active:scale-95 transition-transform"
-                                >
-                                    <Play size={24} fill="white" />
-                                    {isActive ? "应用并返回" : "立即进入骑行模式"}
-                                </button>
-                                <p className="text-center text-[8px] font-black text-white/20 uppercase tracking-[0.5em] mt-6 animate-pulse">
+                            <div className="mt-auto pt-8 flex flex-col gap-4">
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={handleExit}
+                                        className="flex-1 py-6 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black uppercase tracking-widest active:scale-95 transition-transform"
+                                    >
+                                        取消并退出
+                                    </button>
+                                    <button
+                                        onClick={handleCommitStrategy}
+                                        className="flex-[1.5] py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_20px_50px_rgba(6,182,212,0.3)] active:scale-95 transition-transform"
+                                    >
+                                        <Play size={20} fill="white" />
+                                        {isActive ? "确认更改" : "进入骑行模式"}
+                                    </button>
+                                </div>
+                                <p className="text-center text-[8px] font-black text-white/20 uppercase tracking-[0.5em] mt-2 animate-pulse">
                                     VeloTrace Tactical System v3.0
                                 </p>
                             </div>
