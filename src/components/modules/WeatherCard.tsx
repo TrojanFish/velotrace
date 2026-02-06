@@ -7,10 +7,10 @@ import { Skeleton } from "@/lib/utils";
 import { CloudRain, Wind, Thermometer, Shirt, Droplets } from "lucide-react";
 
 export function WeatherCard() {
-    const { data, loading, error } = useWeather();
+    const { data, loading, error, refresh } = useWeather();
     const { user } = useStore();
 
-    if (loading) {
+    if (loading && !data) {
         return (
             <div className="pro-card space-y-6 min-h-[240px]">
                 <div className="flex justify-between items-start">
@@ -34,11 +34,20 @@ export function WeatherCard() {
     }
 
     if (error && !data) return (
-        <div className="pro-card border-red-500/20 bg-red-500/5 py-10 text-center">
+        <div className="pro-card border-red-500/20 bg-red-500/5 py-10 text-center space-y-4">
             <div className="liquid-icon danger mx-auto mb-3">
                 <CloudRain size={20} />
             </div>
-            <p className="text-xs font-bold uppercase text-red-400/80">定位失败，请检查浏览器权限</p>
+            <div>
+                <p className="text-xs font-bold uppercase text-red-400/80">定位未就绪</p>
+                <p className="text-[10px] text-white/30 uppercase mt-1">请重试或检查浏览器权限</p>
+            </div>
+            <button
+                onClick={() => refresh()}
+                className="liquid-button-primary py-2 px-6 text-[10px]"
+            >
+                手动获取位置
+            </button>
         </div>
     );
     if (!data) return null;
