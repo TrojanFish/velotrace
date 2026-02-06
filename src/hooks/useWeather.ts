@@ -15,17 +15,32 @@ export function useWeather() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!navigator.geolocation) {
-            setError("Geolocation not supported");
-            setLoading(false);
-            return;
-        }
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            fetchWeatherData(position.coords.latitude, position.coords.longitude);
-        }, () => {
-            setError("Location timed out / denied - Using Default");
-            fetchWeatherData(39.9042, 116.4074);
-        }, { timeout: 5000 });
+        const getLocation = () => {
+            if (!navigator.geolocation) {
+                setError("Geolocation not supported");
+                setLoading(false);
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    fetchWeatherData(position.coords.latitude, position.coords.longitude);
+                },
+                (err) => {
+                    console.error("Location Error:", err.code, err.message);
+                    setError("Location failed - Using Default");
+                    // Only fetch default if we haven't got data yet
+                    if (!data) fetchWeatherData(39.9042, 116.4074);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        };
+
+        getLocation();
     }, []);
 
     const fetchWeatherData = async (latitude: number, longitude: number) => {
