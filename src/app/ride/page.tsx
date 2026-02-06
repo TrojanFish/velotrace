@@ -1,31 +1,23 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Timer,
     Wind,
     Utensils,
-    X,
-    Maximize2,
-    Vibrate,
     Pause,
     Play,
     RotateCcw,
     Droplets,
-    Trophy,
-    Target,
-    Zap,
-    ChevronRight,
     Settings2,
-    CloudSun,
-    AlertTriangle
 } from "lucide-react";
 import { useWeather } from "@/hooks/useWeather";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useStore } from "@/store/useStore";
 import { Intensity } from "@/lib/calculators/fueling";
+import { getCardinalDirection } from "@/lib/weatherUtils";
 
 export default function ActiveRidePage() {
     const router = useRouter();
@@ -35,22 +27,13 @@ export default function ActiveRidePage() {
     // UI state
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isReady, setIsReady] = useState(false);
-    const [mounted, setMounted] = useState(false);
     const lastTimeRef = useRef<number>(0);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     // Add session persistence for timer
     useEffect(() => {
-        if (!mounted) return;
-
         if (!rideSession) {
-            const timer = setTimeout(() => {
-                if (!rideSession) router.replace('/ride/setup');
-            }, 500); // Give store a moment to hydrate
-            return () => clearTimeout(timer);
+            router.replace('/ride/setup');
+            return;
         }
 
         const updateTimer = () => {
@@ -80,9 +63,8 @@ export default function ActiveRidePage() {
         }
 
         return () => { if (interval) clearInterval(interval); };
-    }, [rideSession, router, mounted]);
+    }, [rideSession, router]);
 
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
     const wakeLockRef = useRef<any>(null);
 
     // Prefetch Home for smoother exit
@@ -92,77 +74,6 @@ export default function ActiveRidePage() {
 
     // Reminder States
     const [showReminder, setShowReminder] = useState<'fuel' | 'water' | null>(null);
-
-    // 1. Tactical Strategy Calculation (Personalized + Weather Optimized)
-    const suggestedStrategy = useMemo(() => {
-        if (!rideSession) return null;
-        const weight = user?.weight || 70;
-        const { intensity, targetDistance } = rideSession;
-
-        // --- Weather Compensation Factors ---
-        const temp = weather?.apparentTemp || 20;
-        const windSpeed = weather?.windSpeed || 0;
-        const humidity = weather?.humidity || 50;
-
-        // 🌡️ Heat Factor: Hydration needs spike above 25°C apparent temp
-        const heatFactor = 1 + Math.max(0, (temp - 22) * 0.05); // 5% increase per degree above 22°C
-
-        // 💧 Humidity Factor: Affects sweat evaporation efficiency
-        const humidityFactor = 1 + Math.max(0, (humidity - 60) * 0.005);
-
-        // 💨 Aerodynamic Resistance Factor (Simple Heuristic)
-        const windPenalty = windSpeed > 20 ? 0.88 : (windSpeed > 10 ? 0.95 : 1.0);
-
-        // Expected speeds (km/h) with wind compensation
-        const baseSpeeds: Record<Intensity, number> = {
-            social: 22,
-            tempo: 30,
-            threshold: 35,
-            race: 40
-        };
-        const currentSpeed = baseSpeeds[intensity] * windPenalty;
-        const durationHours = targetDistance / currentSpeed;
-
-        /**
-         * Personalized Carb Strategy (g/kg/hr):
-         * Heavily affected by intensity and ambient temperature (energy for cooling)
-         */
-        const carbRates: Record<Intensity, number> = {
-            social: 0.6,
-            tempo: 0.9,
-            threshold: 1.2,
-            race: 1.5
-        };
-
-        const hourlyCarbs = carbRates[intensity] * weight;
-        const totalCarbs = Math.round(hourlyCarbs * durationHours);
-
-        // Water base: 8-12ml per kg per hour, scaled by weather
-        const baseWaterRate = (intensity === 'race' ? 12 : 8) * weight;
-        const weatherAdjustedWaterRate = baseWaterRate * heatFactor * humidityFactor;
-        const totalWater = Math.round(weatherAdjustedWaterRate * durationHours);
-
-        // Suggested intervals (Scaled by weather intensity)
-        const baseIntervals: Record<Intensity, { fuel: number; water: number }> = {
-            social: { fuel: 60, water: 30 },
-            tempo: { fuel: 45, water: 20 },
-            threshold: { fuel: 35, water: 15 },
-            race: { fuel: 30, water: 10 }
-        };
-
-        const weatherWaterInterval = Math.max(8, Math.round(baseIntervals[intensity].water / (heatFactor * humidityFactor)));
-
-        return {
-            durationHours,
-            totalCarbs,
-            totalWater,
-            hourlyCarbs,
-            fuelInterval: baseIntervals[intensity].fuel,
-            waterInterval: weatherWaterInterval,
-            tempImpact: heatFactor > 1.1,
-            windImpact: windPenalty < 1.0
-        };
-    }, [rideSession, user?.weight, weather]);
 
     // 3. Screen Wake Lock
     const requestWakeLock = async () => {
@@ -196,7 +107,7 @@ export default function ActiveRidePage() {
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
             const message = type === 'fuel'
                 ? "战术提醒：补给时间到，请摄入碳水化合物或能量胶。"
-                : "骑行提醒：请补充水分，保持体液平衡。";
+                : "骑行提醒：请补充水分，保持体液平衡。"
             const utterance = new SpeechSynthesisUtterance(message);
             utterance.lang = 'zh-CN';
             utterance.rate = 1.0;
@@ -260,13 +171,6 @@ export default function ActiveRidePage() {
         }
     };
 
-    const handleExit = () => {
-        if (rideSession?.isActive && !confirm("骑行正在进行中，确认要退出吗？数据将会暂停。")) {
-            return;
-        }
-        router.push('/');
-    };
-
     // Long Press Reset Logic
     const [holdProgress, setHoldProgress] = useState(0);
     const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -307,7 +211,7 @@ export default function ActiveRidePage() {
 
     const isHeadwind = weather && weather.windSpeed > 15;
 
-    if (!mounted || !isReady || !rideSession) {
+    if (!isReady || !rideSession) {
         return (
             <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden font-sans">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -332,6 +236,18 @@ export default function ActiveRidePage() {
             <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col landscape:flex-row items-center justify-center space-y-8 landscape:space-y-0 landscape:gap-12 z-10">
                 {/* Primary Clock Section */}
                 <div className="flex flex-col items-center justify-center space-y-2 landscape:w-1/2">
+
+                    {/* Mission Context Pill */}
+                    <div className="flex items-center gap-3 mb-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
+                            {rideSession.targetDistance}KM
+                        </span>
+                        <div className="w-1 h-3 bg-white/10 rounded-full" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
+                            {rideSession.intensity}
+                        </span>
+                    </div>
+
                     <div className="flex items-center gap-3 text-cyan-400/80 mb-2">
                         <Timer size={24} className={isActive ? "animate-spin-slow" : ""} />
                         <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
@@ -370,13 +286,15 @@ export default function ActiveRidePage() {
                             <span className="text-[10px] font-black uppercase tracking-widest">Current Wind</span>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums pr-2">
+                            <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
                                 {weather?.windSpeed?.toFixed(0) || '--'}
                                 <span className="text-[10px] uppercase opacity-40 ml-1">KMH</span>
                             </p>
                             <div className="flex items-center gap-1.5 mt-1 opacity-50">
                                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                                <span className="text-[8px] font-black uppercase italic">{weather?.windDirection}° NW</span>
+                                <span className="text-[8px] font-black uppercase italic">
+                                    {weather?.windDirection}° {getCardinalDirection(weather?.windDirection || 0)}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -483,5 +401,3 @@ export default function ActiveRidePage() {
         </div>
     );
 }
-
-

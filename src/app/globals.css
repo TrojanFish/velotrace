@@ -125,6 +125,43 @@ body {
 }
 
 /* ============================================
+   🎚️ Range Sliders (Liquid Glass)
+   ============================================ */
+.range-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+
+.range-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+  background: black;
+  border: 2px solid cyan;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  cursor: pointer;
+  margin-top: -12px;
+  /* Center thumb on track */
+  transition: transform 0.1s;
+}
+
+.range-slider:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  background: cyan;
+}
+
+/* ============================================
    📜 Native App Style - Hide Scrollbars (Aggressive)
    ============================================ */
 
@@ -136,7 +173,6 @@ body,
   /* IE and Edge */
   scrollbar-width: none !important;
   /* Firefox */
-  -webkit-tap-highlight-color: transparent;
 }
 
 /* 针对 Webkit 引擎 (Chrome, Safari, Edge, Opera) */
@@ -146,11 +182,7 @@ body::-webkit-scrollbar,
   display: none !important;
   width: 0 !important;
   height: 0 !important;
-}
-
-.liquid-nav,
-.liquid-nav * {
-  overflow: visible !important;
+  background: transparent !important;
 }
 
 /* 彻底禁绝滚动条占位 */
@@ -1112,8 +1144,8 @@ h4,
 h5,
 h6,
 .italic {
-  padding-right: 0.25em !important;
-  margin-right: -0.1em !important;
+  padding-right: 0.15em;
+  margin-right: -0.05em;
 }
 
 .text-gradient-sunset {
@@ -1148,30 +1180,4 @@ h6,
 
 .safe-area-bottom {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
-}
-
-/* ============================================
-   ✨ Custom Animations
-   ============================================ */
-
-@keyframes cyan-breathing {
-
-  0%,
-  100% {
-    transform: scale(0.95);
-    opacity: 0.5;
-  }
-
-  50% {
-    transform: scale(1.1);
-    opacity: 1;
-  }
-}
-
-.animate-cyan-breathing {
-  animation: cyan-breathing 2s ease-in-out infinite;
-}
-
-.glow-cyan {
-  text-shadow: 0 0 15px rgba(0, 212, 255, 0.8), 0 0 5px rgba(0, 212, 255, 0.4);
 }

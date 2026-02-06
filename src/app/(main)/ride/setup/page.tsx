@@ -143,10 +143,10 @@ export default function TacticalSetupPage() {
                         </div>
                     </div>
                     <input
-                        type="range" min="10" max="300" step="5"
+                        type="range" min="10" max="300" step="1"
                         value={targetDistance}
                         onChange={(e) => setTargetDistance(parseInt(e.target.value))}
-                        className="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-cyan-500"
+                        className="w-full h-8 bg-transparent cursor-pointer appearance-none range-slider"
                     />
                 </div>
 
@@ -183,7 +183,7 @@ export default function TacticalSetupPage() {
                             <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest">预计耗时</span>
                             <Timer size={14} className="text-white/20" />
                         </div>
-                        <p className="text-3xl font-black italic text-white pr-2">
+                        <p className="text-3xl font-black italic text-white">
                             {suggestedStrategy.durationHours.toFixed(1)}<span className="text-xs ml-1 opacity-40">HRS</span>
                         </p>
                     </div>
@@ -192,7 +192,7 @@ export default function TacticalSetupPage() {
                             <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest">水分补给</span>
                             <AlertTriangle size={14} className="text-white/20" />
                         </div>
-                        <p className="text-3xl font-black italic text-white pr-2">
+                        <p className="text-3xl font-black italic text-white">
                             {suggestedStrategy.totalWater > 1000 ? (suggestedStrategy.totalWater / 1000).toFixed(1) : suggestedStrategy.totalWater}
                             <span className="text-xs ml-1 opacity-40">{suggestedStrategy.totalWater > 1000 ? 'L' : 'ML'}</span>
                         </p>
@@ -214,7 +214,7 @@ export default function TacticalSetupPage() {
                                 type="range" min="15" max="90" step="5"
                                 value={fuelingInterval / 60}
                                 onChange={(e) => setFuelingInterval(parseInt(e.target.value) * 60)}
-                                className="w-full accent-amber-500 h-1 bg-white/5 rounded-full appearance-none"
+                                className="w-full h-8 bg-transparent cursor-pointer appearance-none range-slider"
                             />
                         </div>
                         <div className="space-y-3">
@@ -226,7 +226,7 @@ export default function TacticalSetupPage() {
                                 type="range" min="5" max="45" step="5"
                                 value={hydrationInterval / 60}
                                 onChange={(e) => setHydrationInterval(parseInt(e.target.value) * 60)}
-                                className="w-full accent-blue-500 h-1 bg-white/5 rounded-full appearance-none"
+                                className="w-full h-8 bg-transparent cursor-pointer appearance-none range-slider"
                             />
                         </div>
                     </div>
