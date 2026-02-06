@@ -17,8 +17,8 @@ export function Navigation() {
     ];
 
     return (
-        <nav className="liquid-nav fixed bottom-0 left-0 right-0 z-[100] pb-[env(safe-area-inset-bottom)]">
-            <div className="max-w-md mx-auto px-6 py-2.5 flex justify-between items-center">
+        <nav className="liquid-nav fixed bottom-0 left-0 right-0 z-[100] pb-[max(0.5rem,calc(env(safe-area-inset-bottom)-16px))]">
+            <div className="max-w-md mx-auto px-6 py-1.5 flex justify-between items-center">
                 {links.map((link) => {
                     const Icon = link.icon;
                     const isActive = pathname === link.href;
