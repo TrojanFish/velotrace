@@ -253,9 +253,9 @@ export default function GaragePage() {
                                     disabled={isPhysioLocked}
                                     value={user.restingHR}
                                     onChange={(e) => updateUser({ restingHR: parseInt(e.target.value) })}
-                                    className="liquid-input w-20 text-center text-sm font-mono text-rose-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="liquid-input h-11 w-28 text-center text-sm font-mono text-rose-400 disabled:opacity-40 disabled:cursor-not-allowed"
                                 />
-                                <span className="text-[10px] font-bold text-white/30">BPM</span>
+                                <span className="text-[10px] font-bold text-white/20 w-8">BPM</span>
                             </div>
                         </div>
                         <p className="text-[9px] text-white/20 uppercase font-bold tracking-widest pl-11">
@@ -285,28 +285,34 @@ export default function GaragePage() {
                             <div className="liquid-icon success p-2">
                                 <Weight size={16} />
                             </div>
-                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">体重 (kg)</span>
+                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">体重 / WEIGHT</span>
                         </div>
-                        <input
-                            type="number"
-                            value={user.weight}
-                            onChange={(e) => updateUser({ weight: parseFloat(e.target.value) })}
-                            className="liquid-input w-28 text-center text-sm font-mono text-emerald-400"
-                        />
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="number"
+                                value={user.weight}
+                                onChange={(e) => updateUser({ weight: parseFloat(e.target.value) })}
+                                className="liquid-input h-11 w-28 text-center text-sm font-mono text-emerald-400"
+                            />
+                            <span className="text-[10px] font-bold text-white/20 w-8">KG</span>
+                        </div>
                     </div>
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             <div className="liquid-icon p-2">
                                 <Zap size={16} />
                             </div>
-                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">FTP (W)</span>
+                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">当前 FTP</span>
                         </div>
-                        <input
-                            type="number"
-                            value={user.ftp}
-                            onChange={(e) => updateUser({ ftp: parseInt(e.target.value) })}
-                            className="liquid-input w-28 text-center text-sm font-mono text-cyan-400"
-                        />
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="number"
+                                value={user.ftp}
+                                onChange={(e) => updateUser({ ftp: parseInt(e.target.value) })}
+                                className="liquid-input h-11 w-28 text-center text-sm font-mono text-cyan-400"
+                            />
+                            <span className="text-[10px] font-bold text-white/20 w-8">W</span>
+                        </div>
                     </div>
                 </div>
             </section>
