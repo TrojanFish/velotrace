@@ -25,6 +25,8 @@ export default function TacticalSetupPage() {
 
     // Load session if exists to sync settings
     useEffect(() => {
+        router.prefetch('/ride'); // Prefetch the ride page for instant transition
+
         const saved = localStorage.getItem('velotrace_ride_session');
         if (saved) {
             const { fuel, water, distance, level } = JSON.parse(saved);
@@ -33,7 +35,7 @@ export default function TacticalSetupPage() {
             setTargetDistance(distance);
             setIntensity(level);
         }
-    }, []);
+    }, [router]);
 
     // 1. Tactical Strategy Calculation (Personalized + Weather Optimized)
     const suggestedStrategy = useMemo(() => {

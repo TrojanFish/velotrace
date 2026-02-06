@@ -370,14 +370,18 @@ export default function ActiveRidePage() {
             </div>
 
             {/* 3. Global Controls - Bottom Optimized */}
-            <div className="w-full max-w-sm mx-auto flex items-center justify-between px-10 pt-4 pb-[env(safe-area-inset-bottom,2rem)] z-10 landscape:pb-4 landscape:pt-2">
+            <div className="w-full max-w-md mx-auto flex items-center justify-between px-8 pt-4 pb-[env(safe-area-inset-bottom,2rem)] z-10 landscape:pb-4 landscape:pt-2">
                 <button
                     onMouseDown={startHold}
                     onMouseUp={stopHold}
                     onMouseLeave={stopHold}
-                    onTouchStart={startHold}
+                    onTouchStart={(e) => {
+                        e.preventDefault();
+                        startHold();
+                    }}
                     onTouchEnd={stopHold}
-                    className="relative p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden"
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="relative p-6 md:p-8 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden select-none touch-none"
                 >
                     {/* Progress fill background */}
                     <div
@@ -394,9 +398,9 @@ export default function ActiveRidePage() {
 
                 <button
                     onClick={handleStartStop}
-                    className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
-                        ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.3)]'
-                        : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.3)]'
+                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
+                        ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.4)]'
+                        : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.4)]'
                         }`}
                 >
                     {isActive ? <Pause size={44} strokeWidth={3} /> : <Play size={44} strokeWidth={3} fill="currentColor" />}
@@ -404,7 +408,7 @@ export default function ActiveRidePage() {
 
                 <button
                     onClick={() => router.push('/ride/setup')}
-                    className="p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all"
+                    className="p-6 md:p-8 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all select-none"
                 >
                     <Settings2 size={28} />
                 </button>
