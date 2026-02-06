@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { Navigation } from "@/components/Navigation";
 import { Providers } from "@/components/Providers";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -43,10 +42,7 @@ export default function RootLayout({
         className={`${inter.variable} antialiased min-h-[100dvh] selection:bg-cyan-500/30`}
       >
         <Providers>
-          <div className="relative z-10 max-w-md mx-auto min-h-[100dvh] flex flex-col pt-[calc(env(safe-area-inset-top)+1rem)] pb-32 px-4 overflow-x-hidden">
-            {children}
-          </div>
-          <Navigation />
+          {children}
         </Providers>
         <Toaster
           position="top-center"
