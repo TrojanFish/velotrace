@@ -48,13 +48,19 @@ export function Navigation() {
                             className={`flex flex-col items-center gap-1.5 transition-all duration-300 group ${isActive ? "text-cyan-400" : "text-slate-500 hover:text-slate-300"
                                 } ${link.className || ""}`}
                         >
-                            <div className={`relative p-2 rounded-2xl transition-all duration-300 ${isActive
+                            <div className={`relative p-2 rounded-2xl transition-all duration-300 isolate transform-gpu ${isActive
                                 ? "bg-gradient-to-br from-cyan-500/20 to-purple-500/10 shadow-[0_0_20px_rgba(0,212,255,0.3)]"
                                 : "group-hover:bg-white/5"
-                                } ${isRideActive && link.href === (rideSession ? "/ride" : "/ride/setup") ? "animate-cyan-breathing" : ""}`}>
-                                {/* Glow effect for active state */}
+                                }`}>
+                                {/* Liquid Aura Glow for Active Ride */}
+                                {isRideActive && link.href === (rideSession ? "/ride" : "/ride/setup") && (
+                                    <div className="absolute inset-0 -z-10 animate-cyan-breathing">
+                                        <div className="absolute inset-[-40%] bg-cyan-400/30 blur-2xl rounded-full" />
+                                    </div>
+                                )}
+                                {/* Glow effect for active tab route */}
                                 {isActive && (
-                                    <div className="absolute inset-0 rounded-2xl bg-cyan-500/20 blur-xl animate-pulse" />
+                                    <div className="absolute inset-0 rounded-2xl bg-cyan-500/20 blur-xl animate-pulse -z-10" />
                                 )}
                                 <Icon
                                     size={22}
