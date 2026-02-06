@@ -219,181 +219,187 @@ export default function ActiveRidePage() {
     const { isActive, fuelInterval } = rideSession;
 
     return (
-        <div className="fixed inset-0 h-[100dvh] bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans overscroll-none">
-            {/* Background Decor - Optimized for Performance */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-                {/* Reduced blur radius from 150px to 80px/100px and added will-change for performance */}
-                <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-cyan-500/10 blur-[80px] md:blur-[100px] rounded-full animate-pulse will-change-transform" />
-                <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-purple-500/10 blur-[80px] md:blur-[100px] rounded-full animate-pulse will-change-transform" />
-            </div>
+        <>
+            {/* Stable Background Layer */}
+            <div className="fixed inset-0 bg-[#050810] z-[1000]" />
 
-            {/* Active Ride Display - Responsive Landscape/Portrait */}
-            <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col landscape:flex-row items-center justify-center space-y-8 landscape:space-y-0 landscape:gap-12 z-10">
-                {/* Primary Clock Section */}
-                <div className="flex flex-col items-center justify-center space-y-2 landscape:w-1/2">
-
-                    {/* Mission Context Pill */}
-                    <div className="flex items-center gap-3 mb-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
-                            {rideSession.targetDistance}KM
-                        </span>
-                        <div className="w-1 h-3 bg-white/10 rounded-full" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
-                            {rideSession.intensity}
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-cyan-400/80 mb-2">
-                        <Timer size={24} className={isActive ? "animate-spin-slow" : ""} />
-                        <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
-                    </div>
-                    {/* Use will-change on the large text update */}
-                    <h1 className="text-[6.5rem] md:text-[8rem] lg:text-[12rem] landscape:text-[8rem] font-black italic tracking-tighter text-white tabular-nums leading-[0.85] drop-shadow-[0_0_60px_rgba(255,255,255,0.05)] will-change-contents">
-                        {formatTime(elapsedTime)}
-                    </h1>
+            {/* Stable Layout Container using svh to prevent jumping when UI retracts */}
+            <div className="fixed inset-0 z-[1001] h-[100svh] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans overscroll-none">
+                {/* Background Decor - Optimized for Performance */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+                    {/* Reduced blur radius from 150px to 80px/100px and added will-change for performance */}
+                    <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-cyan-500/10 blur-[80px] md:blur-[100px] rounded-full animate-pulse will-change-transform" />
+                    <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-purple-500/10 blur-[80px] md:blur-[100px] rounded-full animate-pulse will-change-transform" />
                 </div>
 
-                {/* Stats Metrics Grid */}
-                <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-4 landscape:w-1/2">
-                    {/* Next Fuel */}
-                    <div className="pro-card bg-white/[0.03] border-white/5 p-6 md:p-8 flex flex-col items-center justify-center space-y-6 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-2 opacity-5">
-                            <Utensils size={40} />
+                {/* Active Ride Display - Responsive Landscape/Portrait */}
+                <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col landscape:flex-row items-center justify-center space-y-8 landscape:space-y-0 landscape:gap-12 z-10">
+                    {/* Primary Clock Section */}
+                    <div className="flex flex-col items-center justify-center space-y-2 landscape:w-1/2">
+
+                        {/* Mission Context Pill */}
+                        <div className="flex items-center gap-3 mb-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
+                                {rideSession.targetDistance}KM
+                            </span>
+                            <div className="w-1 h-3 bg-white/10 rounded-full" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
+                                {rideSession.intensity}
+                            </span>
                         </div>
-                        <div className="flex items-center gap-2 text-amber-500">
-                            <Utensils size={16} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Next Fuel</span>
+
+                        <div className="flex items-center gap-3 text-cyan-400/80 mb-2">
+                            <Timer size={24} className={isActive ? "animate-spin-slow" : ""} />
+                            <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
                         </div>
-                        <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
-                            {formatTime(fuelInterval - (elapsedTime % fuelInterval))}
-                        </p>
-                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
-                            <div
-                                className="h-full bg-amber-500 transition-all duration-1000 will-change-transform"
-                                style={{ width: `${(1 - (elapsedTime % fuelInterval) / fuelInterval) * 100}%` }}
-                            />
-                        </div>
+                        {/* Use will-change on the large text update */}
+                        <h1 className="text-[6.5rem] md:text-[8rem] lg:text-[12rem] landscape:text-[8rem] font-black italic tracking-tighter text-white tabular-nums leading-[0.85] drop-shadow-[0_0_60px_rgba(255,255,255,0.05)] will-change-contents">
+                            {formatTime(elapsedTime)}
+                        </h1>
                     </div>
 
-                    {/* Wind Impact */}
-                    <div className={`pro-card p-6 md:p-8 flex flex-col items-center justify-center space-y-6 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
-                        <div className={`flex items-center gap-2 ${isHeadwind ? 'text-rose-500' : 'text-cyan-400'}`}>
-                            <Wind size={16} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Current Wind</span>
-                        </div>
-                        <div className="flex flex-col items-center">
+                    {/* Stats Metrics Grid */}
+                    <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-4 landscape:w-1/2">
+                        {/* Next Fuel */}
+                        <div className="pro-card bg-white/[0.03] border-white/5 p-6 md:p-8 flex flex-col items-center justify-center space-y-6 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-2 opacity-5">
+                                <Utensils size={40} />
+                            </div>
+                            <div className="flex items-center gap-2 text-amber-500">
+                                <Utensils size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Next Fuel</span>
+                            </div>
                             <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
-                                {weather?.windSpeed?.toFixed(0) || '--'}
-                                <span className="text-[10px] uppercase opacity-40 ml-1 pr-1">KMH</span>
+                                {formatTime(fuelInterval - (elapsedTime % fuelInterval))}
                             </p>
-                            <div className="flex items-center gap-1.5 mt-1 opacity-50">
-                                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                                <span className="text-[8px] font-black uppercase italic">
-                                    {weather?.windDirection}° {getCardinalDirection(weather?.windDirection || 0)}
-                                </span>
+                            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
+                                <div
+                                    className="h-full bg-amber-500 transition-all duration-1000 will-change-transform"
+                                    style={{ width: `${(1 - (elapsedTime % fuelInterval) / fuelInterval) * 100}%` }}
+                                />
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            {/* 3. Global Controls - Bottom Optimized */}
-            <div className="w-full max-w-md mx-auto flex items-center justify-between px-8 pt-4 pb-[env(safe-area-inset-bottom,2rem)] z-10 landscape:pb-4 landscape:pt-2">
-                <button
-                    onMouseDown={startHold}
-                    onMouseUp={stopHold}
-                    onMouseLeave={stopHold}
-                    onTouchStart={(e) => {
-                        e.preventDefault();
-                        startHold();
-                    }}
-                    onTouchEnd={stopHold}
-                    onContextMenu={(e) => e.preventDefault()}
-                    className="relative p-6 md:p-8 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden select-none touch-none"
-                >
-                    {/* Progress fill background */}
-                    <div
-                        className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-[30ms]"
-                        style={{ width: `${holdProgress}%` }}
-                    />
-                    <RotateCcw size={28} className={holdProgress > 0 ? "animate-spin-fast text-rose-500" : ""} />
-                    {holdProgress > 0 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-rose-500/10 backdrop-blur-sm">
-                            <span className="text-[10px] font-black text-rose-500 uppercase">Hold</span>
-                        </div>
-                    )}
-                </button>
-
-                <button
-                    onClick={handleStartStop}
-                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center transition-transform transform active:scale-95 shadow-2xl ${isActive
-                        ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.4)]'
-                        : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.4)]'
-                        }`}
-                >
-                    {isActive ? <Pause size={44} strokeWidth={3} /> : <Play size={44} strokeWidth={3} fill="currentColor" />}
-                </button>
-
-                <button
-                    onClick={() => router.push('/ride/setup')}
-                    className="p-6 md:p-8 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all select-none"
-                >
-                    <Settings2 size={28} />
-                </button>
-            </div>
-
-            {/* 4. Full-Screen Reminder Overlays */}
-            <AnimatePresence>
-                {showReminder && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[2000] flex items-center justify-center p-8 bg-black/98 backdrop-blur-3xl"
-                        onClick={() => {
-                            if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
-                            setShowReminder(null);
-                        }}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.8, y: 40 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="flex flex-col items-center text-center space-y-12"
-                        >
-                            <div className={`w-64 h-64 rounded-full flex items-center justify-center animate-bounce shadow-2xl ${showReminder === 'fuel'
-                                ? 'bg-amber-500/20 text-amber-500 border-4 border-amber-500'
-                                : 'bg-blue-500/20 text-blue-400 border-4 border-blue-400'
-                                }`}>
-                                {showReminder === 'fuel' ? <Utensils size={100} /> : <Droplets size={100} />}
+                        {/* Wind Impact */}
+                        <div className={`pro-card p-6 md:p-8 flex flex-col items-center justify-center space-y-6 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
+                            <div className={`flex items-center gap-2 ${isHeadwind ? 'text-rose-500' : 'text-cyan-400'}`}>
+                                <Wind size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Current Wind</span>
                             </div>
-
-                            <div className="space-y-6">
-                                <h1 className="text-8xl font-black italic text-white uppercase tracking-tighter leading-none">
-                                    {showReminder === 'fuel' ? 'TIME TO FUEL!' : 'HYDRATE NOW!'}
-                                </h1>
-                                <div className="space-y-2">
-                                    <p className="text-2xl font-black text-white/50 uppercase tracking-[0.3em]">补给窗口已开启</p>
-                                    <div className="h-0.5 w-24 bg-cyan-500 mx-auto rounded-full" />
-                                    <p className="text-xl font-bold text-white/80 py-4">
-                                        {showReminder === 'fuel'
-                                            ? `建议摄入 ${rideSession.intensity === 'race' ? '60-80g' : '30-40g'} 碳水化合物`
-                                            : `基于当前高温，请饮入 ${Math.round(250 * (weather?.apparentTemp && weather.apparentTemp > 30 ? 1.4 : 1))}ml 电解质水`}
-                                    </p>
+                            <div className="flex flex-col items-center">
+                                <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
+                                    {weather?.windSpeed?.toFixed(0) || '--'}
+                                    <span className="text-[10px] uppercase opacity-40 ml-1 pr-1">KMH</span>
+                                </p>
+                                <div className="flex items-center gap-1.5 mt-1 opacity-50">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                    <span className="text-[8px] font-black uppercase italic">
+                                        {weather?.windDirection}° {getCardinalDirection(weather?.windDirection || 0)}
+                                    </span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div className="flex flex-col items-center gap-4">
-                                <button className="px-16 py-8 rounded-full bg-white text-black font-black uppercase text-2xl shadow-2xl active:scale-90 transition-transform">
-                                    进入下一阶段
-                                </button>
-                                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest animate-pulse">
-                                    20秒后自动关闭以继续计时
-                                </p>
+                {/* 3. Global Controls - Bottom Optimized */}
+                <div className="w-full max-w-md mx-auto flex items-center justify-between px-8 pt-4 pb-[env(safe-area-inset-bottom,2rem)] z-10 landscape:pb-4 landscape:pt-2">
+                    <button
+                        onMouseDown={startHold}
+                        onMouseUp={stopHold}
+                        onMouseLeave={stopHold}
+                        onTouchStart={(e) => {
+                            e.preventDefault();
+                            startHold();
+                        }}
+                        onTouchEnd={stopHold}
+                        onContextMenu={(e) => e.preventDefault()}
+                        className="relative p-6 md:p-8 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden select-none touch-none"
+                    >
+                        {/* Progress fill background */}
+                        <div
+                            className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-[30ms]"
+                            style={{ width: `${holdProgress}%` }}
+                        />
+                        <RotateCcw size={28} className={holdProgress > 0 ? "animate-spin-fast text-rose-500" : ""} />
+                        {holdProgress > 0 && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-rose-500/10 backdrop-blur-sm">
+                                <span className="text-[10px] font-black text-rose-500 uppercase">Hold</span>
                             </div>
+                        )}
+                    </button>
+
+                    <button
+                        onClick={handleStartStop}
+                        className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center transition-transform transform active:scale-95 shadow-2xl ${isActive
+                            ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.4)]'
+                            : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.4)]'
+                            }`}
+                    >
+                        {isActive ? <Pause size={44} strokeWidth={3} /> : <Play size={44} strokeWidth={3} fill="currentColor" />}
+                    </button>
+
+                    <button
+                        onClick={() => router.push('/ride/setup')}
+                        className="p-6 md:p-8 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all select-none"
+                    >
+                        <Settings2 size={28} />
+                    </button>
+                </div>
+
+                {/* 4. Full-Screen Reminder Overlays */}
+                <AnimatePresence>
+                    {showReminder && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[2000] flex items-center justify-center p-8 bg-black/98 backdrop-blur-3xl"
+                            onClick={() => {
+                                if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
+                                setShowReminder(null);
+                            }}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.8, y: 40 }}
+                                animate={{ scale: 1, y: 0 }}
+                                className="flex flex-col items-center text-center space-y-12"
+                            >
+                                <div className={`w-64 h-64 rounded-full flex items-center justify-center animate-bounce shadow-2xl ${showReminder === 'fuel'
+                                    ? 'bg-amber-500/20 text-amber-500 border-4 border-amber-500'
+                                    : 'bg-blue-500/20 text-blue-400 border-4 border-blue-400'
+                                    }`}>
+                                    {showReminder === 'fuel' ? <Utensils size={100} /> : <Droplets size={100} />}
+                                </div>
+
+                                <div className="space-y-6">
+                                    <h1 className="text-8xl font-black italic text-white uppercase tracking-tighter leading-none">
+                                        {showReminder === 'fuel' ? 'TIME TO FUEL!' : 'HYDRATE NOW!'}
+                                    </h1>
+                                    <div className="space-y-2">
+                                        <p className="text-2xl font-black text-white/50 uppercase tracking-[0.3em]">补给窗口已开启</p>
+                                        <div className="h-0.5 w-24 bg-cyan-500 mx-auto rounded-full" />
+                                        <p className="text-xl font-bold text-white/80 py-4">
+                                            {showReminder === 'fuel'
+                                                ? `建议摄入 ${rideSession.intensity === 'race' ? '60-80g' : '30-40g'} 碳水化合物`
+                                                : `基于当前高温，请饮入 ${Math.round(250 * (weather?.apparentTemp && weather.apparentTemp > 30 ? 1.4 : 1))}ml 电解质水`}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col items-center gap-4">
+                                    <button className="px-16 py-8 rounded-full bg-white text-black font-black uppercase text-2xl shadow-2xl active:scale-90 transition-transform">
+                                        进入下一阶段
+                                    </button>
+                                    <p className="text-[10px] font-black text-white/20 uppercase tracking-widest animate-pulse">
+                                        20秒后自动关闭以继续计时
+                                    </p>
+                                </div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </>
     );
 }
