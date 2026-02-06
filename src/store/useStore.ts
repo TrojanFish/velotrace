@@ -44,6 +44,16 @@ export interface PMCData {
     tsb: number;
 }
 
+export interface WeatherCache {
+    data: any;
+    timestamp: number;
+}
+
+export interface AIBriefingCache {
+    data: any;
+    timestamp: number;
+}
+
 export interface BikeProfile {
     id: string;
     name: string;
@@ -82,6 +92,10 @@ interface VeloState {
     activeBikeIndex: number;
     dailyLoads: DailyLoad[];
 
+    // Global Data Caches to prevent flickering
+    weatherCache: WeatherCache | null;
+    aiBriefingCache: AIBriefingCache | null;
+
     // Actions
     updateUser: (user: Partial<UserSettings>) => void;
     updateBike: (index: number, bike: Partial<BikeProfile>) => void;
@@ -96,6 +110,10 @@ interface VeloState {
     // Wheelset Actions
     setActiveWheelset: (bikeIndex: number, wheelsetIndex: number) => void;
     addWheelset: (bikeIndex: number, wheelset: Wheelset) => void;
+
+    // Cache Actions
+    setWeatherCache: (cache: WeatherCache) => void;
+    setAIBriefingCache: (cache: AIBriefingCache) => void;
 }
 
 // Type for persisted state during migration
@@ -158,6 +176,8 @@ export const useStore = create<VeloState>()(
             ],
             activeBikeIndex: 0,
             dailyLoads: [],
+            weatherCache: null,
+            aiBriefingCache: null,
 
             updateUser: (newUser) => set((state) => ({ user: { ...state.user, ...newUser } })),
             updateBike: (index, newBike) => set((state) => {
@@ -213,6 +233,8 @@ export const useStore = create<VeloState>()(
                 newBikes[bikeIndex].wheelsets.push(wheelset);
                 return { bikes: newBikes };
             }),
+            setWeatherCache: (weatherCache) => set({ weatherCache }),
+            setAIBriefingCache: (aiBriefingCache) => set({ aiBriefingCache }),
         }),
         {
             name: 'velotrace-storage-v3', // New name for IndexedDB storage

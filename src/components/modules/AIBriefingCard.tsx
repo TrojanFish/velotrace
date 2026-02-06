@@ -6,22 +6,14 @@ import { Brain, Sparkles, ChevronRight, Loader2, ThermometerSun, Wind, Zap, X } 
 import { useState, useEffect } from "react";
 
 export function AIBriefingCard() {
-    const { user, bikes, activeBikeIndex } = useStore();
+    const { user, bikes, activeBikeIndex, aiBriefingCache, setAIBriefingCache } = useStore();
     const { data: weather, loading: weatherLoading } = useWeather();
-    const [briefing, setBriefing] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const bike = bikes[activeBikeIndex];
-
     const [showDetails, setShowDetails] = useState(false);
 
-    const [structuredData, setStructuredData] = useState<{
-        session: string;
-        intensity: string;
-        goal: string;
-        advice: string;
-        logic: string;
-    } | null>(null);
+    const structuredData = aiBriefingCache?.data;
 
     const generateBriefing = async () => {
         setIsLoading(true);
@@ -37,16 +29,23 @@ export function AIBriefingCard() {
                 })
             });
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-            const text = await res.text();
-            const data = text ? JSON.parse(text) : null;
-            if (data) setStructuredData(data);
+            const data = await res.json();
+            if (data) {
+                setAIBriefingCache({
+                    data,
+                    timestamp: Date.now()
+                });
+            }
         } catch (e) {
-            setStructuredData({
-                session: "OFFLINE MODE",
-                intensity: "Z2 Endurance",
-                goal: "生理基础维护",
-                advice: `⚠️ 智脑连接超时。基于当前 TSB (${user.tsb || 15})，系统已启用离线基准策略。建议今日进行低强度排酸骑行，注意避开侧风区。`,
-                logic: "网络链路中断，自动调用本地缓存的训练风险模型进行保守指引。"
+            setAIBriefingCache({
+                data: {
+                    session: "OFFLINE MODE",
+                    intensity: "Z2 Endurance",
+                    goal: "生理基础维护",
+                    advice: `⚠️ 智脑连接超时。基于当前 TSB (${user.tsb || 15})，系统已启用离线基准策略。`,
+                    logic: "网络链路中断，自动调用本地缓存模型。"
+                },
+                timestamp: Date.now()
             });
         } finally {
             setIsLoading(false);
@@ -54,10 +53,12 @@ export function AIBriefingCard() {
     };
 
     useEffect(() => {
-        if (!structuredData && !weatherLoading) {
+        // Auto-refresh if data is older than 2 hours or doesn't exist
+        const isExpired = !aiBriefingCache || (Date.now() - aiBriefingCache.timestamp > 2 * 60 * 60 * 1000);
+        if (isExpired && !weatherLoading) {
             generateBriefing();
         }
-    }, [weatherLoading, structuredData]);
+    }, [weatherLoading]);
 
     return (
         <>
