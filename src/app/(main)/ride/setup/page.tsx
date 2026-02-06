@@ -183,7 +183,7 @@ export default function TacticalSetupPage() {
                             <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest">预计耗时</span>
                             <Timer size={14} className="text-white/20" />
                         </div>
-                        <p className="text-3xl font-black italic text-white">
+                        <p className="text-3xl font-black italic text-white pr-2">
                             {suggestedStrategy.durationHours.toFixed(1)}<span className="text-xs ml-1 opacity-40">HRS</span>
                         </p>
                     </div>
@@ -192,7 +192,7 @@ export default function TacticalSetupPage() {
                             <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest">水分补给</span>
                             <AlertTriangle size={14} className="text-white/20" />
                         </div>
-                        <p className="text-3xl font-black italic text-white">
+                        <p className="text-3xl font-black italic text-white pr-2">
                             {suggestedStrategy.totalWater > 1000 ? (suggestedStrategy.totalWater / 1000).toFixed(1) : suggestedStrategy.totalWater}
                             <span className="text-xs ml-1 opacity-40">{suggestedStrategy.totalWater > 1000 ? 'L' : 'ML'}</span>
                         </p>

@@ -18,7 +18,7 @@ export function Navigation() {
         { href: "/", label: "预览", icon: LayoutDashboard },
         { href: "/analytics", label: "记录", icon: BarChart3 },
         {
-            href: rideSession ? "/ride" : "/ride/setup",
+            href: isRideActive ? "/ride" : "/ride/setup",
             label: isRideActive ? "进行中" : "部署",
             icon: isRideActive ? Activity : Target,
             className: isRideActive ? "text-cyan-400 animate-cyan-breathing glow-cyan" : ""
