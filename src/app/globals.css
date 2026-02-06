@@ -109,7 +109,6 @@
 html {
   height: -webkit-fill-available;
   scroll-behavior: smooth;
-  scrollbar-gutter: stable;
 }
 
 body {
@@ -129,19 +128,17 @@ body {
    📜 Native App Style - Hide Scrollbars
    ============================================ */
 
-::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari, Edge */
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+  display: none !important;
 }
 
-/* Firefox */
+/* Hide scrollbar for IE, Edge and Firefox */
 * {
-  scrollbar-width: none;
-}
-
-/* IE/Edge (Old) */
-body {
-  -ms-overflow-style: none;
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
 }
 
 /* Animated Aurora Background */

@@ -65,16 +65,7 @@ export default function ActiveRidePage() {
         }
     }, [router]);
 
-    if (!isReady) {
-        return (
-            <div className="fixed inset-0 bg-[#050810] z-[1000] flex items-center justify-center">
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
-                </div>
-            </div>
-        );
-    }
+
 
     useEffect(() => {
         localStorage.setItem('velotrace_ride_session', JSON.stringify({
@@ -323,6 +314,17 @@ export default function ActiveRidePage() {
 
     const windAlignment = weather?.windDirection || 0;
     const isHeadwind = weather && weather.windSpeed > 15;
+
+    if (!isReady) {
+        return (
+            <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden font-sans">
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans">
