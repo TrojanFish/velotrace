@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { LayoutDashboard, BarChart3, Wrench, UserCog, Target } from "lucide-react";
 
 export function Navigation() {
+    const router = useRouter();
     const pathname = usePathname();
 
     if (pathname === "/ride") return null;
@@ -24,10 +25,17 @@ export function Navigation() {
                     const Icon = link.icon;
                     const isActive = pathname === link.href;
 
+                    // Data Prediction: Prefetch on Hover or Touch Start
+                    const handlePrefetch = () => {
+                        router.prefetch(link.href);
+                    };
+
                     return (
                         <Link
                             key={link.href}
                             href={link.href}
+                            onMouseEnter={handlePrefetch}
+                            onTouchStart={handlePrefetch}
                             className={`flex flex-col items-center gap-1.5 transition-all duration-300 group ${isActive ? "text-cyan-400" : "text-slate-500 hover:text-slate-300"
                                 }`}
                         >
