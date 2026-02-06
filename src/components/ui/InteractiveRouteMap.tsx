@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { MapContainer, TileLayer, Polyline, useMap, LayersControl, CircleMarker, Marker, Tooltip as LeafletTooltip } from "react-leaflet";
 import L from "leaflet";
-import { Wind, Wind as WindIcon, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 interface Point {
     lat: number;
