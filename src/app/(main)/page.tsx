@@ -53,7 +53,7 @@ export default function Home() {
           </p>
         </div>
         <Link
-          href="/garage"
+          href="/pilot-office"
           className="relative group transition-transform hover:scale-105"
         >
           <div className="relative">

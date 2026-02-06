@@ -165,10 +165,9 @@ body {
    📜 Native App Style - Hide Scrollbars (Aggressive)
    ============================================ */
 
-/* 全局禁用滚动条显示 */
+/* 全局禁用滚动条显示 - 优化：仅针对 body，避免不可见导致误解 */
 html,
-body,
-* {
+body {
   -ms-overflow-style: none !important;
   /* IE and Edge */
   scrollbar-width: none !important;
@@ -177,8 +176,7 @@ body,
 
 /* 针对 Webkit 引擎 (Chrome, Safari, Edge, Opera) */
 html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-*::-webkit-scrollbar {
+body::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;

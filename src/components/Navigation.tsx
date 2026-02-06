@@ -15,16 +15,17 @@ export function Navigation() {
     const isRideActive = rideSession?.isActive;
 
     const links = [
-        { href: "/", label: "预览", icon: LayoutDashboard },
-        { href: "/analytics", label: "记录", icon: BarChart3 },
+        { id: 'home', href: "/", label: "预览", icon: LayoutDashboard },
+        { id: 'analytics', href: "/analytics", label: "记录", icon: BarChart3 },
         {
+            id: 'ride',
             href: (rideSession && (rideSession.isActive || rideSession.accumulatedTime > 0)) ? "/ride" : "/ride/setup",
             label: (rideSession && (rideSession.isActive || rideSession.accumulatedTime > 0)) ? "进行中" : "部署",
             icon: (rideSession && rideSession.isActive) ? Activity : Target,
             className: (rideSession && rideSession.isActive) ? "text-cyan-400 animate-pulse" : ""
         },
-        { href: "/tools", label: "工具", icon: Wrench },
-        { href: "/garage", label: "车手", icon: UserCog },
+        { id: 'tools', href: "/tools", label: "工具", icon: Wrench },
+        { id: 'pilot', href: "/pilot-office", label: "车手", icon: UserCog },
     ];
 
     return (
@@ -32,10 +33,22 @@ export function Navigation() {
             <div className="max-w-md mx-auto px-6 py-1.5 flex justify-between items-center">
                 {links.map((link) => {
                     const Icon = link.icon;
-                    // Improved active check to handle /ride subroutes properly
-                    const isDeployLink = link.label === "部署" || link.label === "进行中";
-                    const isActive = pathname === link.href ||
-                        (isDeployLink && (pathname === "/ride" || pathname === "/ride/setup"));
+
+                    // Robust active check using ID
+                    let isActive = false;
+                    switch (link.id) {
+                        case 'home':
+                            isActive = pathname === "/";
+                            break;
+                        case 'ride':
+                            isActive = pathname === "/ride" || pathname === "/ride/setup";
+                            break;
+                        case 'pilot':
+                            isActive = pathname.startsWith("/pilot-office");
+                            break;
+                        default:
+                            isActive = pathname.startsWith(link.href);
+                    }
 
                     // Data Prediction: Prefetch on Hover or Touch Start
                     const handlePrefetch = () => {
@@ -44,7 +57,7 @@ export function Navigation() {
 
                     return (
                         <Link
-                            key={link.href}
+                            key={link.id}
                             href={link.href}
                             onMouseEnter={handlePrefetch}
                             onTouchStart={handlePrefetch}
