@@ -219,7 +219,7 @@ export default function ActiveRidePage() {
     const { isActive, fuelInterval } = rideSession;
 
     return (
-        <div className="fixed inset-0 h-[100dvh] bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden touch-none font-sans overscroll-none">
+        <div className="fixed inset-0 h-[100dvh] bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans overscroll-none">
             {/* Background Decor - Optimized for Performance */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
                 {/* Reduced blur radius from 150px to 80px/100px and added will-change for performance */}
