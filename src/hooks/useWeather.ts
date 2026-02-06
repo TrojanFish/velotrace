@@ -16,25 +16,34 @@ export function useWeather() {
 
     useEffect(() => {
         const getLocation = () => {
-            if (!navigator.geolocation) {
+            if (typeof window === 'undefined' || !navigator.geolocation) {
                 setError("Geolocation not supported");
                 setLoading(false);
                 return;
             }
 
+            // iOS PWA Tip: Geolocation is strictly tied to HTTPS and domain origin.
+            // We use high accuracy and a reasonably long timeout.
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
-                    fetchWeatherData(position.coords.latitude, position.coords.longitude);
+                    const { latitude, longitude } = position.coords;
+                    console.log("📍 Location acquired:", latitude, longitude);
+                    fetchWeatherData(latitude, longitude);
                 },
                 (err) => {
-                    console.error("Location Error:", err.code, err.message);
-                    setError("Location failed - Using Default");
-                    // Only fetch default if we haven't got data yet
+                    console.error("❌ Location Error:", err.code, err.message);
+                    // Specific handling for permission denial
+                    if (err.code === 1) {
+                        setError("Permission Denied - Using Default");
+                    } else {
+                        setError("Location Timeout - Using Default");
+                    }
+                    // Fallback to Beijing if no data exists
                     if (!data) fetchWeatherData(39.9042, 116.4074);
                 },
                 {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 15000,
                     maximumAge: 0
                 }
             );
@@ -45,7 +54,10 @@ export function useWeather() {
 
     const fetchWeatherData = async (latitude: number, longitude: number) => {
         try {
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto`);
+            // Speed optimization: Use cache-control for faster weather response
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto`, {
+                cache: 'force-cache'
+            });
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const text = await res.text();
             const json = text ? JSON.parse(text) : null;
@@ -58,7 +70,7 @@ export function useWeather() {
                 windSpeed: current.wind_speed_10m,
                 windDirection: current.wind_direction_10m,
                 isRainy: current.precipitation > 0,
-                city: "默认位置 (北京)"
+                city: "本地探测结果"
             });
         } catch (_err) {
             setError("Failed to fetch weather");
