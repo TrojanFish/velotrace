@@ -109,6 +109,7 @@
 html {
   height: -webkit-fill-available;
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 body {
