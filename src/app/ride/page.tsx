@@ -144,7 +144,7 @@ export default function ActiveRidePage() {
                         <Timer size={20} className={isActive ? "animate-spin-slow" : ""} />
                         <span className="text-xs font-black uppercase tracking-[0.4em]">Ride Duration</span>
                     </div>
-                    <h1 className="text-8xl md:text-[12rem] font-black italic tracking-tighter text-white tabular-nums drop-shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                    <h1 className="text-8xl md:text-[12rem] font-black italic tracking-tighter text-white tabular-nums drop-shadow-[0_0_50px_rgba(255,255,255,0.1)] pr-8 mr-[-2rem]">
                         {formatTime(elapsedTime)}
                     </h1>
                 </div>
@@ -157,7 +157,7 @@ export default function ActiveRidePage() {
                             <Utensils size={24} />
                             <span className="text-[10px] font-black uppercase tracking-widest">Next Fuel</span>
                         </div>
-                        <p className="text-4xl font-black italic text-white">
+                        <p className="text-4xl font-black italic text-white pr-4">
                             {formatTime(fuelingInterval - (elapsedTime % fuelingInterval))}
                         </p>
                     </div>
@@ -169,7 +169,7 @@ export default function ActiveRidePage() {
                             <span className="text-[10px] font-black uppercase tracking-widest">Wind Data</span>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-4xl font-black italic text-white">{weather?.windSpeed || '--'} <span className="text-sm">KM/H</span></p>
+                            <p className="text-4xl font-black italic text-white pr-4">{weather?.windSpeed || '--'} <span className="text-sm">KM/H</span></p>
                             <div className="flex items-center gap-2 mt-2 opacity-40">
                                 <div className="w-2 h-2 rounded-full bg-cyan-400" />
                                 <span className="text-[8px] font-bold uppercase">{weather?.windDirection}° DIRECTION</span>
@@ -191,8 +191,8 @@ export default function ActiveRidePage() {
                 <button
                     onClick={handleStartStop}
                     className={`w-24 h-24 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
-                            ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_40px_rgba(244,63,94,0.3)]'
-                            : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.3)]'
+                        ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_40px_rgba(244,63,94,0.3)]'
+                        : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.3)]'
                         }`}
                 >
                     {isActive ? <Pause size={40} strokeWidth={3} /> : <Play size={40} strokeWidth={3} fill="currentColor" />}

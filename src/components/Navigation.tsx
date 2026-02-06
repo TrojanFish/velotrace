@@ -7,6 +7,8 @@ import { LayoutDashboard, BarChart3, Wrench, UserCog } from "lucide-react";
 export function Navigation() {
     const pathname = usePathname();
 
+    if (pathname === "/ride") return null;
+
     const links = [
         { href: "/", label: "战术", icon: LayoutDashboard },
         { href: "/analytics", label: "数据", icon: BarChart3 },
