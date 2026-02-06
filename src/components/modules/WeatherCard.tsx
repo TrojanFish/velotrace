@@ -87,15 +87,22 @@ export function WeatherCard() {
                         <p className="liquid-stat-value text-3xl pr-2">{data.temp}°C</p>
                         <span className="text-sm font-medium text-white/40">体感 {data.apparentTemp}°</span>
                     </div>
-                    {/* Sunrise & Sunset */}
-                    <div className="flex gap-4 mt-1">
-                        <div className="flex items-center gap-1.5 opacity-60">
-                            <Sunrise size={10} className="text-amber-400" />
-                            <span className="text-[10px] font-mono font-bold text-white/60">{data.sunrise || "--:--"}</span>
+
+                    {/* Sunrise & Sunset - Enhanced visibility */}
+                    <div className="flex gap-3 mt-3">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+                            <Sunrise size={14} className="text-amber-400" />
+                            <div className="flex flex-col -space-y-0.5">
+                                <span className="text-[7px] font-black text-white/30 uppercase tracking-tighter">Sunrise</span>
+                                <span className="text-[12px] font-mono font-black text-white/90">{data.sunrise || "--:--"}</span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-1.5 opacity-60">
-                            <Sunset size={10} className="text-orange-400" />
-                            <span className="text-[10px] font-mono font-bold text-white/60">{data.sunset || "--:--"}</span>
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+                            <Sunset size={14} className="text-orange-500" />
+                            <div className="flex flex-col -space-y-0.5">
+                                <span className="text-[7px] font-black text-white/30 uppercase tracking-tighter">Sunset</span>
+                                <span className="text-[12px] font-mono font-black text-white/90">{data.sunset || "--:--"}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
