@@ -4,7 +4,9 @@ import { useStore, Wheelset } from "@/store/useStore";
 import { calculateBMR } from "@/lib/calculators/physiology";
 import { useStravaSync } from "@/hooks/useStravaSync";
 import Image from "next/image";
-import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight } from "lucide-react";
+import { TorqueManager } from "@/components/modules/TorqueManager";
+import { MaintenanceLogManager } from "@/components/modules/MaintenanceLogManager";
+import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight, Wrench, ShieldAlert } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
@@ -19,6 +21,7 @@ export default function GaragePage() {
     const [newWsWidth, setNewWsWidth] = useState(25);
     const [newWsTubeless, setNewWsTubeless] = useState(false);
     const [isPhysioLocked, setIsPhysioLocked] = useState(true);
+    const [assetTab, setAssetTab] = useState<'wheelset' | 'torque' | 'log'>('wheelset');
 
     const { isSyncing, syncSuccess, syncError, sync: handleStravaSync } = useStravaSync();
 
@@ -341,61 +344,90 @@ export default function GaragePage() {
                 </div>
             </section>
 
-            {/* 5. 活动轮组管理 [WHEELSETS] */}
+            {/* 5. 机械档案与扭矩管理 [MECHANICAL ARCHIVE] */}
             <section className="space-y-4">
-                <div className="flex items-center justify-between px-1">
-                    <div className="section-header mb-0">
-                        <div className="section-indicator" />
-                        <h2 className="section-title">轮组资产库</h2>
-                    </div>
-                    <button
-                        onClick={() => setIsAddingWheelset(true)}
-                        className="liquid-tag cursor-pointer hover:scale-105 transition-transform"
-                    >
-                        <Plus size={10} /> 新增
-                    </button>
+                <div className="section-header">
+                    <div className="section-indicator blue" />
+                    <h2 className="section-title">机械档案 / MECHANICAL</h2>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3">
-                    {bike?.wheelsets?.map((ws, idx) => (
-                        <div
-                            key={idx}
-                            className={`pro-card relative transition-all ${bike.activeWheelsetIndex === idx
-                                ? 'border-cyan-500/30 bg-gradient-to-r from-cyan-500/5 to-transparent'
-                                : ''
-                                }`}
+                <div className="pro-card p-0 overflow-hidden">
+                    {/* Segmented Control */}
+                    <div className="flex p-1.5 bg-white/[0.03] border-b border-white/5">
+                        <button
+                            onClick={() => setAssetTab('wheelset')}
+                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'wheelset' ? 'bg-white/10 text-cyan-400' : 'text-white/30 hover:text-white/50'}`}
                         >
-                            <div className="flex justify-between items-start">
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-2">
-                                        <p className={`text-sm font-bold uppercase ${bike.activeWheelsetIndex === idx ? 'text-gradient-cyan' : 'text-white/70'}`}>{ws.name}</p>
-                                        {bike.activeWheelsetIndex === idx && <CheckCircle2 size={12} className="text-cyan-400" />}
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <span className="liquid-tag text-[8px] py-0.5">{ws.tireWidth}MM</span>
-                                        <span className="liquid-tag purple text-[8px] py-0.5">{ws.isTubeless ? 'TL' : 'CL'}</span>
-                                        <span className="liquid-tag success text-[8px] py-0.5">{ws.mileage.toFixed(0)}KM</span>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
-                                    {bike.activeWheelsetIndex !== idx && (
-                                        <button
-                                            onClick={() => setActiveWheelset(activeBikeIndex, idx)}
-                                            className="liquid-button text-[9px] py-1.5 px-3"
-                                        >
-                                            激活
-                                        </button>
-                                    )}
+                            轮组资产
+                        </button>
+                        <button
+                            onClick={() => setAssetTab('torque')}
+                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'torque' ? 'bg-white/10 text-purple-400' : 'text-white/30 hover:text-white/50'}`}
+                        >
+                            扭矩设定
+                        </button>
+                        <button
+                            onClick={() => setAssetTab('log')}
+                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'log' ? 'bg-white/10 text-orange-400' : 'text-white/30 hover:text-white/50'}`}
+                        >
+                            维护日志
+                        </button>
+                    </div>
+
+                    <div className="p-5">
+                        {assetTab === 'wheelset' && (
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">已保存轮组 ({bike?.wheelsets?.length})</p>
                                     <button
-                                        onClick={() => handleDeleteWheelset(idx)}
-                                        className="liquid-icon danger p-1.5 hover:scale-105 transition-transform"
+                                        onClick={() => setIsAddingWheelset(true)}
+                                        className="liquid-tag cursor-pointer"
                                     >
-                                        <Trash2 size={14} />
+                                        <Plus size={10} /> 新增
                                     </button>
                                 </div>
+                                <div className="grid grid-cols-1 gap-3">
+                                    {bike?.wheelsets?.map((ws, idx) => (
+                                        <div
+                                            key={idx}
+                                            className={`pro-card relative transition-all border-dashed ${bike.activeWheelsetIndex === idx
+                                                ? 'border-cyan-500/30 bg-cyan-500/5'
+                                                : 'border-white/5'
+                                                }`}
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <p className={`text-sm font-bold uppercase ${bike.activeWheelsetIndex === idx ? 'text-cyan-400' : 'text-white/70'}`}>{ws.name}</p>
+                                                        {bike.activeWheelsetIndex === idx && <CheckCircle2 size={12} className="text-cyan-400" />}
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">{ws.tireWidth}MM • {ws.isTubeless ? 'TL' : 'CL'} • {ws.mileage.toFixed(0)}KM</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    {bike.activeWheelsetIndex !== idx && (
+                                                        <button
+                                                            onClick={() => setActiveWheelset(activeBikeIndex, idx)}
+                                                            className="text-[10px] font-black text-cyan-400 uppercase tracking-widest hover:brightness-125"
+                                                        >
+                                                            激活
+                                                        </button>
+                                                    )}
+                                                    <button onClick={() => handleDeleteWheelset(idx)} className="text-white/20 hover:text-rose-500 transition-colors">
+                                                        <Trash2 size={12} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )}
+
+                        {assetTab === 'torque' && <TorqueManager />}
+                        {assetTab === 'log' && <MaintenanceLogManager />}
+                    </div>
                 </div>
             </section>
 

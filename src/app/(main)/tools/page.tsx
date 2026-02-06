@@ -5,8 +5,9 @@ import { PowerZoneCard } from "@/components/modules/PowerZoneCard";
 import { RouteAnalyzer } from "@/components/modules/RouteAnalyzer";
 import { TirePressureCalculator } from "@/components/modules/TirePressureCalculator";
 import { NutritionCalculator } from "@/components/modules/NutritionCalculator";
+import { SweatRateCalculator } from "@/components/modules/SweatRateCalculator";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
-import { Wrench, Info, Zap, Map, Gauge, Utensils, Sparkles } from "lucide-react";
+import { Wrench, Info, Zap, Map, Gauge, Utensils, Sparkles, Droplets } from "lucide-react";
 
 export default function ToolsPage() {
     return (
@@ -32,6 +33,10 @@ export default function ToolsPage() {
 
                 <CollapsibleSection title="补给战策规划" icon={<Utensils size={14} className="text-amber-400" />}>
                     <NutritionCalculator />
+                </CollapsibleSection>
+
+                <CollapsibleSection title="精准排汗率计算" icon={<Droplets size={14} className="text-blue-400" />}>
+                    <SweatRateCalculator />
                 </CollapsibleSection>
 
                 <CollapsibleSection title="训练强度参考" icon={<Zap size={14} className="text-yellow-400" />}>

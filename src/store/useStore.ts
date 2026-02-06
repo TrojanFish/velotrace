@@ -70,6 +70,20 @@ export interface RideSession {
     intensity: Intensity;
 }
 
+export interface TorqueSetting {
+    id: string;
+    component: string;
+    value: string; // e.g., "5-6 Nm"
+}
+
+export interface MaintenanceLog {
+    id: string;
+    date: string;
+    title: string;
+    description: string;
+    mileage: number;
+}
+
 export interface BikeProfile {
     id: string;
     name: string;
@@ -79,6 +93,8 @@ export interface BikeProfile {
     maintenance: MaintenanceState;
     wheelsets: Wheelset[];
     activeWheelsetIndex: number;
+    torqueSettings: TorqueSetting[];
+    maintenanceLogs: MaintenanceLog[];
 }
 
 interface UserSettings {
@@ -133,6 +149,12 @@ interface VeloState {
     setActiveWheelset: (bikeIndex: number, wheelsetIndex: number) => void;
     addWheelset: (bikeIndex: number, wheelset: Wheelset) => void;
 
+    // Torque & Maintenance Actions
+    addTorqueSetting: (bikeIndex: number, setting: TorqueSetting) => void;
+    removeTorqueSetting: (bikeIndex: number, id: string) => void;
+    addMaintenanceLog: (bikeIndex: number, log: MaintenanceLog) => void;
+    removeMaintenanceLog: (bikeIndex: number, id: string) => void;
+
     // Cache Actions
     setWeatherCache: (cache: WeatherCache | null) => void;
     setAIBriefingCache: (cache: AIBriefingCache | null) => void;
@@ -145,7 +167,12 @@ interface VeloState {
 // Type for persisted state during migration
 interface PersistedState {
     user?: Partial<UserSettings> & { mmp?: UserSettings['mmp'] };
-    bikes?: Array<Partial<BikeProfile> & { tireWidth?: number; isTubeless?: boolean }>;
+    bikes?: Array<Partial<BikeProfile> & {
+        tireWidth?: number;
+        isTubeless?: boolean;
+        torqueSettings?: TorqueSetting[];
+        maintenanceLogs?: MaintenanceLog[];
+    }>;
     activeBikeIndex?: number;
     dailyLoads?: DailyLoad[];
 }
@@ -197,7 +224,9 @@ export const useStore = create<VeloState>()(
                             mileage: 0,
                             lastLubeMileage: 0
                         }
-                    ]
+                    ],
+                    torqueSettings: [],
+                    maintenanceLogs: []
                 }
             ],
             activeBikeIndex: 0,
@@ -263,6 +292,28 @@ export const useStore = create<VeloState>()(
                 newBikes[bikeIndex].wheelsets.push(wheelset);
                 return { bikes: newBikes };
             }),
+
+            addTorqueSetting: (bikeIndex, setting) => set((state) => {
+                const newBikes = [...state.bikes];
+                newBikes[bikeIndex].torqueSettings = [...(newBikes[bikeIndex].torqueSettings || []), setting];
+                return { bikes: newBikes };
+            }),
+            removeTorqueSetting: (bikeIndex, id) => set((state) => {
+                const newBikes = [...state.bikes];
+                newBikes[bikeIndex].torqueSettings = newBikes[bikeIndex].torqueSettings.filter(s => s.id !== id);
+                return { bikes: newBikes };
+            }),
+            addMaintenanceLog: (bikeIndex, log) => set((state) => {
+                const newBikes = [...state.bikes];
+                newBikes[bikeIndex].maintenanceLogs = [log, ...(newBikes[bikeIndex].maintenanceLogs || [])];
+                return { bikes: newBikes };
+            }),
+            removeMaintenanceLog: (bikeIndex, id) => set((state) => {
+                const newBikes = [...state.bikes];
+                newBikes[bikeIndex].maintenanceLogs = newBikes[bikeIndex].maintenanceLogs.filter(l => l.id !== id);
+                return { bikes: newBikes };
+            }),
+
             setWeatherCache: (weatherCache) => set({ weatherCache }),
             setAIBriefingCache: (aiBriefingCache) => set({ aiBriefingCache }),
             setStravaStatsCache: (stravaStatsCache) => set({ stravaStatsCache }),
@@ -271,23 +322,16 @@ export const useStore = create<VeloState>()(
             setRideSession: (rideSession) => set({ rideSession }),
         }),
         {
-            name: 'velotrace-storage-v3', // New name for IndexedDB storage
+            name: 'velotrace-storage-v4', // Internal migration
             storage: createJSONStorage(() => idbStorage),
-            version: 3,
+            version: 4,
             migrate: (persistedState: unknown, version: number) => {
                 const state = persistedState as PersistedState;
-                // Migration logic for older versions if needed
                 if (version < 3) {
-                    // Initialize MMP for existing users
+                    // Logic already in v3 migration
                     if (state.user && !state.user.mmp) {
-                        state.user.mmp = {
-                            "5s": 800,
-                            "1m": 400,
-                            "5m": 300,
-                            "20m": 240
-                        };
+                        state.user.mmp = { "5s": 800, "1m": 400, "5m": 300, "20m": 240 };
                     }
-                    // Initialize wheelsets for existing bikes during migration
                     if (state.bikes) {
                         state.bikes = state.bikes.map((b) => ({
                             ...b,
@@ -305,6 +349,17 @@ export const useStore = create<VeloState>()(
                         }));
                     }
                 }
+
+                if (version < 4) {
+                    if (state.bikes) {
+                        state.bikes = state.bikes.map((b) => ({
+                            ...b,
+                            torqueSettings: b.torqueSettings || [],
+                            maintenanceLogs: b.maintenanceLogs || []
+                        }));
+                    }
+                }
+
                 return state as VeloState;
             }
         }
