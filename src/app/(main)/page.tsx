@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { useStore } from "@/store/useStore";
 import { WeatherCard } from "@/components/modules/WeatherCard";
 import { FuelCard } from "@/components/modules/FuelCard";
 import { BikeCard } from "@/components/modules/BikeCard";
 import { RouteWindForecastCard } from "@/components/modules/RouteWindForecastCard";
 import { AIBriefingCard } from "@/components/modules/AIBriefingCard";
-import { Bike, Maximize2, User } from "lucide-react";
-import { toast } from "sonner";
+import { Maximize2, User } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/lib/utils";
 import { useSession } from "next-auth/react";
@@ -38,24 +36,9 @@ export default function Home() {
     weekday: 'long'
   });
 
-  const { addRideDistance } = useStore();
-  const [isLogging, setIsLogging] = useState(false);
-  const [distance, setDistance] = useState("40");
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const handleLogRide = () => {
-    const dist = parseFloat(distance);
-    if (!isNaN(dist)) {
-      addRideDistance(dist);
-      setIsLogging(false);
-      toast.success(`已记录 ${dist}km`, {
-        description: "链条保养进度已更新"
-      });
-    }
-  };
 
   return (
     <main className="space-y-8 pb-12">
@@ -128,52 +111,7 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* Logging Overlay */}
-      {isLogging && (
-        <div className="liquid-overlay">
-          <div className="liquid-modal space-y-5">
-            <div className="flex items-center gap-3">
-              <div className="liquid-icon success p-2.5">
-                <Bike size={20} />
-              </div>
-              <h3 className="text-lg font-bold">记录今日骑行</h3>
-            </div>
-
-            <div className="space-y-3">
-              <label className="text-xs text-white/50 font-medium uppercase tracking-wider">
-                骑行总里程 (km)
-              </label>
-              <input
-                type="number"
-                autoFocus
-                value={distance}
-                onChange={(e) => setDistance(e.target.value)}
-                className="liquid-input text-2xl font-mono font-bold text-center"
-              />
-            </div>
-
-            <div className="liquid-divider" />
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setIsLogging(false)}
-                className="flex-1 py-3 text-sm font-bold text-white/50 hover:text-white transition-colors rounded-xl hover:bg-white/5"
-              >
-                取消
-              </button>
-              <button
-                onClick={handleLogRide}
-                className="liquid-button-primary flex-1 py-3 text-sm font-bold rounded-xl"
-              >
-                确认记录
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Floating Action Button Section */}
+      {/* Floating Action Button Section (Ride Mode Only) */}
       <div className="fixed bottom-32 right-6 z-50 flex flex-col gap-4">
         <Link
           href="/ride"
@@ -181,12 +119,6 @@ export default function Home() {
         >
           <Maximize2 size={24} />
         </Link>
-        <button
-          onClick={() => setIsLogging(true)}
-          className="liquid-fab w-14 h-14 flex items-center justify-center text-white"
-        >
-          <Bike size={24} />
-        </button>
       </div>
     </main>
   );
