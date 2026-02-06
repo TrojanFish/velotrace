@@ -21,8 +21,8 @@ export function WeeklyStatsCard() {
 
     useEffect(() => {
         if (session) {
-            // If we have cache within last 15 minutes, don't refresh immediately
-            const isFresh = stravaStatsCache && (Date.now() - stravaStatsCache.timestamp < 15 * 60 * 1000);
+            // If we have cache within last 1 hour, don't refresh immediately
+            const isFresh = stravaStatsCache && (Date.now() - stravaStatsCache.timestamp < 60 * 60 * 1000);
             if (isFresh) {
                 setLoading(false);
                 return;

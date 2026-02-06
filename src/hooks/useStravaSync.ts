@@ -33,34 +33,39 @@ export function useStravaSync(): UseStravaSyncReturn {
         setSyncError(false);
 
         try {
-            const res = await fetch('/api/strava/sync');
+            const res = await fetch('/api/strava/dashboard');
             const data = await res.json();
 
             if (data.error) {
                 throw new Error(data.error);
             }
 
-            // Invalidate caches to force a refresh on other pages
-            setStravaStatsCache(null);
-            setStravaSegmentsCache(null);
-            setStravaRoutesCache(null);
+            const { athlete, stats, routes, timestamp } = data;
 
-            // Update user profile data
+            // 1. Update user profile data
             updateUser({
-                ftp: data.ftp || user.ftp,
-                weight: data.weight || user.weight,
-                sex: data.sex || user.sex,
-                lastSyncDate: new Date().toISOString()
+                ftp: athlete.ftp || user.ftp,
+                weight: athlete.weight || user.weight,
+                sex: athlete.sex || user.sex,
+                lastSyncDate: new Date(timestamp).toISOString()
             });
 
-            // Sync bikes if available
-            if (data.bikes && data.bikes.length > 0) {
-                const syncedBikes: BikeProfile[] = data.bikes.map((b: {
-                    id: string;
-                    name: string;
-                    totalDistance: number;
-                    primary?: boolean;
-                }) => {
+            // 2. Update stats and routes caches immediately
+            setStravaStatsCache({ data: stats, timestamp });
+            setStravaRoutesCache({
+                data: routes.map((r: any) => ({
+                    id: r.id,
+                    name: r.name,
+                    distance: r.distance,
+                    elevation: r.elevation,
+                    map: { summary_polyline: r.polyline }
+                })),
+                timestamp
+            });
+
+            // 3. Sync bikes
+            if (athlete.bikes && athlete.bikes.length > 0) {
+                const syncedBikes: BikeProfile[] = athlete.bikes.map((b: any) => {
                     const existing = bikes.find(eb => eb.stravaGearId === b.id);
                     return {
                         id: b.id,
@@ -87,11 +92,8 @@ export function useStravaSync(): UseStravaSyncReturn {
 
                 setBikes(syncedBikes);
 
-                // Set primary bike as active
                 const primaryIndex = syncedBikes.findIndex((sb) =>
-                    data.bikes.find((db: { id: string; primary?: boolean }) =>
-                        db.id === sb.id && db.primary
-                    )
+                    athlete.bikes.find((db: any) => db.id === sb.id && db.primary)
                 );
                 if (primaryIndex !== -1) {
                     setActiveBikeIndex(primaryIndex);
@@ -103,7 +105,7 @@ export function useStravaSync(): UseStravaSyncReturn {
 
             return { success: true };
         } catch (e) {
-            console.error("Strava sync error:", e);
+            console.error("Strava batch sync error:", e);
             setSyncError(true);
             setTimeout(() => setSyncError(false), 3000);
 
@@ -114,7 +116,7 @@ export function useStravaSync(): UseStravaSyncReturn {
         } finally {
             setIsSyncing(false);
         }
-    }, [user, bikes, updateUser, setBikes, setActiveBikeIndex]);
+    }, [user, bikes, updateUser, setBikes, setActiveBikeIndex, setStravaStatsCache, setStravaRoutesCache]);
 
     return {
         isSyncing,

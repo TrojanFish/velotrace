@@ -33,8 +33,8 @@ export function RouteWindForecastCard() {
 
     useEffect(() => {
         if (session) {
-            // Cache logic: 15 minutes fresh
-            const isFresh = stravaRoutesCache && (Date.now() - stravaRoutesCache.timestamp < 15 * 60 * 1000);
+            // Cache logic: 1 hour fresh
+            const isFresh = stravaRoutesCache && (Date.now() - stravaRoutesCache.timestamp < 60 * 60 * 1000);
             if (isFresh) {
                 setLoading(false);
                 return;
