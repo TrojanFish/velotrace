@@ -164,12 +164,32 @@ export default function ActiveRidePage() {
         }
     };
 
-    // 4. Vibration & Alerts
+    // 4. Vibration, Voice & Auto-dismiss Alerts
+    const autoDismissRef = useRef<NodeJS.Timeout | null>(null);
+
     const triggerReminder = (type: 'fuel' | 'water') => {
+        // Clear any pending auto-dismiss
+        if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
+
         setShowReminder(type);
-        if ('vibrate' in navigator) {
-            navigator.vibrate([200, 100, 500, 100, 200]);
+
+        // 🔊 1. Voice Synthesis (TTS) - Crucial for "Back-pocket" racing
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+            const message = type === 'fuel'
+                ? "战术提醒：补给时间到，请摄入碳水化合物或能量胶。"
+                : "骑行提醒：请补充水分，保持体液平衡。";
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
         }
+
+        // 📳 2. Vibration
+        if ('vibrate' in navigator) {
+            navigator.vibrate([200, 100, 500, 100, 200, 100, 500]);
+        }
+
+        // 🎵 3. Audio Fallback (Beep)
         if (typeof window !== 'undefined') {
             const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
             if (AudioContextClass) {
@@ -181,9 +201,14 @@ export default function ActiveRidePage() {
                 oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.5);
+                oscillator.stop(audioCtx.currentTime + 0.8);
             }
         }
+
+        // 🕒 4. Auto-dismiss Logic - Prevents UI from getting stuck in pocket
+        autoDismissRef.current = setTimeout(() => {
+            setShowReminder(null);
+        }, 20000); // Auto-close after 20 seconds
     };
 
     const formatTime = (s: number) => {
@@ -516,7 +541,10 @@ export default function ActiveRidePage() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[2000] flex items-center justify-center p-8 bg-black/98 backdrop-blur-3xl"
-                        onClick={() => setShowReminder(null)}
+                        onClick={() => {
+                            if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
+                            setShowReminder(null);
+                        }}
                     >
                         <motion.div
                             initial={{ scale: 0.8, y: 40 }}
@@ -545,9 +573,14 @@ export default function ActiveRidePage() {
                                 </div>
                             </div>
 
-                            <button className="px-16 py-8 rounded-full bg-white text-black font-black uppercase text-2xl shadow-2xl active:scale-90 transition-transform">
-                                进入下一阶段
-                            </button>
+                            <div className="flex flex-col items-center gap-4">
+                                <button className="px-16 py-8 rounded-full bg-white text-black font-black uppercase text-2xl shadow-2xl active:scale-90 transition-transform">
+                                    进入下一阶段
+                                </button>
+                                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest animate-pulse">
+                                    20秒后自动关闭以继续计时
+                                </p>
+                            </div>
                         </motion.div>
                     </motion.div>
                 )}
