@@ -46,6 +46,7 @@ export default function RootLayout({
         </Providers>
         <Toaster
           position="top-center"
+          offset={60}
           toastOptions={{
             style: {
               background: 'rgba(10, 15, 26, 0.9)',

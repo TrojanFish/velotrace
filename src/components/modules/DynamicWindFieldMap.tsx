@@ -41,6 +41,9 @@ export function DynamicWindFieldMap() {
     useEffect(() => {
         if (stravaRoutesCache?.data && stravaRoutesCache.data.length > 0) {
             decodeAndProject(stravaRoutesCache.data[0].polyline);
+        } else if (stravaRoutesCache) {
+            // Cache exists but is empty
+            useDemoRoute();
         }
     }, []);
 

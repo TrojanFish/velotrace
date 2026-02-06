@@ -176,8 +176,12 @@ export function RideInsightCard() {
     const zoneColors = ['bg-slate-500', 'bg-blue-500', 'bg-emerald-500', 'bg-yellow-500', 'bg-orange-500', 'bg-red-500', 'bg-purple-600'];
 
     return (
-        <div className="space-y-2">
-            <div className="flex justify-end px-1">
+        <div className="space-y-4">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="w-1 h-3 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]" />
+                    <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">活动复盘 / Activity Insights</h2>
+                </div>
                 <button
                     onClick={handleShare}
                     disabled={isSharing}

@@ -33,14 +33,12 @@ export default function AnalyticsPage() {
 
             {/* 2. 复盘与挑战 [RECAP & GOALS] */}
             <section className="space-y-5">
+                <RideInsightCard />
                 <div className="section-header">
                     <div className="section-indicator pink" />
-                    <h2 className="section-title">活动复盘 / Activity Insights</h2>
+                    <h2 className="section-title">最近分段快讯</h2>
                 </div>
-                <div className="space-y-5">
-                    <RideInsightCard />
-                    <SegmentChallengeCard />
-                </div>
+                <SegmentChallengeCard />
             </section>
 
             {/* 3. 生理引擎 [PHYSIOLOGICAL ENGINE] */}

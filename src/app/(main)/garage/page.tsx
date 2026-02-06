@@ -166,16 +166,16 @@ export default function GaragePage() {
 
             {/* 2. 生理参数设置 [PHYSIO CONFIG] */}
             <section className="space-y-4">
-                <div className="flex items-center justify-between px-1">
+                <div className="flex items-center justify-between">
                     <div className="section-header mb-0">
                         <div className="section-indicator pink" />
-                        <h2 className="section-title">生理参数 ( PHYSIOLOGICAL )</h2>
+                        <h2 className="section-title">生理参数</h2>
                     </div>
                     <button
                         onClick={handleToggleLock}
-                        className={`liquid-tag py-1.5 px-3 cursor-pointer transition-all ${isPhysioLocked
-                            ? ''
-                            : 'danger animate-pulse'
+                        className={`liquid-tag py-1.5 px-3 cursor-pointer transition-all border whitespace-nowrap ${isPhysioLocked
+                            ? 'border-white/10'
+                            : 'danger animate-pulse border-rose-500/30'
                             }`}
                     >
                         {isPhysioLocked ? '🔒 锁定模式' : '🔓 解锁编辑'}
@@ -230,9 +230,9 @@ export default function GaragePage() {
                             <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
                                 <Flame size={10} /> 基础代谢 / BMR
                             </label>
-                            <div className="h-11 px-3 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center">
-                                <span className="text-sm font-bold text-gradient-sunset">{bmr}</span>
-                                <span className="text-[10px] text-white/30 ml-1 uppercase">Kcal/Day</span>
+                            <div className="liquid-input h-11 flex items-center justify-between disabled:opacity-80">
+                                <span className="text-sm font-mono font-bold text-gradient-sunset">{bmr}</span>
+                                <span className="text-[10px] text-white/20 font-bold uppercase tracking-tighter">Kcal/Day</span>
                             </div>
                         </div>
                     </div>
@@ -291,7 +291,7 @@ export default function GaragePage() {
                             type="number"
                             value={user.weight}
                             onChange={(e) => updateUser({ weight: parseFloat(e.target.value) })}
-                            className="liquid-input w-24 text-center text-sm font-mono text-emerald-400"
+                            className="liquid-input w-28 text-center text-sm font-mono text-emerald-400"
                         />
                     </div>
                     <div className="flex items-center justify-between gap-4">
@@ -305,7 +305,7 @@ export default function GaragePage() {
                             type="number"
                             value={user.ftp}
                             onChange={(e) => updateUser({ ftp: parseInt(e.target.value) })}
-                            className="liquid-input w-24 text-center text-sm font-mono text-cyan-400"
+                            className="liquid-input w-28 text-center text-sm font-mono text-cyan-400"
                         />
                     </div>
                 </div>
