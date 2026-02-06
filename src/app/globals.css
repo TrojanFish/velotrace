@@ -768,6 +768,27 @@ a:active {
   }
 }
 
+/* Status Dot Breathing */
+.animate-status-blink {
+  animation: status-blink 2s ease-in-out infinite;
+}
+
+@keyframes status-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.4);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+    box-shadow: 0 0 12px 3px rgba(251, 146, 60, 0.5);
+  }
+}
+
 /* Float Animation */
 .animate-float {
   animation: float 6s ease-in-out infinite;

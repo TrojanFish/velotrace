@@ -8,10 +8,12 @@ import { FuelCard } from "@/components/modules/FuelCard";
 import { BikeCard } from "@/components/modules/BikeCard";
 import { RouteWindForecastCard } from "@/components/modules/RouteWindForecastCard";
 import { AIBriefingCard } from "@/components/modules/AIBriefingCard";
-import { Settings, Bike, Maximize2 } from "lucide-react";
+import { Bike, Maximize2, User } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Skeleton } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 // Lazy load heavy canvas component
 const DynamicWindFieldMap = dynamic(
@@ -27,6 +29,7 @@ const DynamicWindFieldMap = dynamic(
 );
 
 export default function Home() {
+  const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
 
   const today = new Date().toLocaleDateString('zh-CN', {
@@ -68,9 +71,28 @@ export default function Home() {
         </div>
         <Link
           href="/garage"
-          className="liquid-icon p-3 hover:scale-105 transition-transform"
+          className="relative group transition-transform hover:scale-105"
         >
-          <Settings size={18} />
+          <div className="relative">
+            {session?.user?.image ? (
+              <div className="w-10 h-10 rounded-xl border-2 border-white/10 overflow-hidden">
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name || "User"}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="liquid-icon p-2.5">
+                <User size={18} />
+              </div>
+            )}
+            {session && (
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-orange-400 border-2 border-[#050810] rounded-full animate-status-blink" />
+            )}
+          </div>
         </Link>
       </header>
 

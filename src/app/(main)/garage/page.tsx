@@ -106,7 +106,7 @@ export default function GaragePage() {
                                         <User size={18} />
                                     </div>
                                 )}
-                                {session && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-orange-400 border-2 border-[#050810] rounded-full animate-pulse" />}
+                                {session && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-orange-400 border-2 border-[#050810] rounded-full animate-status-blink" />}
                             </div>
                             <div>
                                 <p className="text-sm font-bold text-white/90 truncate max-w-[140px]">{session?.user?.name || "未同步用户"}</p>
