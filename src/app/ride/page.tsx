@@ -282,34 +282,34 @@ export default function ActiveRidePage() {
     const isHeadwind = weather && weather.windSpeed > 15;
 
     return (
-        <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-between p-8 landscape:flex-row overflow-hidden font-sans">
+        <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans">
             {/* Background Decor */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
                 <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
             </div>
 
-            {/* Exit Button */}
+            {/* Exit Button - Safe Area Aware */}
             {!isActive && (
                 <button
                     onClick={() => router.back()}
-                    className="absolute top-12 left-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all z-50 group"
+                    className="absolute top-[env(safe-area-inset-top,3rem)] left-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all z-[1200] group"
                 >
                     <X size={24} className="group-hover:rotate-90 transition-transform" />
                 </button>
             )}
 
-            {/* 1. Tactical Setup Overlay (Before Ride) */}
+            {/* 1. Tactical Setup Overlay (Before Ride/Pause) */}
             <AnimatePresence mode="wait">
                 {isSetup && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, y: 20 }}
-                        className="fixed inset-0 z-[1100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-6"
+                        className="fixed inset-0 z-[1100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-start p-6 pt-[env(safe-area-inset-top,4rem)] overflow-y-auto"
                     >
-                        <div className="w-full max-w-xl space-y-10">
-                            <div className="text-center space-y-2">
+                        <div className="w-full max-w-xl space-y-8 pb-10">
+                            <div className="text-center space-y-2 mt-4">
                                 <div className="flex items-center justify-center gap-2 text-cyan-400">
                                     <Target size={20} />
                                     <span className="text-xs font-black uppercase tracking-[0.4em]">Tactical Prep</span>
@@ -327,7 +327,7 @@ export default function ActiveRidePage() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-8">
+                            <div className="grid grid-cols-1 gap-6">
                                 {/* Distance Slider */}
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
@@ -391,14 +391,11 @@ export default function ActiveRidePage() {
                                             <Settings2 size={14} />
                                             <span className="text-[10px] font-black uppercase tracking-widest">环境优化后的补给节奏</span>
                                         </div>
-                                        {suggestedStrategy.tempImpact && (
-                                            <span className="text-[8px] font-bold text-orange-400 uppercase bg-orange-400/10 px-2 py-0.5 rounded">高温报警：已缩短饮水周期</span>
-                                        )}
                                     </div>
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
-                                                <span className="text-[9px] text-white/40 uppercase">能量提醒</span>
+                                                <span className="text-[9px] text-white/40 uppercase tracking-tighter">能量提醒</span>
                                                 <span className="text-xs font-bold text-white">{fuelingInterval / 60}m</span>
                                             </div>
                                             <input
@@ -410,7 +407,7 @@ export default function ActiveRidePage() {
                                         </div>
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
-                                                <span className="text-[9px] text-white/40 uppercase">水分提醒</span>
+                                                <span className="text-[9px] text-white/40 uppercase tracking-tighter">水分提醒</span>
                                                 <span className="text-xs font-bold text-white text-cyan-400">{hydrationInterval / 60}m</span>
                                             </div>
                                             <input
@@ -426,7 +423,7 @@ export default function ActiveRidePage() {
 
                             <button
                                 onClick={handleCommitStrategy}
-                                className="w-full py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/20 active:scale-95 transition-transform"
+                                className="w-full py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/20 active:scale-95 transition-transform mt-4"
                             >
                                 <Play size={24} fill="white" />
                                 {isActive ? "应用并返回" : "立即进入骑行模式"}
@@ -436,35 +433,35 @@ export default function ActiveRidePage() {
                 )}
             </AnimatePresence>
 
-            {/* 2. Active Ride Display */}
+            {/* 2. Active Ride Display - Responsive Landscape/Portrait */}
             {!isSetup && (
-                <div className="flex-1 flex flex-col items-center justify-center space-y-12 landscape:space-y-0 landscape:space-x-20 z-10 w-full max-w-6xl mx-auto">
-                    {/* Primary Clock */}
-                    <div className="text-center space-y-4 relative">
-                        <div className="flex items-center justify-center gap-3 text-cyan-400/80">
+                <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col landscape:flex-row items-center justify-center space-y-8 landscape:space-y-0 landscape:gap-12 z-10">
+                    {/* Primary Clock Section */}
+                    <div className="flex flex-col items-center justify-center space-y-2 landscape:w-1/2">
+                        <div className="flex items-center gap-3 text-cyan-400/80 mb-2">
                             <Timer size={24} className={isActive ? "animate-spin-slow" : ""} />
-                            <span className="text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
+                            <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
                         </div>
-                        <h1 className="text-[7rem] md:text-[14rem] font-black italic tracking-tighter text-white tabular-nums leading-none drop-shadow-[0_0_60px_rgba(255,255,255,0.05)]">
+                        <h1 className="text-[6.5rem] md:text-[8rem] lg:text-[12rem] landscape:text-[8rem] font-black italic tracking-tighter text-white tabular-nums leading-[0.85] drop-shadow-[0_0_60px_rgba(255,255,255,0.05)]">
                             {formatTime(elapsedTime)}
                         </h1>
                     </div>
 
                     {/* Stats Metrics Grid */}
-                    <div className="grid grid-cols-2 gap-6 w-full max-w-2xl px-4">
+                    <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-4 landscape:w-1/2">
                         {/* Next Fuel */}
-                        <div className="pro-card bg-white/[0.03] border-white/5 p-8 flex flex-col items-center justify-center space-y-4 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-2 opacity-10">
+                        <div className="pro-card bg-white/[0.03] border-white/5 p-6 md:p-8 flex flex-col items-center justify-center space-y-3 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-2 opacity-5">
                                 <Utensils size={40} />
                             </div>
                             <div className="flex items-center gap-2 text-amber-500">
-                                <Utensils size={20} />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Next Fueling</span>
+                                <Utensils size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Next Fuel</span>
                             </div>
-                            <p className="text-5xl font-black italic text-white tabular-nums">
+                            <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
                                 {formatTime(fuelingInterval - (elapsedTime % fuelingInterval))}
                             </p>
-                            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-2">
+                            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
                                 <div
                                     className="h-full bg-amber-500 transition-all duration-1000"
                                     style={{ width: `${(1 - (elapsedTime % fuelingInterval) / fuelingInterval) * 100}%` }}
@@ -473,16 +470,19 @@ export default function ActiveRidePage() {
                         </div>
 
                         {/* Wind Impact */}
-                        <div className={`pro-card p-8 flex flex-col items-center justify-center space-y-4 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
+                        <div className={`pro-card p-6 md:p-8 flex flex-col items-center justify-center space-y-3 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
                             <div className={`flex items-center gap-2 ${isHeadwind ? 'text-rose-500' : 'text-cyan-400'}`}>
-                                <Wind size={20} />
+                                <Wind size={16} />
                                 <span className="text-[10px] font-black uppercase tracking-widest">Current Wind</span>
                             </div>
                             <div className="flex flex-col items-center">
-                                <p className="text-5xl font-black italic text-white tabular-nums">{weather?.windSpeed?.toFixed(0) || '--'} <span className="text-xs uppercase opacity-40">KMH</span></p>
-                                <div className="flex items-center gap-2 mt-2 opacity-50">
-                                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                                    <span className="text-[9px] font-black uppercase italic">{weather?.windDirection}° NW</span>
+                                <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
+                                    {weather?.windSpeed?.toFixed(0) || '--'}
+                                    <span className="text-[10px] uppercase opacity-40 ml-1">KMH</span>
+                                </p>
+                                <div className="flex items-center gap-1.5 mt-1 opacity-50">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                    <span className="text-[8px] font-black uppercase italic">{weather?.windDirection}° NW</span>
                                 </div>
                             </div>
                         </div>
@@ -490,16 +490,16 @@ export default function ActiveRidePage() {
                 </div>
             )}
 
-            {/* 3. Global Controls */}
+            {/* 3. Global Controls - Bottom Optimized */}
             {!isSetup && (
-                <div className="w-full max-w-sm mx-auto flex items-center justify-between px-10 py-10 z-10">
+                <div className="w-full max-w-sm mx-auto flex items-center justify-between px-10 pt-4 pb-[env(safe-area-inset-bottom,2rem)] z-10 landscape:pb-4 landscape:pt-2">
                     <button
                         onMouseDown={startHold}
                         onMouseUp={stopHold}
                         onMouseLeave={stopHold}
                         onTouchStart={startHold}
                         onTouchEnd={stopHold}
-                        className="relative p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden"
+                        className="relative p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden"
                     >
                         {/* Progress fill background */}
                         <div
@@ -516,7 +516,7 @@ export default function ActiveRidePage() {
 
                     <button
                         onClick={handleStartStop}
-                        className={`w-28 h-28 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
+                        className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
                             ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.3)]'
                             : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.3)]'
                             }`}
@@ -526,7 +526,7 @@ export default function ActiveRidePage() {
 
                     <button
                         onClick={() => setIsSetup(true)}
-                        className="p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all"
+                        className="p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all"
                     >
                         <Settings2 size={28} />
                     </button>
