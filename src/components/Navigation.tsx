@@ -32,7 +32,10 @@ export function Navigation() {
             <div className="max-w-md mx-auto px-6 py-1.5 flex justify-between items-center">
                 {links.map((link) => {
                     const Icon = link.icon;
-                    const isActive = pathname === link.href || (link.href === "/ride" && pathname === "/ride");
+                    // Improved active check to handle /ride subroutes properly
+                    const isDeployLink = link.label === "部署" || link.label === "进行中";
+                    const isActive = pathname === link.href ||
+                        (isDeployLink && (pathname === "/ride" || pathname === "/ride/setup"));
 
                     // Data Prediction: Prefetch on Hover or Touch Start
                     const handlePrefetch = () => {
@@ -46,7 +49,7 @@ export function Navigation() {
                             onMouseEnter={handlePrefetch}
                             onTouchStart={handlePrefetch}
                             className={`flex flex-col items-center gap-1.5 transition-all duration-300 group ${isActive ? "text-cyan-400" : "text-slate-500 hover:text-slate-300"
-                                } ${link.className || ""}`}
+                                }`}
                         >
                             <div className={`relative p-2 rounded-2xl transition-all duration-300 ${isActive
                                 ? "bg-gradient-to-br from-cyan-500/20 to-purple-500/10 shadow-[0_0_20px_rgba(0,212,255,0.3)]"

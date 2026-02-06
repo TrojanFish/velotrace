@@ -195,7 +195,6 @@ export default function ActiveRidePage() {
                     accumulatedTime: 0
                 });
                 setElapsedTime(0);
-                toast.success("数据已清零", { position: "bottom-center" });
                 if ('vibrate' in navigator) navigator.vibrate(100);
             }
         }, 16);
