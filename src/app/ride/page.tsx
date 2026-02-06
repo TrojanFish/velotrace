@@ -256,7 +256,7 @@ export default function ActiveRidePage() {
                 {/* Stats Metrics Grid */}
                 <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-4 landscape:w-1/2">
                     {/* Next Fuel */}
-                    <div className="pro-card bg-white/[0.03] border-white/5 p-6 md:p-8 flex flex-col items-center justify-center space-y-3 relative overflow-hidden group">
+                    <div className="pro-card bg-white/[0.03] border-white/5 p-6 md:p-8 flex flex-col items-center justify-center space-y-6 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-2 opacity-5">
                             <Utensils size={40} />
                         </div>
@@ -276,7 +276,7 @@ export default function ActiveRidePage() {
                     </div>
 
                     {/* Wind Impact */}
-                    <div className={`pro-card p-6 md:p-8 flex flex-col items-center justify-center space-y-3 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
+                    <div className={`pro-card p-6 md:p-8 flex flex-col items-center justify-center space-y-6 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
                         <div className={`flex items-center gap-2 ${isHeadwind ? 'text-rose-500' : 'text-cyan-400'}`}>
                             <Wind size={16} />
                             <span className="text-[10px] font-black uppercase tracking-widest">Current Wind</span>

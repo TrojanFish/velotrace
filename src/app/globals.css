@@ -151,7 +151,7 @@ body {
   border: 2px solid cyan;
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
   cursor: pointer;
-  margin-top: -11px;
+  margin-top: -8px;
   /* Center thumb on track */
   transition: transform 0.1s;
 }
@@ -652,6 +652,7 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow:
     0 0 16px rgba(0, 212, 255, 0.5),
     inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  margin-top: -7px;
   transition: all 0.2s ease;
 }
 
