@@ -105,7 +105,8 @@ export default function ActiveRidePage() {
             setIsActive(true);
             requestWakeLock();
             toast.success("骑行开始，屏幕已常亮", {
-                icon: <Maximize2 size={16} />
+                icon: <Maximize2 size={16} />,
+                position: "bottom-center",
             });
         } else {
             setIsActive(false);
@@ -128,7 +129,7 @@ export default function ActiveRidePage() {
             {/* Exit Button */}
             <button
                 onClick={() => router.back()}
-                className="absolute top-6 left-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all z-50"
+                className="absolute top-10 left-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all z-50"
             >
                 <X size={24} />
             </button>
