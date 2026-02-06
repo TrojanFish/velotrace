@@ -47,9 +47,11 @@ export default function ActiveRidePage() {
     // Reminder States
     const [showReminder, setShowReminder] = useState<'fuel' | 'water' | null>(null);
 
-    // 1. Tactical Strategy Calculation
+    // 1. Tactical Strategy Calculation (Personalized Athlete Logic)
     const suggestedStrategy = useMemo(() => {
-        // Expected speeds for calculation (km/h)
+        const weight = user?.weight || 70;
+
+        // Expected speeds (km/h) for duration estimation
         const speeds: Record<Intensity, number> = {
             social: 22,
             tempo: 30,
@@ -59,18 +61,25 @@ export default function ActiveRidePage() {
 
         const durationHours = targetDistance / (speeds[intensity] || 30);
 
-        // Carb rates based on user weight and intensity
+        /**
+         * Personalized Carb Strategy (g/kg/hr):
+         * Social: 0.6g/kg (Recovery/Base)
+         * Tempo: 0.9g/kg (Normal Endurance)
+         * Threshold: 1.2g/kg (Intense Training)
+         * Race: 1.5g/kg (High Performance Competition)
+         */
         const carbRates: Record<Intensity, number> = {
-            social: 30,
-            tempo: 60,
-            threshold: 80,
-            race: 95
+            social: 0.6,
+            tempo: 0.9,
+            threshold: 1.2,
+            race: 1.5
         };
 
-        const totalCarbs = Math.round(carbRates[intensity] * durationHours);
-        const totalWater = Math.round((intensity === 'race' ? 1000 : 600) * durationHours);
+        const hourlyCarbs = carbRates[intensity] * weight;
+        const totalCarbs = Math.round(hourlyCarbs * durationHours);
+        const totalWater = Math.round((intensity === 'race' ? 12 : 8) * weight * durationHours);
 
-        // Suggested intervals in minutes
+        // Suggested intervals in minutes (Baseline tacticals)
         const intervals: Record<Intensity, { fuel: number; water: number }> = {
             social: { fuel: 60, water: 30 },
             tempo: { fuel: 45, water: 20 },
@@ -82,18 +91,19 @@ export default function ActiveRidePage() {
             durationHours,
             totalCarbs,
             totalWater,
+            hourlyCarbs,
             fuelInterval: intervals[intensity].fuel,
             waterInterval: intervals[intensity].water
         };
-    }, [targetDistance, intensity]);
+    }, [targetDistance, intensity, user?.weight]);
 
     // Apply suggested intervals to state when setup is active or intensity changes
     useEffect(() => {
-        if (!isActive) {
+        if (isSetup) {
             setFuelingInterval(suggestedStrategy.fuelInterval * 60);
             setHydrationInterval(suggestedStrategy.waterInterval * 60);
         }
-    }, [intensity, isActive, suggestedStrategy]);
+    }, [intensity, isSetup, suggestedStrategy.fuelInterval, suggestedStrategy.waterInterval]);
 
     // 2. Timer Logic
     useEffect(() => {
@@ -124,6 +134,7 @@ export default function ActiveRidePage() {
     };
 
     const releaseWakeLock = () => {
+        if (holdTimerRef.current) stopHold();
         if (wakeLockRef.current) {
             wakeLockRef.current.release();
             wakeLockRef.current = null;
@@ -256,7 +267,9 @@ export default function ActiveRidePage() {
                                     <span className="text-xs font-black uppercase tracking-[0.4em]">Tactical Prep</span>
                                 </div>
                                 <h1 className="text-4xl font-black italic text-white uppercase tracking-tighter">部署骑行战术</h1>
-                                <p className="text-[10px] text-white/30 uppercase font-black tracking-widest leading-relaxed">基于 200KM+ 长距离实战方案优化</p>
+                                <p className="text-[10px] text-white/30 uppercase font-black tracking-widest leading-relaxed">
+                                    基于您 {user?.weight}kg 的体重与实战方案优化
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-1 gap-8">
@@ -300,7 +313,7 @@ export default function ActiveRidePage() {
                                         <p className="text-lg font-black italic text-white">{suggestedStrategy.durationHours.toFixed(1)} <span className="text-[10px] opacity-40">HRS</span></p>
                                     </div>
                                     <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-1">
-                                        <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">能量缺口</span>
+                                        <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">个性化能量缺口</span>
                                         <p className="text-lg font-black italic text-white">{suggestedStrategy.totalCarbs} <span className="text-[10px] opacity-40">g CHO</span></p>
                                     </div>
                                 </div>
@@ -442,7 +455,7 @@ export default function ActiveRidePage() {
 
                     <button
                         onClick={() => setIsSetup(true)}
-                        className="p-6 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all"
+                        className="p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all"
                     >
                         <Settings2 size={28} />
                     </button>
