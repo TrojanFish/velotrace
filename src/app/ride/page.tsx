@@ -32,8 +32,7 @@ export default function ActiveRidePage() {
     const { data: weather } = useWeather();
     const { user } = useStore();
 
-    // Strategy Planning State
-    const [isSetup, setIsSetup] = useState(true);
+    // Strategy Planning State (Now just for sync, UI moved to /tactical)
     const [targetDistance, setTargetDistance] = useState(100);
     const [intensity, setIntensity] = useState<Intensity>("tempo");
 
@@ -54,9 +53,10 @@ export default function ActiveRidePage() {
             setHydrationInterval(water);
             setTargetDistance(distance);
             setIntensity(level);
-            if (active) setIsSetup(false);
+        } else {
+            router.replace('/ride/setup');
         }
-    }, []);
+    }, [router]);
 
     useEffect(() => {
         localStorage.setItem('velotrace_ride_session', JSON.stringify({
@@ -151,13 +151,11 @@ export default function ActiveRidePage() {
         };
     }, [targetDistance, intensity, user?.weight, weather]);
 
-    // Apply suggested intervals to state when setup is active or intensity changes
+    // Apply suggested intervals to state when session data is missing or incomplete
     useEffect(() => {
-        if (isSetup) {
-            setFuelingInterval(suggestedStrategy.fuelInterval * 60);
-            setHydrationInterval(suggestedStrategy.waterInterval * 60);
-        }
-    }, [intensity, isSetup, suggestedStrategy.fuelInterval, suggestedStrategy.waterInterval]);
+        setFuelingInterval(suggestedStrategy.fuelInterval * 60);
+        setHydrationInterval(suggestedStrategy.waterInterval * 60);
+    }, [intensity, suggestedStrategy.fuelInterval, suggestedStrategy.waterInterval]);
 
     // 2. Timer Logic
     useEffect(() => {
@@ -252,7 +250,6 @@ export default function ActiveRidePage() {
     const handleStartStop = () => {
         if (!isActive) {
             setIsActive(true);
-            setIsSetup(false);
             requestWakeLock();
         } else {
             setIsActive(false);
@@ -271,8 +268,6 @@ export default function ActiveRidePage() {
     const handleCommitStrategy = () => {
         if (!isActive) {
             handleStartStop();
-        } else {
-            setIsSetup(false);
         }
     };
 
@@ -319,252 +314,101 @@ export default function ActiveRidePage() {
                 <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
             </div>
 
-            {/* Tactical Setup Overlay (Before Ride/Pause) */}
-            <AnimatePresence mode="wait">
-                {isSetup && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        className="fixed inset-0 z-[1100] bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-start p-6 pt-[env(safe-area-inset-top,5rem)] overflow-y-auto"
-                    >
-                        <div className="w-full max-w-xl flex-1 flex flex-col gap-10 pb-10">
-                            <div className="text-center space-y-3 mt-4">
-                                <div className="flex items-center justify-center gap-2 text-cyan-400">
-                                    <Target size={20} />
-                                    <span className="text-xs font-black uppercase tracking-[0.4em]">Tactical Prep</span>
-                                </div>
-                                <h1 className="text-4xl font-black italic text-white uppercase tracking-tighter">部署骑行战术</h1>
-                                <div className="flex items-center justify-center gap-4 mt-2">
-                                    <p className="text-[10px] text-white/30 uppercase font-black tracking-widest leading-relaxed">
-                                        基于 {user?.weight}kg 体重
-                                    </p>
-                                    <div className="w-1 h-1 rounded-full bg-white/20" />
-                                    <div className="flex items-center gap-1.5 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                                        <CloudSun size={12} />
-                                        当日天气已对齐
-                                    </div>
-                                </div>
-                            </div>
+            {/* Active Ride Display - Responsive Landscape/Portrait */}
+            <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col landscape:flex-row items-center justify-center space-y-8 landscape:space-y-0 landscape:gap-12 z-10">
+                {/* Primary Clock Section */}
+                <div className="flex flex-col items-center justify-center space-y-2 landscape:w-1/2">
+                    <div className="flex items-center gap-3 text-cyan-400/80 mb-2">
+                        <Timer size={24} className={isActive ? "animate-spin-slow" : ""} />
+                        <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
+                    </div>
+                    <h1 className="text-[6.5rem] md:text-[8rem] lg:text-[12rem] landscape:text-[8rem] font-black italic tracking-tighter text-white tabular-nums leading-[0.85] drop-shadow-[0_0_60px_rgba(255,255,255,0.05)]">
+                        {formatTime(elapsedTime)}
+                    </h1>
+                </div>
 
-                            <div className="grid grid-cols-1 gap-6">
-                                {/* Distance Slider */}
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-end">
-                                        <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">目标里程</span>
-                                        <span className="text-2xl font-black italic text-cyan-400">{targetDistance} <span className="text-xs">KM</span></span>
-                                    </div>
-                                    <input
-                                        type="range" min="10" max="300" step="5"
-                                        value={targetDistance}
-                                        onChange={(e) => setTargetDistance(parseInt(e.target.value))}
-                                        className="w-full accent-cyan-500"
-                                    />
-                                </div>
-
-                                {/* Intensity Multi-selector */}
-                                <div className="space-y-4">
-                                    <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">作战强度</span>
-                                    <div className="grid grid-cols-4 gap-2">
-                                        {(['social', 'tempo', 'threshold', 'race'] as Intensity[]).map((i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => setIntensity(i)}
-                                                className={`py-3 rounded-xl text-[10px] font-black uppercase transition-all border ${intensity === i
-                                                    ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-                                                    : 'bg-white/5 border-white/5 text-white/40'
-                                                    }`}
-                                            >
-                                                {i === 'social' ? '养生' : i === 'tempo' ? '甜区' : i === 'threshold' ? '拉爆' : '竞赛'}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Summary Grid */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className={`pro-card bg-white/5 border p-4 space-y-1 ${suggestedStrategy.windImpact ? 'border-amber-500/30 bg-amber-500/5' : 'border-white/10'}`}>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">预计耗时</span>
-                                            {suggestedStrategy.windImpact && <Wind size={10} className="text-amber-500" />}
-                                        </div>
-                                        <p className="text-lg font-black italic text-white">
-                                            {suggestedStrategy.durationHours.toFixed(1)} <span className="text-[10px] opacity-40">HRS</span>
-                                        </p>
-                                    </div>
-                                    <div className={`pro-card bg-white/5 border p-4 space-y-1 ${suggestedStrategy.tempImpact ? 'border-orange-500/30 bg-orange-500/5' : 'border-white/10'}`}>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">气象调节补给</span>
-                                            {suggestedStrategy.tempImpact && <AlertTriangle size={10} className="text-orange-500" />}
-                                        </div>
-                                        <p className="text-lg font-black italic text-white">
-                                            {suggestedStrategy.totalWater > 1000 ? (suggestedStrategy.totalWater / 1000).toFixed(1) : suggestedStrategy.totalWater}
-                                            <span className="text-[10px] opacity-40"> {suggestedStrategy.totalWater > 1000 ? 'L' : 'ML'} H2O</span>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Manual Fine-tuning */}
-                                <div className="pro-card bg-cyan-500/5 border-cyan-500/20 p-5 space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2 text-cyan-400">
-                                            <Settings2 size={14} />
-                                            <span className="text-[10px] font-black uppercase tracking-widest">环境优化后的补给节奏</span>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between">
-                                                <span className="text-[9px] text-white/40 uppercase tracking-tighter">能量提醒</span>
-                                                <span className="text-xs font-bold text-white">{fuelingInterval / 60}m</span>
-                                            </div>
-                                            <input
-                                                type="range" min="15" max="90" step="5"
-                                                value={fuelingInterval / 60}
-                                                onChange={(e) => setFuelingInterval(parseInt(e.target.value) * 60)}
-                                                className="w-full accent-amber-500 h-1"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between">
-                                                <span className="text-[9px] text-white/40 uppercase tracking-tighter">水分提醒</span>
-                                                <span className="text-xs font-bold text-white text-cyan-400">{hydrationInterval / 60}m</span>
-                                            </div>
-                                            <input
-                                                type="range" min="5" max="45" step="5"
-                                                value={hydrationInterval / 60}
-                                                onChange={(e) => setHydrationInterval(parseInt(e.target.value) * 60)}
-                                                className="w-full accent-blue-500 h-1"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-auto pt-8 flex flex-col gap-4">
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={handleExit}
-                                        className="flex-1 py-6 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black uppercase tracking-widest active:scale-95 transition-transform"
-                                    >
-                                        取消并退出
-                                    </button>
-                                    <button
-                                        onClick={handleCommitStrategy}
-                                        className="flex-[1.5] py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_20px_50px_rgba(6,182,212,0.3)] active:scale-95 transition-transform"
-                                    >
-                                        <Play size={20} fill="white" />
-                                        {isActive ? "确认更改" : "进入骑行模式"}
-                                    </button>
-                                </div>
-                                <p className="text-center text-[8px] font-black text-white/20 uppercase tracking-[0.5em] mt-2 animate-pulse">
-                                    VeloTrace Tactical System v3.0
-                                </p>
-                            </div>
+                {/* Stats Metrics Grid */}
+                <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-4 landscape:w-1/2">
+                    {/* Next Fuel */}
+                    <div className="pro-card bg-white/[0.03] border-white/5 p-6 md:p-8 flex flex-col items-center justify-center space-y-3 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-2 opacity-5">
+                            <Utensils size={40} />
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* 2. Active Ride Display - Responsive Landscape/Portrait */}
-            {!isSetup && (
-                <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col landscape:flex-row items-center justify-center space-y-8 landscape:space-y-0 landscape:gap-12 z-10">
-                    {/* Primary Clock Section */}
-                    <div className="flex flex-col items-center justify-center space-y-2 landscape:w-1/2">
-                        <div className="flex items-center gap-3 text-cyan-400/80 mb-2">
-                            <Timer size={24} className={isActive ? "animate-spin-slow" : ""} />
-                            <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
+                        <div className="flex items-center gap-2 text-amber-500">
+                            <Utensils size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Next Fuel</span>
                         </div>
-                        <h1 className="text-[6.5rem] md:text-[8rem] lg:text-[12rem] landscape:text-[8rem] font-black italic tracking-tighter text-white tabular-nums leading-[0.85] drop-shadow-[0_0_60px_rgba(255,255,255,0.05)]">
-                            {formatTime(elapsedTime)}
-                        </h1>
+                        <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
+                            {formatTime(fuelingInterval - (elapsedTime % fuelingInterval))}
+                        </p>
+                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
+                            <div
+                                className="h-full bg-amber-500 transition-all duration-1000"
+                                style={{ width: `${(1 - (elapsedTime % fuelingInterval) / fuelingInterval) * 100}%` }}
+                            />
+                        </div>
                     </div>
 
-                    {/* Stats Metrics Grid */}
-                    <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-4 landscape:w-1/2">
-                        {/* Next Fuel */}
-                        <div className="pro-card bg-white/[0.03] border-white/5 p-6 md:p-8 flex flex-col items-center justify-center space-y-3 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-2 opacity-5">
-                                <Utensils size={40} />
-                            </div>
-                            <div className="flex items-center gap-2 text-amber-500">
-                                <Utensils size={16} />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Next Fuel</span>
-                            </div>
-                            <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
-                                {formatTime(fuelingInterval - (elapsedTime % fuelingInterval))}
-                            </p>
-                            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
-                                <div
-                                    className="h-full bg-amber-500 transition-all duration-1000"
-                                    style={{ width: `${(1 - (elapsedTime % fuelingInterval) / fuelingInterval) * 100}%` }}
-                                />
-                            </div>
+                    {/* Wind Impact */}
+                    <div className={`pro-card p-6 md:p-8 flex flex-col items-center justify-center space-y-3 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
+                        <div className={`flex items-center gap-2 ${isHeadwind ? 'text-rose-500' : 'text-cyan-400'}`}>
+                            <Wind size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Current Wind</span>
                         </div>
-
-                        {/* Wind Impact */}
-                        <div className={`pro-card p-6 md:p-8 flex flex-col items-center justify-center space-y-3 transition-all ${isHeadwind ? 'border-rose-500/40 bg-rose-500/5' : 'border-white/5 bg-white/[0.03]'}`}>
-                            <div className={`flex items-center gap-2 ${isHeadwind ? 'text-rose-500' : 'text-cyan-400'}`}>
-                                <Wind size={16} />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Current Wind</span>
-                            </div>
-                            <div className="flex flex-col items-center">
-                                <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
-                                    {weather?.windSpeed?.toFixed(0) || '--'}
-                                    <span className="text-[10px] uppercase opacity-40 ml-1">KMH</span>
-                                </p>
-                                <div className="flex items-center gap-1.5 mt-1 opacity-50">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                                    <span className="text-[8px] font-black uppercase italic">{weather?.windDirection}° NW</span>
-                                </div>
+                        <div className="flex flex-col items-center">
+                            <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
+                                {weather?.windSpeed?.toFixed(0) || '--'}
+                                <span className="text-[10px] uppercase opacity-40 ml-1">KMH</span>
+                            </p>
+                            <div className="flex items-center gap-1.5 mt-1 opacity-50">
+                                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                <span className="text-[8px] font-black uppercase italic">{weather?.windDirection}° NW</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
 
             {/* 3. Global Controls - Bottom Optimized */}
-            {!isSetup && (
-                <div className="w-full max-w-sm mx-auto flex items-center justify-between px-10 pt-4 pb-[env(safe-area-inset-bottom,2rem)] z-10 landscape:pb-4 landscape:pt-2">
-                    <button
-                        onMouseDown={startHold}
-                        onMouseUp={stopHold}
-                        onMouseLeave={stopHold}
-                        onTouchStart={startHold}
-                        onTouchEnd={stopHold}
-                        className="relative p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden"
-                    >
-                        {/* Progress fill background */}
-                        <div
-                            className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-[30ms]"
-                            style={{ width: `${holdProgress}%` }}
-                        />
-                        <RotateCcw size={28} className={holdProgress > 0 ? "animate-spin-fast text-rose-500" : ""} />
-                        {holdProgress > 0 && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-rose-500/10 backdrop-blur-sm">
-                                <span className="text-[10px] font-black text-rose-500 uppercase">Hold</span>
-                            </div>
-                        )}
-                    </button>
+            <div className="w-full max-w-sm mx-auto flex items-center justify-between px-10 pt-4 pb-[env(safe-area-inset-bottom,2rem)] z-10 landscape:pb-4 landscape:pt-2">
+                <button
+                    onMouseDown={startHold}
+                    onMouseUp={stopHold}
+                    onMouseLeave={stopHold}
+                    onTouchStart={startHold}
+                    onTouchEnd={stopHold}
+                    className="relative p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden"
+                >
+                    {/* Progress fill background */}
+                    <div
+                        className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-[30ms]"
+                        style={{ width: `${holdProgress}%` }}
+                    />
+                    <RotateCcw size={28} className={holdProgress > 0 ? "animate-spin-fast text-rose-500" : ""} />
+                    {holdProgress > 0 && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-rose-500/10 backdrop-blur-sm">
+                            <span className="text-[10px] font-black text-rose-500 uppercase">Hold</span>
+                        </div>
+                    )}
+                </button>
 
-                    <button
-                        onClick={handleStartStop}
-                        className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
-                            ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.3)]'
-                            : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.3)]'
-                            }`}
-                    >
-                        {isActive ? <Pause size={44} strokeWidth={3} /> : <Play size={44} strokeWidth={3} fill="currentColor" />}
-                    </button>
+                <button
+                    onClick={handleStartStop}
+                    className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
+                        ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.3)]'
+                        : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.3)]'
+                        }`}
+                >
+                    {isActive ? <Pause size={44} strokeWidth={3} /> : <Play size={44} strokeWidth={3} fill="currentColor" />}
+                </button>
 
-                    <button
-                        onClick={() => setIsSetup(true)}
-                        className="p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all"
-                    >
-                        <Settings2 size={28} />
-                    </button>
-                </div>
-            )}
+                <button
+                    onClick={() => router.push('/ride/setup')}
+                    className="p-6 md:p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-cyan-400 transition-all"
+                >
+                    <Settings2 size={28} />
+                </button>
+            </div>
 
             {/* 4. Full-Screen Reminder Overlays */}
             <AnimatePresence>
