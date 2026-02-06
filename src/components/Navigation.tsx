@@ -2,18 +2,27 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { LayoutDashboard, BarChart3, Wrench, UserCog, Target } from "lucide-react";
+import { LayoutDashboard, BarChart3, Wrench, UserCog, Target, Activity } from "lucide-react";
+import { useStore } from "@/store/useStore";
 
 export function Navigation() {
     const router = useRouter();
+    const { rideSession } = useStore();
     const pathname = usePathname();
 
     if (pathname === "/ride") return null;
 
+    const isRideActive = rideSession?.isActive;
+
     const links = [
         { href: "/", label: "预览", icon: LayoutDashboard },
         { href: "/analytics", label: "记录", icon: BarChart3 },
-        { href: "/ride/setup", label: "部署", icon: Target },
+        {
+            href: rideSession ? "/ride" : "/ride/setup",
+            label: isRideActive ? "进行中" : "部署",
+            icon: isRideActive ? Activity : Target,
+            className: isRideActive ? "text-cyan-400 animate-pulse" : ""
+        },
         { href: "/tools", label: "工具", icon: Wrench },
         { href: "/garage", label: "车手", icon: UserCog },
     ];
@@ -23,7 +32,7 @@ export function Navigation() {
             <div className="max-w-md mx-auto px-6 py-1.5 flex justify-between items-center">
                 {links.map((link) => {
                     const Icon = link.icon;
-                    const isActive = pathname === link.href;
+                    const isActive = pathname === link.href || (link.href === "/ride" && pathname === "/ride");
 
                     // Data Prediction: Prefetch on Hover or Touch Start
                     const handlePrefetch = () => {
@@ -37,7 +46,7 @@ export function Navigation() {
                             onMouseEnter={handlePrefetch}
                             onTouchStart={handlePrefetch}
                             className={`flex flex-col items-center gap-1.5 transition-all duration-300 group ${isActive ? "text-cyan-400" : "text-slate-500 hover:text-slate-300"
-                                }`}
+                                } ${link.className || ""}`}
                         >
                             <div className={`relative p-2 rounded-2xl transition-all duration-300 ${isActive
                                 ? "bg-gradient-to-br from-cyan-500/20 to-purple-500/10 shadow-[0_0_20px_rgba(0,212,255,0.3)]"

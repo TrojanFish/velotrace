@@ -15,7 +15,7 @@ import { Intensity } from "@/lib/calculators/fueling";
 export default function TacticalSetupPage() {
     const router = useRouter();
     const { data: weather } = useWeather();
-    const { user } = useStore();
+    const { user, rideSession, setRideSession } = useStore();
 
     // Strategy Planning State
     const [targetDistance, setTargetDistance] = useState(100);
@@ -27,15 +27,13 @@ export default function TacticalSetupPage() {
     useEffect(() => {
         router.prefetch('/ride'); // Prefetch the ride page for instant transition
 
-        const saved = localStorage.getItem('velotrace_ride_session');
-        if (saved) {
-            const { fuel, water, distance, level } = JSON.parse(saved);
-            setFuelingInterval(fuel);
-            setHydrationInterval(water);
-            setTargetDistance(distance);
-            setIntensity(level);
+        if (rideSession) {
+            setFuelingInterval(rideSession.fuelInterval);
+            setHydrationInterval(rideSession.waterInterval);
+            setTargetDistance(rideSession.targetDistance);
+            setIntensity(rideSession.intensity);
         }
-    }, [router]);
+    }, [router, rideSession]);
 
     // 1. Tactical Strategy Calculation (Personalized + Weather Optimized)
     const suggestedStrategy = useMemo(() => {
@@ -98,22 +96,15 @@ export default function TacticalSetupPage() {
     }, [intensity, suggestedStrategy.fuelInterval, suggestedStrategy.waterInterval]);
 
     const handleCommitAndStart = () => {
-        // Save to session
-        const session = localStorage.getItem('velotrace_ride_session');
-        let currentTime = 0;
-        if (session) {
-            const parsed = JSON.parse(session);
-            currentTime = parsed.time || 0;
-        }
-
-        localStorage.setItem('velotrace_ride_session', JSON.stringify({
-            time: currentTime,
-            active: true,
-            fuel: fuelingInterval,
-            water: hydrationInterval,
-            distance: targetDistance,
-            level: intensity
-        }));
+        setRideSession({
+            startTime: Date.now(),
+            accumulatedTime: rideSession?.accumulatedTime || 0,
+            isActive: true,
+            fuelInterval: fuelingInterval,
+            waterInterval: hydrationInterval,
+            targetDistance: targetDistance,
+            intensity: intensity
+        });
 
         router.push('/ride');
     };

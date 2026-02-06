@@ -1099,13 +1099,23 @@ a:active {
   margin-right: -0.15em;
 }
 
+/* Fix for italic text cutting at the end */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.italic {
+  padding-right: 0.15em;
+  margin-right: -0.05em;
+}
+
 .text-gradient-sunset {
   background: linear-gradient(135deg, #fb923c 0%, #f472b6 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  padding-right: 0.15em;
-  margin-right: -0.15em;
 }
 
 /* ============================================

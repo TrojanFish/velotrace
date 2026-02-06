@@ -30,53 +30,48 @@ import { Intensity } from "@/lib/calculators/fueling";
 export default function ActiveRidePage() {
     const router = useRouter();
     const { data: weather } = useWeather();
-    const { user } = useStore();
+    const { user, rideSession, setRideSession } = useStore();
 
-    // Strategy Planning State (Now just for sync, UI moved to /tactical)
-    const [targetDistance, setTargetDistance] = useState(100);
-    const [intensity, setIntensity] = useState<Intensity>("tempo");
-
-    // Ride State - Persistent
-    const [isActive, setIsActive] = useState(false);
+    // UI state
     const [elapsedTime, setElapsedTime] = useState(0);
-    const [fuelingInterval, setFuelingInterval] = useState(45 * 60); // seconds
-    const [hydrationInterval, setHydrationInterval] = useState(20 * 60); // seconds
     const [isReady, setIsReady] = useState(false);
+    const lastTimeRef = useRef<number>(0);
 
     // Add session persistence for timer
     useEffect(() => {
-        const saved = localStorage.getItem('velotrace_ride_session');
-        if (saved) {
-            try {
-                const { time, active, fuel, water, distance, level } = JSON.parse(saved);
-                setElapsedTime(time);
-                setIsActive(active);
-                setFuelingInterval(fuel);
-                setHydrationInterval(water);
-                setTargetDistance(distance);
-                setIntensity(level);
-                setIsReady(true);
-            } catch (e) {
-                console.error("Failed to parse session", e);
-                router.replace('/ride/setup');
-            }
-        } else {
+        if (!rideSession) {
             router.replace('/ride/setup');
+            return;
         }
-    }, [router]);
 
+        const updateTimer = () => {
+            if (rideSession.isActive && rideSession.startTime) {
+                const now = Date.now();
+                const diff = Math.floor((now - rideSession.startTime) / 1000);
+                const nextTime = rideSession.accumulatedTime + diff;
+                setElapsedTime(nextTime);
 
+                // Reminders logic - Trigger only once per second
+                if (nextTime > 0 && lastTimeRef.current !== nextTime) {
+                    if (nextTime % rideSession.fuelInterval === 0) triggerReminder('fuel');
+                    if (nextTime % rideSession.waterInterval === 0) triggerReminder('water');
+                }
+                lastTimeRef.current = nextTime;
+            } else {
+                setElapsedTime(rideSession.accumulatedTime);
+            }
+        };
 
-    useEffect(() => {
-        localStorage.setItem('velotrace_ride_session', JSON.stringify({
-            time: elapsedTime,
-            active: isActive,
-            fuel: fuelingInterval,
-            water: hydrationInterval,
-            distance: targetDistance,
-            level: intensity
-        }));
-    }, [elapsedTime, isActive, fuelingInterval, hydrationInterval, targetDistance, intensity]);
+        updateTimer();
+        setIsReady(true);
+
+        let interval: NodeJS.Timeout | null = null;
+        if (rideSession.isActive) {
+            interval = setInterval(updateTimer, 1000);
+        }
+
+        return () => { if (interval) clearInterval(interval); };
+    }, [rideSession, router]);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const wakeLockRef = useRef<any>(null);
@@ -91,7 +86,9 @@ export default function ActiveRidePage() {
 
     // 1. Tactical Strategy Calculation (Personalized + Weather Optimized)
     const suggestedStrategy = useMemo(() => {
+        if (!rideSession) return null;
         const weight = user?.weight || 70;
+        const { intensity, targetDistance } = rideSession;
 
         // --- Weather Compensation Factors ---
         const temp = weather?.apparentTemp || 20;
@@ -105,7 +102,6 @@ export default function ActiveRidePage() {
         const humidityFactor = 1 + Math.max(0, (humidity - 60) * 0.005);
 
         // 💨 Aerodynamic Resistance Factor (Simple Heuristic)
-        // High winds (>20km/h) increase energy expenditure and duration
         const windPenalty = windSpeed > 20 ? 0.88 : (windSpeed > 10 ? 0.95 : 1.0);
 
         // Expected speeds (km/h) with wind compensation
@@ -138,7 +134,6 @@ export default function ActiveRidePage() {
         const totalWater = Math.round(weatherAdjustedWaterRate * durationHours);
 
         // Suggested intervals (Scaled by weather intensity)
-        // If it's hot, we shorten the hydration interval
         const baseIntervals: Record<Intensity, { fuel: number; water: number }> = {
             social: { fuel: 60, water: 30 },
             tempo: { fuel: 45, water: 20 },
@@ -158,30 +153,7 @@ export default function ActiveRidePage() {
             tempImpact: heatFactor > 1.1,
             windImpact: windPenalty < 1.0
         };
-    }, [targetDistance, intensity, user?.weight, weather]);
-
-    // Apply suggested intervals to state when session data is missing or incomplete
-    useEffect(() => {
-        setFuelingInterval(suggestedStrategy.fuelInterval * 60);
-        setHydrationInterval(suggestedStrategy.waterInterval * 60);
-    }, [intensity, suggestedStrategy.fuelInterval, suggestedStrategy.waterInterval]);
-
-    // 2. Timer Logic
-    useEffect(() => {
-        if (isActive) {
-            timerRef.current = setInterval(() => {
-                setElapsedTime(prev => {
-                    const next = prev + 1;
-                    if (next > 0 && next % fuelingInterval === 0) triggerReminder('fuel');
-                    if (next > 0 && next % hydrationInterval === 0) triggerReminder('water');
-                    return next;
-                });
-            }, 1000);
-        } else {
-            if (timerRef.current) clearInterval(timerRef.current);
-        }
-        return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    }, [isActive, fuelingInterval, hydrationInterval]);
+    }, [rideSession, user?.weight, weather]);
 
     // 3. Screen Wake Lock
     const requestWakeLock = async () => {
@@ -195,7 +167,6 @@ export default function ActiveRidePage() {
     };
 
     const releaseWakeLock = () => {
-        if (holdTimerRef.current) stopHold();
         if (wakeLockRef.current) {
             wakeLockRef.current.release();
             wakeLockRef.current = null;
@@ -206,6 +177,7 @@ export default function ActiveRidePage() {
     const autoDismissRef = useRef<NodeJS.Timeout | null>(null);
 
     const triggerReminder = (type: 'fuel' | 'water') => {
+        if (!rideSession) return;
         // Clear any pending auto-dismiss
         if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
 
@@ -257,27 +229,33 @@ export default function ActiveRidePage() {
     };
 
     const handleStartStop = () => {
-        if (!isActive) {
-            setIsActive(true);
+        if (!rideSession) return;
+
+        if (!rideSession.isActive) {
+            setRideSession({
+                ...rideSession,
+                isActive: true,
+                startTime: Date.now(),
+            });
             requestWakeLock();
         } else {
-            setIsActive(false);
+            const now = Date.now();
+            const diff = Math.floor((now - (rideSession.startTime || now)) / 1000);
+            setRideSession({
+                ...rideSession,
+                isActive: false,
+                startTime: undefined,
+                accumulatedTime: rideSession.accumulatedTime + diff
+            });
             releaseWakeLock();
         }
     };
 
     const handleExit = () => {
-        if (isActive && !confirm("骑行正在进行中，确认要退出吗？数据将会暂停。")) {
+        if (rideSession?.isActive && !confirm("骑行正在进行中，确认要退出吗？数据将会暂停。")) {
             return;
         }
-        // Use prefetch or direct push to make it smoother
         router.push('/');
-    };
-
-    const handleCommitStrategy = () => {
-        if (!isActive) {
-            handleStartStop();
-        }
     };
 
     // Long Press Reset Logic
@@ -285,7 +263,7 @@ export default function ActiveRidePage() {
     const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const startHold = () => {
-        if (holdTimerRef.current) return;
+        if (holdTimerRef.current || !rideSession) return;
         setHoldProgress(0);
         const startTime = Date.now();
         const duration = 1500; // 1.5 seconds to reset
@@ -297,6 +275,12 @@ export default function ActiveRidePage() {
 
             if (p >= 100) {
                 stopHold();
+                setRideSession({
+                    ...rideSession,
+                    isActive: false,
+                    startTime: undefined,
+                    accumulatedTime: 0
+                });
                 setElapsedTime(0);
                 toast.success("数据已清零", { position: "bottom-center" });
                 if ('vibrate' in navigator) navigator.vibrate(100);
@@ -312,10 +296,9 @@ export default function ActiveRidePage() {
         setHoldProgress(0);
     };
 
-    const windAlignment = weather?.windDirection || 0;
     const isHeadwind = weather && weather.windSpeed > 15;
 
-    if (!isReady) {
+    if (!isReady || !rideSession) {
         return (
             <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden font-sans">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -325,6 +308,8 @@ export default function ActiveRidePage() {
             </div>
         );
     }
+
+    const { isActive, fuelInterval } = rideSession;
 
     return (
         <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans">
@@ -359,12 +344,12 @@ export default function ActiveRidePage() {
                             <span className="text-[10px] font-black uppercase tracking-widest">Next Fuel</span>
                         </div>
                         <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
-                            {formatTime(fuelingInterval - (elapsedTime % fuelingInterval))}
+                            {formatTime(fuelInterval - (elapsedTime % fuelInterval))}
                         </p>
                         <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
                             <div
                                 className="h-full bg-amber-500 transition-all duration-1000"
-                                style={{ width: `${(1 - (elapsedTime % fuelingInterval) / fuelingInterval) * 100}%` }}
+                                style={{ width: `${(1 - (elapsedTime % fuelInterval) / fuelInterval) * 100}%` }}
                             />
                         </div>
                     </div>
@@ -468,7 +453,7 @@ export default function ActiveRidePage() {
                                     <div className="h-0.5 w-24 bg-cyan-500 mx-auto rounded-full" />
                                     <p className="text-xl font-bold text-white/80 py-4">
                                         {showReminder === 'fuel'
-                                            ? `建议摄入 ${intensity === 'race' ? '60-80g' : '30-40g'} 碳水化合物`
+                                            ? `建议摄入 ${rideSession.intensity === 'race' ? '60-80g' : '30-40g'} 碳水化合物`
                                             : `基于当前高温，请饮入 ${Math.round(250 * (weather?.apparentTemp && weather.apparentTemp > 30 ? 1.4 : 1))}ml 电解质水`}
                                     </p>
                                 </div>
@@ -489,3 +474,5 @@ export default function ActiveRidePage() {
         </div>
     );
 }
+
+

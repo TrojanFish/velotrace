@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import { get, set, del } from 'idb-keyval';
+import { Intensity } from '@/lib/calculators/fueling';
 
 // Custom IndexedDB storage for local-first architecture
 const idbStorage: StateStorage = {
@@ -59,6 +60,16 @@ export interface StravaCache {
     timestamp: number;
 }
 
+export interface RideSession {
+    startTime?: number; // timestamp when timer started
+    accumulatedTime: number; // seconds accumulated before last start
+    isActive: boolean;
+    fuelInterval: number;
+    waterInterval: number;
+    targetDistance: number;
+    intensity: Intensity;
+}
+
 export interface BikeProfile {
     id: string;
     name: string;
@@ -104,6 +115,9 @@ interface VeloState {
     stravaSegmentsCache: StravaCache | null;
     stravaRoutesCache: StravaCache | null;
 
+    // Ride Session
+    rideSession: RideSession | null;
+
     // Actions
     updateUser: (user: Partial<UserSettings>) => void;
     updateBike: (index: number, bike: Partial<BikeProfile>) => void;
@@ -125,6 +139,7 @@ interface VeloState {
     setStravaStatsCache: (cache: StravaCache | null) => void;
     setStravaSegmentsCache: (cache: StravaCache | null) => void;
     setStravaRoutesCache: (cache: StravaCache | null) => void;
+    setRideSession: (session: RideSession | null) => void;
 }
 
 // Type for persisted state during migration
@@ -192,6 +207,7 @@ export const useStore = create<VeloState>()(
             stravaStatsCache: null,
             stravaSegmentsCache: null,
             stravaRoutesCache: null,
+            rideSession: null,
 
             updateUser: (newUser) => set((state) => ({ user: { ...state.user, ...newUser } })),
             updateBike: (index, newBike) => set((state) => {
@@ -252,6 +268,7 @@ export const useStore = create<VeloState>()(
             setStravaStatsCache: (stravaStatsCache) => set({ stravaStatsCache }),
             setStravaSegmentsCache: (stravaSegmentsCache) => set({ stravaSegmentsCache }),
             setStravaRoutesCache: (stravaRoutesCache) => set({ stravaRoutesCache }),
+            setRideSession: (rideSession) => set({ rideSession }),
         }),
         {
             name: 'velotrace-storage-v3', // New name for IndexedDB storage
