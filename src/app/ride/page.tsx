@@ -17,7 +17,9 @@ import {
     Target,
     Zap,
     ChevronRight,
-    Settings2
+    Settings2,
+    CloudSun,
+    AlertTriangle
 } from "lucide-react";
 import { useWeather } from "@/hooks/useWeather";
 import { useRouter } from "next/navigation";
@@ -47,26 +49,38 @@ export default function ActiveRidePage() {
     // Reminder States
     const [showReminder, setShowReminder] = useState<'fuel' | 'water' | null>(null);
 
-    // 1. Tactical Strategy Calculation (Personalized Athlete Logic)
+    // 1. Tactical Strategy Calculation (Personalized + Weather Optimized)
     const suggestedStrategy = useMemo(() => {
         const weight = user?.weight || 70;
 
-        // Expected speeds (km/h) for duration estimation
-        const speeds: Record<Intensity, number> = {
+        // --- Weather Compensation Factors ---
+        const temp = weather?.apparentTemp || 20;
+        const windSpeed = weather?.windSpeed || 0;
+        const humidity = weather?.humidity || 50;
+
+        // 🌡️ Heat Factor: Hydration needs spike above 25°C apparent temp
+        const heatFactor = 1 + Math.max(0, (temp - 22) * 0.05); // 5% increase per degree above 22°C
+
+        // 💧 Humidity Factor: Affects sweat evaporation efficiency
+        const humidityFactor = 1 + Math.max(0, (humidity - 60) * 0.005);
+
+        // 💨 Aerodynamic Resistance Factor (Simple Heuristic)
+        // High winds (>20km/h) increase energy expenditure and duration
+        const windPenalty = windSpeed > 20 ? 0.88 : (windSpeed > 10 ? 0.95 : 1.0);
+
+        // Expected speeds (km/h) with wind compensation
+        const baseSpeeds: Record<Intensity, number> = {
             social: 22,
             tempo: 30,
             threshold: 35,
             race: 40
         };
-
-        const durationHours = targetDistance / (speeds[intensity] || 30);
+        const currentSpeed = baseSpeeds[intensity] * windPenalty;
+        const durationHours = targetDistance / currentSpeed;
 
         /**
          * Personalized Carb Strategy (g/kg/hr):
-         * Social: 0.6g/kg (Recovery/Base)
-         * Tempo: 0.9g/kg (Normal Endurance)
-         * Threshold: 1.2g/kg (Intense Training)
-         * Race: 1.5g/kg (High Performance Competition)
+         * Heavily affected by intensity and ambient temperature (energy for cooling)
          */
         const carbRates: Record<Intensity, number> = {
             social: 0.6,
@@ -77,25 +91,34 @@ export default function ActiveRidePage() {
 
         const hourlyCarbs = carbRates[intensity] * weight;
         const totalCarbs = Math.round(hourlyCarbs * durationHours);
-        const totalWater = Math.round((intensity === 'race' ? 12 : 8) * weight * durationHours);
 
-        // Suggested intervals in minutes (Baseline tacticals)
-        const intervals: Record<Intensity, { fuel: number; water: number }> = {
+        // Water base: 8-12ml per kg per hour, scaled by weather
+        const baseWaterRate = (intensity === 'race' ? 12 : 8) * weight;
+        const weatherAdjustedWaterRate = baseWaterRate * heatFactor * humidityFactor;
+        const totalWater = Math.round(weatherAdjustedWaterRate * durationHours);
+
+        // Suggested intervals (Scaled by weather intensity)
+        // If it's hot, we shorten the hydration interval
+        const baseIntervals: Record<Intensity, { fuel: number; water: number }> = {
             social: { fuel: 60, water: 30 },
             tempo: { fuel: 45, water: 20 },
             threshold: { fuel: 35, water: 15 },
             race: { fuel: 30, water: 10 }
         };
 
+        const weatherWaterInterval = Math.max(8, Math.round(baseIntervals[intensity].water / (heatFactor * humidityFactor)));
+
         return {
             durationHours,
             totalCarbs,
             totalWater,
             hourlyCarbs,
-            fuelInterval: intervals[intensity].fuel,
-            waterInterval: intervals[intensity].water
+            fuelInterval: baseIntervals[intensity].fuel,
+            waterInterval: weatherWaterInterval,
+            tempImpact: heatFactor > 1.1,
+            windImpact: windPenalty < 1.0
         };
-    }, [targetDistance, intensity, user?.weight]);
+    }, [targetDistance, intensity, user?.weight, weather]);
 
     // Apply suggested intervals to state when setup is active or intensity changes
     useEffect(() => {
@@ -267,9 +290,16 @@ export default function ActiveRidePage() {
                                     <span className="text-xs font-black uppercase tracking-[0.4em]">Tactical Prep</span>
                                 </div>
                                 <h1 className="text-4xl font-black italic text-white uppercase tracking-tighter">部署骑行战术</h1>
-                                <p className="text-[10px] text-white/30 uppercase font-black tracking-widest leading-relaxed">
-                                    基于您 {user?.weight}kg 的体重与实战方案优化
-                                </p>
+                                <div className="flex items-center justify-center gap-4 mt-2">
+                                    <p className="text-[10px] text-white/30 uppercase font-black tracking-widest leading-relaxed">
+                                        基于 {user?.weight}kg 体重
+                                    </p>
+                                    <div className="w-1 h-1 rounded-full bg-white/20" />
+                                    <div className="flex items-center gap-1.5 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
+                                        <CloudSun size={12} />
+                                        当日天气已对齐
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 gap-8">
@@ -306,23 +336,39 @@ export default function ActiveRidePage() {
                                     </div>
                                 </div>
 
-                                {/* Summary & Fine-tune */}
+                                {/* Summary Grid */}
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-1">
-                                        <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">预计耗时</span>
-                                        <p className="text-lg font-black italic text-white">{suggestedStrategy.durationHours.toFixed(1)} <span className="text-[10px] opacity-40">HRS</span></p>
+                                    <div className={`pro-card bg-white/5 border p-4 space-y-1 ${suggestedStrategy.windImpact ? 'border-amber-500/30 bg-amber-500/5' : 'border-white/10'}`}>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">预计耗时</span>
+                                            {suggestedStrategy.windImpact && <Wind size={10} className="text-amber-500" />}
+                                        </div>
+                                        <p className="text-lg font-black italic text-white">
+                                            {suggestedStrategy.durationHours.toFixed(1)} <span className="text-[10px] opacity-40">HRS</span>
+                                        </p>
                                     </div>
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-1">
-                                        <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">个性化能量缺口</span>
-                                        <p className="text-lg font-black italic text-white">{suggestedStrategy.totalCarbs} <span className="text-[10px] opacity-40">g CHO</span></p>
+                                    <div className={`pro-card bg-white/5 border p-4 space-y-1 ${suggestedStrategy.tempImpact ? 'border-orange-500/30 bg-orange-500/5' : 'border-white/10'}`}>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">气象调节补给</span>
+                                            {suggestedStrategy.tempImpact && <AlertTriangle size={10} className="text-orange-500" />}
+                                        </div>
+                                        <p className="text-lg font-black italic text-white">
+                                            {suggestedStrategy.totalWater > 1000 ? (suggestedStrategy.totalWater / 1000).toFixed(1) : suggestedStrategy.totalWater}
+                                            <span className="text-[10px] opacity-40"> {suggestedStrategy.totalWater > 1000 ? 'L' : 'ML'} H2O</span>
+                                        </p>
                                     </div>
                                 </div>
 
                                 {/* Manual Fine-tuning */}
                                 <div className="pro-card bg-cyan-500/5 border-cyan-500/20 p-5 space-y-4">
-                                    <div className="flex items-center gap-2 text-cyan-400">
-                                        <Settings2 size={14} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">补给节奏微调</span>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2 text-cyan-400">
+                                            <Settings2 size={14} />
+                                            <span className="text-[10px] font-black uppercase tracking-widest">环境优化后的补给节奏</span>
+                                        </div>
+                                        {suggestedStrategy.tempImpact && (
+                                            <span className="text-[8px] font-bold text-orange-400 uppercase bg-orange-400/10 px-2 py-0.5 rounded">高温报警：已缩短饮水周期</span>
+                                        )}
                                     </div>
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
@@ -340,7 +386,7 @@ export default function ActiveRidePage() {
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
                                                 <span className="text-[9px] text-white/40 uppercase">水分提醒</span>
-                                                <span className="text-xs font-bold text-white">{hydrationInterval / 60}m</span>
+                                                <span className="text-xs font-bold text-white text-cyan-400">{hydrationInterval / 60}m</span>
                                             </div>
                                             <input
                                                 type="range" min="5" max="45" step="5"
@@ -494,7 +540,7 @@ export default function ActiveRidePage() {
                                     <p className="text-xl font-bold text-white/80 py-4">
                                         {showReminder === 'fuel'
                                             ? `建议摄入 ${intensity === 'race' ? '60-80g' : '30-40g'} 碳水化合物`
-                                            : '建议饮入 200-300ml 电解质水'}
+                                            : `基于当前高温，请饮入 ${Math.round(250 * (weather?.apparentTemp && weather.apparentTemp > 30 ? 1.4 : 1))}ml 电解质水`}
                                     </p>
                                 </div>
                             </div>
