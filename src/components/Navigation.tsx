@@ -18,10 +18,10 @@ export function Navigation() {
         { href: "/", label: "预览", icon: LayoutDashboard },
         { href: "/analytics", label: "记录", icon: BarChart3 },
         {
-            href: rideSession ? "/ride" : "/ride/setup",
-            label: isRideActive ? "进行中" : "部署",
-            icon: isRideActive ? Activity : Target,
-            className: isRideActive ? "text-cyan-400 animate-pulse" : ""
+            href: (rideSession && (rideSession.isActive || rideSession.accumulatedTime > 0)) ? "/ride" : "/ride/setup",
+            label: (rideSession && (rideSession.isActive || rideSession.accumulatedTime > 0)) ? "进行中" : "部署",
+            icon: (rideSession && rideSession.isActive) ? Activity : Target,
+            className: (rideSession && rideSession.isActive) ? "text-cyan-400 animate-pulse" : ""
         },
         { href: "/tools", label: "工具", icon: Wrench },
         { href: "/garage", label: "车手", icon: UserCog },

@@ -367,7 +367,7 @@ export default function ActiveRidePage() {
 
                 <button
                     onClick={handleStartStop}
-                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center transition-all transform active:scale-95 shadow-2xl ${isActive
+                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center transition-transform transform active:scale-95 shadow-2xl ${isActive
                         ? 'bg-rose-500/20 text-rose-500 border-2 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.4)]'
                         : 'bg-emerald-500/20 text-emerald-500 border-2 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.4)]'
                         }`}
