@@ -41,22 +41,40 @@ export default function ActiveRidePage() {
     const [elapsedTime, setElapsedTime] = useState(0);
     const [fuelingInterval, setFuelingInterval] = useState(45 * 60); // seconds
     const [hydrationInterval, setHydrationInterval] = useState(20 * 60); // seconds
+    const [isReady, setIsReady] = useState(false);
 
     // Add session persistence for timer
     useEffect(() => {
         const saved = localStorage.getItem('velotrace_ride_session');
         if (saved) {
-            const { time, active, fuel, water, distance, level } = JSON.parse(saved);
-            setElapsedTime(time);
-            setIsActive(active);
-            setFuelingInterval(fuel);
-            setHydrationInterval(water);
-            setTargetDistance(distance);
-            setIntensity(level);
+            try {
+                const { time, active, fuel, water, distance, level } = JSON.parse(saved);
+                setElapsedTime(time);
+                setIsActive(active);
+                setFuelingInterval(fuel);
+                setHydrationInterval(water);
+                setTargetDistance(distance);
+                setIntensity(level);
+                setIsReady(true);
+            } catch (e) {
+                console.error("Failed to parse session", e);
+                router.replace('/ride/setup');
+            }
         } else {
             router.replace('/ride/setup');
         }
     }, [router]);
+
+    if (!isReady) {
+        return (
+            <div className="fixed inset-0 bg-[#050810] z-[1000] flex items-center justify-center">
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
+                </div>
+            </div>
+        );
+    }
 
     useEffect(() => {
         localStorage.setItem('velotrace_ride_session', JSON.stringify({
