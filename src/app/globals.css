@@ -151,7 +151,7 @@ body {
   border: 2px solid cyan;
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
   cursor: pointer;
-  margin-top: -12px;
+  margin-top: -11px;
   /* Center thumb on track */
   transition: transform 0.1s;
 }
