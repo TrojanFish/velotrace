@@ -211,12 +211,50 @@ export default function ActiveRidePage() {
 
     const isHeadwind = weather && weather.windSpeed > 15;
 
-    if (!isReady || !rideSession) {
+    if (!rideSession) {
         return (
             <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden font-sans">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
                     <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
+                </div>
+            </div>
+        );
+    }
+
+    if (!isReady) {
+        return (
+            <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans">
+                {/* Background Decor */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
+                </div>
+
+                <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col items-center justify-center z-10 animate-pulse opacity-50">
+                    {/* Mission Context Pill - Visible during loading for continuity */}
+                    <div className="flex items-center gap-3 mb-8 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
+                            {rideSession.targetDistance}KM
+                        </span>
+                        <div className="w-1 h-3 bg-white/10 rounded-full" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
+                            {rideSession.intensity}
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-4">
+                        <div className="h-4 w-32 bg-white/10 rounded-full" />
+                    </div>
+                    {/* Placeholder for Big Timer */}
+                    <div className="h-[12rem] w-3/4 bg-white/5 rounded-3xl" />
+                </div>
+
+                {/* Bottom Controls Placeholder */}
+                <div className="w-full max-w-md mx-auto flex items-center justify-between px-8">
+                    <div className="w-16 h-16 rounded-2xl bg-white/5" />
+                    <div className="w-24 h-24 rounded-full bg-white/5" />
+                    <div className="w-16 h-16 rounded-2xl bg-white/5" />
                 </div>
             </div>
         );
