@@ -171,7 +171,52 @@ export default function ActiveRidePage() {
         } else {
             setIsActive(false);
             releaseWakeLock();
+            toast.error("骑行已暂停", { position: "bottom-center" });
         }
+    };
+
+    const handleCommitStrategy = () => {
+        if (!isActive) {
+            handleStartStop();
+        } else {
+            setIsSetup(false);
+            toast.success("战术节奏已更新", {
+                icon: <Zap size={16} />,
+                position: "bottom-center"
+            });
+        }
+    };
+
+    // Long Press Reset Logic
+    const [holdProgress, setHoldProgress] = useState(0);
+    const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    const startHold = () => {
+        if (holdTimerRef.current) return;
+        setHoldProgress(0);
+        const startTime = Date.now();
+        const duration = 1500; // 1.5 seconds to reset
+
+        holdTimerRef.current = setInterval(() => {
+            const now = Date.now();
+            const p = Math.min(((now - startTime) / duration) * 100, 100);
+            setHoldProgress(p);
+
+            if (p >= 100) {
+                stopHold();
+                setElapsedTime(0);
+                toast.success("数据已清零", { position: "bottom-center" });
+                if ('vibrate' in navigator) navigator.vibrate(100);
+            }
+        }, 16);
+    };
+
+    const stopHold = () => {
+        if (holdTimerRef.current) {
+            clearInterval(holdTimerRef.current);
+            holdTimerRef.current = null;
+        }
+        setHoldProgress(0);
     };
 
     const windAlignment = weather?.windDirection || 0;
@@ -238,8 +283,8 @@ export default function ActiveRidePage() {
                                                 key={i}
                                                 onClick={() => setIntensity(i)}
                                                 className={`py-3 rounded-xl text-[10px] font-black uppercase transition-all border ${intensity === i
-                                                        ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-                                                        : 'bg-white/5 border-white/5 text-white/40'
+                                                    ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
+                                                    : 'bg-white/5 border-white/5 text-white/40'
                                                     }`}
                                             >
                                                 {i === 'social' ? '养生' : i === 'tempo' ? '甜区' : i === 'threshold' ? '拉爆' : '竞赛'}
@@ -296,11 +341,11 @@ export default function ActiveRidePage() {
                             </div>
 
                             <button
-                                onClick={handleStartStop}
+                                onClick={handleCommitStrategy}
                                 className="w-full py-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/20 active:scale-95 transition-transform"
                             >
                                 <Play size={24} fill="white" />
-                                立即进入骑行模式
+                                {isActive ? "应用并返回" : "立即进入骑行模式"}
                             </button>
                         </div>
                     </motion.div>
@@ -365,12 +410,24 @@ export default function ActiveRidePage() {
             {!isSetup && (
                 <div className="w-full max-w-sm mx-auto flex items-center justify-between px-10 py-10 z-10">
                     <button
-                        onClick={() => {
-                            if (confirm("确定要重置当前计时吗？")) setElapsedTime(0);
-                        }}
-                        className="p-6 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-90"
+                        onMouseDown={startHold}
+                        onMouseUp={stopHold}
+                        onMouseLeave={stopHold}
+                        onTouchStart={startHold}
+                        onTouchEnd={stopHold}
+                        className="relative p-7 rounded-2xl bg-white/5 border border-white/10 text-white/20 hover:text-white transition-all transform active:scale-95 group overflow-hidden"
                     >
-                        <RotateCcw size={28} />
+                        {/* Progress fill background */}
+                        <div
+                            className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-[30ms]"
+                            style={{ width: `${holdProgress}%` }}
+                        />
+                        <RotateCcw size={28} className={holdProgress > 0 ? "animate-spin-fast text-rose-500" : ""} />
+                        {holdProgress > 0 && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-rose-500/10 backdrop-blur-sm">
+                                <span className="text-[10px] font-black text-rose-500 uppercase">Hold</span>
+                            </div>
+                        )}
                     </button>
 
                     <button
@@ -408,8 +465,8 @@ export default function ActiveRidePage() {
                             className="flex flex-col items-center text-center space-y-12"
                         >
                             <div className={`w-64 h-64 rounded-full flex items-center justify-center animate-bounce shadow-2xl ${showReminder === 'fuel'
-                                    ? 'bg-amber-500/20 text-amber-500 border-4 border-amber-500'
-                                    : 'bg-blue-500/20 text-blue-400 border-4 border-blue-400'
+                                ? 'bg-amber-500/20 text-amber-500 border-4 border-amber-500'
+                                : 'bg-blue-500/20 text-blue-400 border-4 border-blue-400'
                                 }`}>
                                 {showReminder === 'fuel' ? <Utensils size={100} /> : <Droplets size={100} />}
                             </div>
