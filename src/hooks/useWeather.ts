@@ -8,6 +8,8 @@ export interface WeatherData {
     windDirection: number;
     isRainy: boolean;
     city: string;
+    sunrise?: string;
+    sunset?: string;
 }
 
 export function useWeather() {
@@ -33,12 +35,18 @@ export function useWeather() {
 
     const fetchWeatherData = async (latitude: number, longitude: number) => {
         try {
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto`);
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m&daily=sunrise,sunset&wind_speed_unit=kmh&timezone=auto`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const json = await res.json();
 
             if (!json || !json.current) throw new Error("Invalid response from weather API");
             const current = json.current;
+            const daily = json.daily;
+
+            const formatTime = (isoString: string) => {
+                if (!isoString) return "";
+                return isoString.split('T')[1].substring(0, 5);
+            };
 
             const newData: WeatherData = {
                 temp: current.temperature_2m,
@@ -46,7 +54,9 @@ export function useWeather() {
                 windSpeed: current.wind_speed_10m,
                 windDirection: current.wind_direction_10m,
                 isRainy: current.precipitation > 0,
-                city: "本地探测结果"
+                city: "本地探测结果",
+                sunrise: daily?.sunrise?.[0] ? formatTime(daily.sunrise[0]) : undefined,
+                sunset: daily?.sunset?.[0] ? formatTime(daily.sunset[0]) : undefined
             };
 
             setWeatherCache({

@@ -4,7 +4,7 @@ import { useWeather } from "@/hooks/useWeather";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { useStore } from "@/store/useStore";
 import { Skeleton } from "@/lib/utils";
-import { CloudRain, Wind, Thermometer, Shirt, Droplets } from "lucide-react";
+import { CloudRain, Wind, Thermometer, Shirt, Droplets, Sunrise, Sunset } from "lucide-react";
 
 export function WeatherCard() {
     const { data, loading, error, refresh } = useWeather();
@@ -50,6 +50,7 @@ export function WeatherCard() {
             </button>
         </div>
     );
+
     if (!data) return null;
 
     const kit = getKitRecommendation({
@@ -85,6 +86,17 @@ export function WeatherCard() {
                     <div className="flex items-baseline gap-2">
                         <p className="liquid-stat-value text-3xl pr-2">{data.temp}°C</p>
                         <span className="text-sm font-medium text-white/40">体感 {data.apparentTemp}°</span>
+                    </div>
+                    {/* Sunrise & Sunset */}
+                    <div className="flex gap-4 mt-1">
+                        <div className="flex items-center gap-1.5 opacity-60">
+                            <Sunrise size={10} className="text-amber-400" />
+                            <span className="text-[10px] font-mono font-bold text-white/60">{data.sunrise || "--:--"}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 opacity-60">
+                            <Sunset size={10} className="text-orange-400" />
+                            <span className="text-[10px] font-mono font-bold text-white/60">{data.sunset || "--:--"}</span>
+                        </div>
                     </div>
                 </div>
                 <div className="liquid-icon p-3">
