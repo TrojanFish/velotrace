@@ -24,9 +24,8 @@ export default function ActiveRidePage() {
     const { data: weather } = useWeather();
     const { user, rideSession, setRideSession } = useStore();
 
-    // UI state
+    // Optimized: Remove isReady state to prevent layout thrashing
     const [elapsedTime, setElapsedTime] = useState(0);
-    const [isReady, setIsReady] = useState(false);
     const lastTimeRef = useRef<number>(0);
 
     // Add session persistence for timer
@@ -41,6 +40,7 @@ export default function ActiveRidePage() {
                 const now = Date.now();
                 const diff = Math.floor((now - rideSession.startTime) / 1000);
                 const nextTime = rideSession.accumulatedTime + diff;
+                // Avoid state update if time hasn't changed (though it changes every second)
                 setElapsedTime(nextTime);
 
                 // Reminders logic - Trigger only once per second
@@ -55,7 +55,6 @@ export default function ActiveRidePage() {
         };
 
         updateTimer();
-        setIsReady(true);
 
         let interval: NodeJS.Timeout | null = null;
         if (rideSession.isActive) {
@@ -64,6 +63,8 @@ export default function ActiveRidePage() {
 
         return () => { if (interval) clearInterval(interval); };
     }, [rideSession, router]);
+
+    // ... (WakeLock, Prefetch, Reminder Logic unchanged) ...
 
     const wakeLockRef = useRef<any>(null);
 
@@ -210,63 +211,20 @@ export default function ActiveRidePage() {
 
     const isHeadwind = weather && weather.windSpeed > 15;
 
+    // Optimized: Direct return if no session, removed "isReady" skeleton to speed up perceived load
     if (!rideSession) {
-        return (
-            <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden font-sans">
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
-                </div>
-            </div>
-        );
-    }
-
-    if (!isReady) {
-        return (
-            <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans">
-                {/* Background Decor */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
-                </div>
-
-                <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col items-center justify-center z-10 animate-pulse opacity-50">
-                    {/* Mission Context Pill - Visible during loading for continuity */}
-                    <div className="flex items-center gap-3 mb-8 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
-                            {rideSession.targetDistance}KM
-                        </span>
-                        <div className="w-1 h-3 bg-white/10 rounded-full" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
-                            {rideSession.intensity}
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="h-4 w-32 bg-white/10 rounded-full" />
-                    </div>
-                    {/* Placeholder for Big Timer */}
-                    <div className="h-[12rem] w-3/4 bg-white/5 rounded-3xl" />
-                </div>
-
-                {/* Bottom Controls Placeholder */}
-                <div className="w-full max-w-md mx-auto flex items-center justify-between px-8">
-                    <div className="w-16 h-16 rounded-2xl bg-white/5" />
-                    <div className="w-24 h-24 rounded-full bg-white/5" />
-                    <div className="w-16 h-16 rounded-2xl bg-white/5" />
-                </div>
-            </div>
-        );
+        return null; // Or redirect logic handled in useEffect
     }
 
     const { isActive, fuelInterval } = rideSession;
 
     return (
-        <div className="fixed inset-0 bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden font-sans">
-            {/* Background Decor */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full animate-pulse" />
-                <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 blur-[150px] rounded-full animate-pulse" />
+        <div className="fixed inset-0 h-[100dvh] bg-[#050810] z-[1000] flex flex-col items-center justify-between p-6 md:p-12 overflow-hidden touch-none font-sans overscroll-none">
+            {/* Background Decor - Optimized for Performance */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+                {/* Reduced blur radius from 150px to 80px/100px and added will-change for performance */}
+                <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-cyan-500/10 blur-[80px] md:blur-[100px] rounded-full animate-pulse will-change-transform" />
+                <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-purple-500/10 blur-[80px] md:blur-[100px] rounded-full animate-pulse will-change-transform" />
             </div>
 
             {/* Active Ride Display - Responsive Landscape/Portrait */}
@@ -289,7 +247,8 @@ export default function ActiveRidePage() {
                         <Timer size={24} className={isActive ? "animate-spin-slow" : ""} />
                         <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">Session Live</span>
                     </div>
-                    <h1 className="text-[6.5rem] md:text-[8rem] lg:text-[12rem] landscape:text-[8rem] font-black italic tracking-tighter text-white tabular-nums leading-[0.85] drop-shadow-[0_0_60px_rgba(255,255,255,0.05)]">
+                    {/* Use will-change on the large text update */}
+                    <h1 className="text-[6.5rem] md:text-[8rem] lg:text-[12rem] landscape:text-[8rem] font-black italic tracking-tighter text-white tabular-nums leading-[0.85] drop-shadow-[0_0_60px_rgba(255,255,255,0.05)] will-change-contents">
                         {formatTime(elapsedTime)}
                     </h1>
                 </div>
@@ -310,7 +269,7 @@ export default function ActiveRidePage() {
                         </p>
                         <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
                             <div
-                                className="h-full bg-amber-500 transition-all duration-1000"
+                                className="h-full bg-amber-500 transition-all duration-1000 will-change-transform"
                                 style={{ width: `${(1 - (elapsedTime % fuelInterval) / fuelInterval) * 100}%` }}
                             />
                         </div>
