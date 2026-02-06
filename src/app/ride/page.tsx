@@ -284,7 +284,7 @@ export default function ActiveRidePage() {
                         <div className="flex flex-col items-center">
                             <p className="text-4xl md:text-5xl font-black italic text-white tabular-nums">
                                 {weather?.windSpeed?.toFixed(0) || '--'}
-                                <span className="text-[10px] uppercase opacity-40 ml-1">KMH</span>
+                                <span className="text-[10px] uppercase opacity-40 ml-1 pr-1">KMH</span>
                             </p>
                             <div className="flex items-center gap-1.5 mt-1 opacity-50">
                                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />

@@ -184,7 +184,7 @@ export default function TacticalSetupPage() {
                             <Timer size={14} className="text-white/20" />
                         </div>
                         <p className="text-3xl font-black italic text-white">
-                            {suggestedStrategy.durationHours.toFixed(1)}<span className="text-xs ml-1 opacity-40">HRS</span>
+                            {suggestedStrategy.durationHours.toFixed(1)}<span className="text-xs ml-1 opacity-40 pr-1">HRS</span>
                         </p>
                     </div>
                     <div className={`pro-card border flex flex-col justify-between h-32 ${suggestedStrategy.tempImpact ? 'border-orange-500/30 bg-orange-500/5' : 'border-white/5'}`}>
@@ -194,7 +194,7 @@ export default function TacticalSetupPage() {
                         </div>
                         <p className="text-3xl font-black italic text-white">
                             {suggestedStrategy.totalWater > 1000 ? (suggestedStrategy.totalWater / 1000).toFixed(1) : suggestedStrategy.totalWater}
-                            <span className="text-xs ml-1 opacity-40">{suggestedStrategy.totalWater > 1000 ? 'L' : 'ML'}</span>
+                            <span className="text-xs ml-1 opacity-40 pr-1">{suggestedStrategy.totalWater > 1000 ? 'L' : 'ML'}</span>
                         </p>
                     </div>
                 </div>
