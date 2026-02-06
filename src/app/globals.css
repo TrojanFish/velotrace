@@ -136,6 +136,7 @@ body,
   /* IE and Edge */
   scrollbar-width: none !important;
   /* Firefox */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* 针对 Webkit 引擎 (Chrome, Safari, Edge, Opera) */
@@ -145,7 +146,11 @@ body::-webkit-scrollbar,
   display: none !important;
   width: 0 !important;
   height: 0 !important;
-  background: transparent !important;
+}
+
+.liquid-nav,
+.liquid-nav * {
+  overflow: visible !important;
 }
 
 /* 彻底禁绝滚动条占位 */

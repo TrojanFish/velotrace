@@ -33,6 +33,7 @@ export function Navigation() {
                 {links.map((link) => {
                     const Icon = link.icon;
                     const isActive = pathname === link.href || (link.href === "/ride" && pathname === "/ride");
+                    const isRideActiveLink = isRideActive && link.href === (rideSession ? "/ride" : "/ride/setup");
 
                     // Data Prediction: Prefetch on Hover or Touch Start
                     const handlePrefetch = () => {
@@ -45,23 +46,24 @@ export function Navigation() {
                             href={link.href}
                             onMouseEnter={handlePrefetch}
                             onTouchStart={handlePrefetch}
-                            className={`flex flex-col items-center gap-1.5 transition-all duration-300 group ${isActive ? "text-cyan-400" : "text-slate-500 hover:text-slate-300"
+                            className={`flex flex-col items-center gap-1.5 transition-all duration-300 group active:scale-95 ${isActive ? "text-cyan-400" : "text-slate-500 hover:text-slate-300"
                                 } ${link.className || ""}`}
                         >
-                            <div className={`relative p-2 rounded-2xl transition-all duration-300 isolate transform-gpu ${isActive
-                                ? "bg-gradient-to-br from-cyan-500/20 to-purple-500/10 shadow-[0_0_20px_rgba(0,212,255,0.3)]"
+                            <div className={`relative p-2 rounded-2xl transition-all duration-300 overflow-visible ${isActive && !isRideActiveLink
+                                ? "bg-white/5 shadow-[0_0_20px_rgba(0,212,255,0.1)] border border-white/10"
                                 : "group-hover:bg-white/5"
                                 }`}>
-                                {/* Liquid Aura Glow for Active Ride */}
-                                {isRideActive && link.href === (rideSession ? "/ride" : "/ride/setup") && (
-                                    <div className="absolute inset-0 -z-10 animate-cyan-breathing">
-                                        <div className="absolute inset-[-40%] bg-cyan-400/30 blur-2xl rounded-full" />
+                                {/* 
+                                    Liquid Aura for Active Ride 
+                                    Dedicated glow that sits behind the icon without a contained background to avoid clipping 
+                                */}
+                                {isRideActiveLink && (
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
+                                        <div className="w-[180%] h-[180%] bg-cyan-500/20 blur-2xl rounded-full animate-cyan-breathing" />
+                                        <div className="absolute inset-0 bg-cyan-500/5 rounded-2xl border border-cyan-500/20 shadow-[0_0_15px_rgba(0,212,255,0.2)]" />
                                     </div>
                                 )}
-                                {/* Glow effect for active tab route */}
-                                {isActive && (
-                                    <div className="absolute inset-0 rounded-2xl bg-cyan-500/20 blur-xl animate-pulse -z-10" />
-                                )}
+
                                 <Icon
                                     size={22}
                                     strokeWidth={isActive ? 2.5 : 1.5}
@@ -72,10 +74,6 @@ export function Navigation() {
                                 }`}>
                                 {link.label}
                             </span>
-                            {/* Active indicator dot */}
-                            {isActive && (
-                                <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(0,212,255,0.8)]" />
-                            )}
                         </Link>
                     );
                 })}
