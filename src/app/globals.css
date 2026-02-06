@@ -107,7 +107,7 @@
    ============================================ */
 
 html {
-  height: -webkit-fill-available;
+  /* height: -webkit-fill-available; Removed to fix iOS bottom bar jump */
   scroll-behavior: smooth;
 }
 
