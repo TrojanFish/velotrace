@@ -937,7 +937,8 @@ a:active {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  line-height: 1.1;
+  line-height: 1.25;
+  padding-bottom: 0.1em;
   padding-right: 0.1em;
   margin-right: -0.1em;
 }
