@@ -79,7 +79,9 @@ export function useStravaSync(): UseStravaSyncReturn {
                                 lastLubeMileage: 0
                             }
                         ],
-                        maintenance: existing?.maintenance || { ...DEFAULT_MAINTENANCE }
+                        maintenance: existing?.maintenance || { ...DEFAULT_MAINTENANCE },
+                        torqueSettings: existing?.torqueSettings || [],
+                        maintenanceLogs: existing?.maintenanceLogs || []
                     };
                 });
 
