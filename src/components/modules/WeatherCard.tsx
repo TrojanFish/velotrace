@@ -4,7 +4,18 @@ import { useWeather } from "@/hooks/useWeather";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { useStore } from "@/store/useStore";
 import { Skeleton } from "@/lib/utils";
-import { CloudRain, Wind, Thermometer, Shirt, Droplets, Sunrise, Sunset } from "lucide-react";
+import {
+    CloudRain,
+    Wind,
+    Thermometer,
+    Shirt,
+    Droplets,
+    Sunrise,
+    Sunset,
+    Zap,
+    Sun,
+    Waves
+} from "lucide-react";
 
 export function WeatherCard() {
     const { data, loading, error, refresh } = useWeather();
@@ -21,6 +32,8 @@ export function WeatherCard() {
                     <div className="liquid-skeleton w-12 h-12 rounded-2xl" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
+                    <div className="liquid-skeleton w-full h-14 rounded-xl" />
+                    <div className="liquid-skeleton w-full h-14 rounded-xl" />
                     <div className="liquid-skeleton w-full h-14 rounded-xl" />
                     <div className="liquid-skeleton w-full h-14 rounded-xl" />
                 </div>
@@ -63,10 +76,17 @@ export function WeatherCard() {
     // Calculate wind strategy
     const windDir = data.windDirection;
     let windAdvice = "侧风";
-    if (windDir > 315 || windDir < 45) windAdvice = "北风 (考虑向南骑行)";
-    else if (windDir >= 45 && windDir <= 135) windAdvice = "东风 (考虑向西骑行)";
-    else if (windDir > 135 && windDir <= 225) windAdvice = "南风 (考虑向北骑行)";
-    else windAdvice = "西风 (考虑向东骑行)";
+    if (windDir > 315 || windDir < 45) windAdvice = "北风 (建议南骑)";
+    else if (windDir >= 45 && windDir <= 135) windAdvice = "东风 (建议西骑)";
+    else if (windDir > 135 && windDir <= 225) windAdvice = "南风 (建议北骑)";
+    else windAdvice = "西风 (建议东骑)";
+
+    // UV Index interpretation
+    let uvAdvice = "低";
+    let uvColor = "text-emerald-400";
+    if (data.uvIndex >= 8) { uvAdvice = "极强"; uvColor = "text-purple-400"; }
+    else if (data.uvIndex >= 6) { uvAdvice = "强"; uvColor = "text-red-400"; }
+    else if (data.uvIndex >= 3) { uvAdvice = "中"; uvColor = "text-amber-400"; }
 
     return (
         <div className="pro-card space-y-6">
@@ -88,20 +108,27 @@ export function WeatherCard() {
                         <span className="text-sm font-medium text-white/40">体感 {data.apparentTemp}°</span>
                     </div>
 
-                    {/* Sunrise & Sunset - Enhanced visibility */}
-                    <div className="flex gap-3 mt-3">
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-                            <Sunrise size={14} className="text-amber-400" />
+                    {/* Meta Row: Sunrise, Sunset, Wind Gusts */}
+                    <div className="flex gap-2.5 mt-3 flex-wrap">
+                        <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                            <Sunrise size={12} className="text-amber-400" />
                             <div className="flex flex-col -space-y-0.5">
-                                <span className="text-[7px] font-black text-white/30 uppercase tracking-tighter">Sunrise</span>
-                                <span className="text-[12px] font-mono font-black text-white/90">{data.sunrise || "--:--"}</span>
+                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">Sunrise</span>
+                                <span className="text-[11px] font-mono font-black text-white/90">{data.sunrise || "--:--"}</span>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-                            <Sunset size={14} className="text-orange-500" />
+                        <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                            <Sunset size={12} className="text-orange-500" />
                             <div className="flex flex-col -space-y-0.5">
-                                <span className="text-[7px] font-black text-white/30 uppercase tracking-tighter">Sunset</span>
-                                <span className="text-[12px] font-mono font-black text-white/90">{data.sunset || "--:--"}</span>
+                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">Sunset</span>
+                                <span className="text-[11px] font-mono font-black text-white/90">{data.sunset || "--:--"}</span>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                            <Zap size={12} className="text-cyan-400" />
+                            <div className="flex flex-col -space-y-0.5">
+                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">Max Gust</span>
+                                <span className="text-[11px] font-mono font-black text-white/90">{data.windGusts.toFixed(0)}<span className="text-[7px] ml-0.5 opacity-40">KMH</span></span>
                             </div>
                         </div>
                     </div>
@@ -111,15 +138,15 @@ export function WeatherCard() {
                 </div>
             </div>
 
-            {/* Stats Grid */}
+            {/* Tactical Grid (2x2) */}
             <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                     <div className="liquid-icon p-2">
                         <Wind size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-white/40 font-medium">风向策略</p>
-                        <p className="text-xs font-semibold text-white/90">{windAdvice}</p>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">风向策略</p>
+                        <p className="text-xs font-semibold text-white/90 truncate">{windAdvice}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -127,8 +154,28 @@ export function WeatherCard() {
                         <Droplets size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-white/40 font-medium">降水概率</p>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">降水概率</p>
                         <p className="text-xs font-semibold text-white/90">{data.isRainy ? "有雨 💧" : "干爽 ☀️"}</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="liquid-icon warning p-2">
+                        <Sun size={16} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">紫外线指数</p>
+                        <p className="text-xs font-semibold text-white/90">
+                            {data.uvIndex.toFixed(1)} <span className={`text-[9px] font-black ${uvColor} uppercase ml-1`}>{uvAdvice}</span>
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="liquid-icon purple p-2">
+                        <Waves size={16} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">相对湿度</p>
+                        <p className="text-xs font-semibold text-white/90">{data.humidity}% <span className="text-[9px] font-black text-white/30 uppercase ml-1">{data.humidity > 70 ? "闷热" : "适宜"}</span></p>
                     </div>
                 </div>
             </div>

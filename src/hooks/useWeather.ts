@@ -6,6 +6,9 @@ export interface WeatherData {
     apparentTemp: number;
     windSpeed: number;
     windDirection: number;
+    humidity: number;
+    uvIndex: number;
+    windGusts: number;
     isRainy: boolean;
     city: string;
     sunrise?: string;
@@ -35,7 +38,7 @@ export function useWeather() {
 
     const fetchWeatherData = async (latitude: number, longitude: number) => {
         try {
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m&daily=sunrise,sunset&wind_speed_unit=kmh&timezone=auto`);
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index&daily=sunrise,sunset&wind_speed_unit=kmh&timezone=auto`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const json = await res.json();
 
@@ -53,6 +56,9 @@ export function useWeather() {
                 apparentTemp: current.apparent_temperature,
                 windSpeed: current.wind_speed_10m,
                 windDirection: current.wind_direction_10m,
+                humidity: current.relative_humidity_2m,
+                uvIndex: current.uv_index,
+                windGusts: current.wind_gusts_10m,
                 isRainy: current.precipitation > 0,
                 city: "本地探测结果",
                 sunrise: daily?.sunrise?.[0] ? formatTime(daily.sunrise[0]) : undefined,
