@@ -2,8 +2,9 @@
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { BarChart3, Map, Mountain, Trophy } from "lucide-react";
+import { BarChart3, Map as MapIcon, Mountain, Trophy } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
+import { useStore } from "@/store/useStore";
 
 interface WeeklyStats {
     distance: number;
@@ -13,11 +14,20 @@ interface WeeklyStats {
 
 export function WeeklyStatsCard() {
     const { data: session } = useSession();
-    const [stats, setStats] = useState<WeeklyStats | null>(null);
-    const [loading, setLoading] = useState(false);
+    const { stravaStatsCache, setStravaStatsCache } = useStore();
+    const [loading, setLoading] = useState(!stravaStatsCache);
+
+    const stats = stravaStatsCache?.data as WeeklyStats | null;
 
     useEffect(() => {
         if (session) {
+            // If we have cache within last 15 minutes, don't refresh immediately
+            const isFresh = stravaStatsCache && (Date.now() - stravaStatsCache.timestamp < 15 * 60 * 1000);
+            if (isFresh) {
+                setLoading(false);
+                return;
+            }
+
             setLoading(true);
             fetch("/api/strava/stats")
                 .then((res) => {
@@ -25,11 +35,16 @@ export function WeeklyStatsCard() {
                     return res.json();
                 })
                 .then((data) => {
-                    if (!data.error) setStats(data);
+                    if (!data.error) {
+                        setStravaStatsCache({
+                            data,
+                            timestamp: Date.now()
+                        });
+                    }
                 })
                 .finally(() => setLoading(false));
         }
-    }, [session]);
+    }, [session, stravaStatsCache, setStravaStatsCache]);
 
     if (!session) return null;
 
@@ -71,7 +86,7 @@ export function WeeklyStatsCard() {
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                     <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Map size={12} />
+                        <MapIcon size={12} />
                         <span className="text-[10px] uppercase font-bold tracking-wider">本周里程</span>
                     </div>
                     <div className="text-2xl font-black italic tracking-tighter text-slate-100">

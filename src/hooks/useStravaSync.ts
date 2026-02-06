@@ -25,7 +25,7 @@ export function useStravaSync(): UseStravaSyncReturn {
     const [syncSuccess, setSyncSuccess] = useState(false);
     const [syncError, setSyncError] = useState(false);
 
-    const { user, bikes, updateUser, setBikes, setActiveBikeIndex } = useStore();
+    const { user, bikes, updateUser, setBikes, setActiveBikeIndex, setStravaStatsCache, setStravaSegmentsCache, setStravaRoutesCache } = useStore();
 
     const sync = useCallback(async (): Promise<StravaSyncResult> => {
         setIsSyncing(true);
@@ -39,6 +39,11 @@ export function useStravaSync(): UseStravaSyncReturn {
             if (data.error) {
                 throw new Error(data.error);
             }
+
+            // Invalidate caches to force a refresh on other pages
+            setStravaStatsCache(null);
+            setStravaSegmentsCache(null);
+            setStravaRoutesCache(null);
 
             // Update user profile data
             updateUser({

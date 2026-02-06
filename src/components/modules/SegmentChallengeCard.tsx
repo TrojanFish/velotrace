@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Trophy, ChevronRight, Activity } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
+import { useStore } from "@/store/useStore";
 
 interface SegmentEffort {
     name: string;
@@ -14,20 +15,34 @@ interface SegmentEffort {
 
 export function SegmentChallengeCard() {
     const { data: session } = useSession();
-    const [segments, setSegments] = useState<SegmentEffort[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { stravaSegmentsCache, setStravaSegmentsCache } = useStore();
+    const [loading, setLoading] = useState(!stravaSegmentsCache);
+
+    const segments = (stravaSegmentsCache?.data || []) as SegmentEffort[];
 
     useEffect(() => {
         if (session) {
+            // Cache logic: 15 minutes fresh
+            const isFresh = stravaSegmentsCache && (Date.now() - stravaSegmentsCache.timestamp < 15 * 60 * 1000);
+            if (isFresh) {
+                setLoading(false);
+                return;
+            }
+
             setLoading(true);
             fetch("/api/strava/segments")
                 .then(res => res.json())
                 .then(data => {
-                    if (!data.error) setSegments(data);
+                    if (!data.error) {
+                        setStravaSegmentsCache({
+                            data,
+                            timestamp: Date.now()
+                        });
+                    }
                 })
                 .finally(() => setLoading(false));
         }
-    }, [session]);
+    }, [session, stravaSegmentsCache, setStravaSegmentsCache]);
 
     if (!session) return null;
 

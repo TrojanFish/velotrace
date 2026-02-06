@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Wind, Navigation, Loader2, AlertTriangle, ChevronDown, Map } from "lucide-react";
 import polyline from "polyline-encoded";
+import { useStore } from "@/store/useStore";
 
 interface Particle {
     x: number;
@@ -27,13 +28,21 @@ interface StravaRoute {
 
 export function DynamicWindFieldMap() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { stravaRoutesCache, setStravaRoutesCache } = useStore();
     const [is3D, setIs3D] = useState(true);
     const [routePoints, setRoutePoints] = useState<Point[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [allRoutes, setAllRoutes] = useState<StravaRoute[]>([]);
+    const [isLoading, setIsLoading] = useState(!stravaRoutesCache);
+    const [allRoutes, setAllRoutes] = useState<StravaRoute[]>(stravaRoutesCache?.data || []);
     const [activeRouteIndex, setActiveRouteIndex] = useState<number>(0);
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [showSelector, setShowSelector] = useState(false);
+
+    // Initial projection if cache exists
+    useEffect(() => {
+        if (stravaRoutesCache?.data && stravaRoutesCache.data.length > 0) {
+            decodeAndProject(stravaRoutesCache.data[0].polyline);
+        }
+    }, []);
 
     const useDemoRoute = () => {
         setRoutePoints([
@@ -48,28 +57,41 @@ export function DynamicWindFieldMap() {
 
     useEffect(() => {
         async function fetchRoutes() {
+            // Cache logic: 15 minutes fresh
+            const isFresh = stravaRoutesCache && (Date.now() - stravaRoutesCache.timestamp < 15 * 60 * 1000);
+            if (isFresh) {
+                setIsLoading(false);
+                return;
+            }
+
             setIsLoading(true);
             try {
                 const res = await fetch('/api/strava/routes');
                 const data = await res.json();
 
                 if (data.error || !data.routes || data.routes.length === 0) {
-                    useDemoRoute();
+                    if (allRoutes.length === 0) useDemoRoute();
                     return;
                 }
 
                 setAllRoutes(data.routes);
-                setActiveRouteIndex(0);
-                decodeAndProject(data.routes[0].polyline);
+                setStravaRoutesCache({
+                    data: data.routes,
+                    timestamp: Date.now()
+                });
+
+                if (activeRouteIndex === 0) {
+                    decodeAndProject(data.routes[0].polyline);
+                }
             } catch (err) {
                 console.warn("Strava Route Sync Failed", err);
-                useDemoRoute();
+                if (allRoutes.length === 0) useDemoRoute();
             } finally {
                 setIsLoading(false);
             }
         }
         fetchRoutes();
-    }, []);
+    }, [stravaRoutesCache, setStravaRoutesCache]);
 
     const decodeAndProject = (encoded: string) => {
         if (!encoded) {

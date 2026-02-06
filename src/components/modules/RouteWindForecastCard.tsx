@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { Wind, Navigation, ChevronLeft, ChevronRight, Shield, MapPin } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
 import { decodePolyline, calculateBearing, scoreWindAlignment } from "@/lib/calculators/routeIntel";
+import { useStore } from "@/store/useStore";
 
 interface StravaRoute {
     id: number;
@@ -18,10 +19,12 @@ interface StravaRoute {
 
 export function RouteWindForecastCard() {
     const { data: session } = useSession();
-    const [routes, setRoutes] = useState<StravaRoute[]>([]);
+    const { stravaRoutesCache, setStravaRoutesCache } = useStore();
     const [activeIndex, setActiveIndex] = useState(0);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(!stravaRoutesCache);
     const [windInfo, setWindInfo] = useState<{ speed: number; deg: number; label: string } | null>(null);
+
+    const routes = (stravaRoutesCache?.data || []) as StravaRoute[];
 
     const getWindDirectionLabel = useCallback((deg: number) => {
         const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
@@ -30,6 +33,13 @@ export function RouteWindForecastCard() {
 
     useEffect(() => {
         if (session) {
+            // Cache logic: 15 minutes fresh
+            const isFresh = stravaRoutesCache && (Date.now() - stravaRoutesCache.timestamp < 15 * 60 * 1000);
+            if (isFresh) {
+                setLoading(false);
+                return;
+            }
+
             setLoading(true);
             fetch("/api/strava/routes")
                 .then(res => {
@@ -38,7 +48,6 @@ export function RouteWindForecastCard() {
                 })
                 .then(data => {
                     if (data.routes && Array.isArray(data.routes)) {
-                        // Transform the API response to match the expected local interface
                         const mappedRoutes = data.routes.map((r: any) => ({
                             id: r.id,
                             name: r.name,
@@ -48,16 +57,19 @@ export function RouteWindForecastCard() {
                                 summary_polyline: r.polyline || ""
                             }
                         }));
-                        setRoutes(mappedRoutes);
+
+                        setStravaRoutesCache({
+                            data: mappedRoutes,
+                            timestamp: Date.now()
+                        });
                     }
                 })
                 .catch(err => {
                     console.error("Failed to fetch routes:", err);
-                    setRoutes([]);
                 })
                 .finally(() => setLoading(false));
         }
-    }, [session]);
+    }, [session, stravaRoutesCache, setStravaRoutesCache]);
 
     useEffect(() => {
         if (routes.length > 0) {

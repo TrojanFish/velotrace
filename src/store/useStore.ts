@@ -54,6 +54,11 @@ export interface AIBriefingCache {
     timestamp: number;
 }
 
+export interface StravaCache {
+    data: any;
+    timestamp: number;
+}
+
 export interface BikeProfile {
     id: string;
     name: string;
@@ -95,6 +100,9 @@ interface VeloState {
     // Global Data Caches to prevent flickering
     weatherCache: WeatherCache | null;
     aiBriefingCache: AIBriefingCache | null;
+    stravaStatsCache: StravaCache | null;
+    stravaSegmentsCache: StravaCache | null;
+    stravaRoutesCache: StravaCache | null;
 
     // Actions
     updateUser: (user: Partial<UserSettings>) => void;
@@ -112,8 +120,11 @@ interface VeloState {
     addWheelset: (bikeIndex: number, wheelset: Wheelset) => void;
 
     // Cache Actions
-    setWeatherCache: (cache: WeatherCache) => void;
-    setAIBriefingCache: (cache: AIBriefingCache) => void;
+    setWeatherCache: (cache: WeatherCache | null) => void;
+    setAIBriefingCache: (cache: AIBriefingCache | null) => void;
+    setStravaStatsCache: (cache: StravaCache | null) => void;
+    setStravaSegmentsCache: (cache: StravaCache | null) => void;
+    setStravaRoutesCache: (cache: StravaCache | null) => void;
 }
 
 // Type for persisted state during migration
@@ -178,6 +189,9 @@ export const useStore = create<VeloState>()(
             dailyLoads: [],
             weatherCache: null,
             aiBriefingCache: null,
+            stravaStatsCache: null,
+            stravaSegmentsCache: null,
+            stravaRoutesCache: null,
 
             updateUser: (newUser) => set((state) => ({ user: { ...state.user, ...newUser } })),
             updateBike: (index, newBike) => set((state) => {
@@ -235,6 +249,9 @@ export const useStore = create<VeloState>()(
             }),
             setWeatherCache: (weatherCache) => set({ weatherCache }),
             setAIBriefingCache: (aiBriefingCache) => set({ aiBriefingCache }),
+            setStravaStatsCache: (stravaStatsCache) => set({ stravaStatsCache }),
+            setStravaSegmentsCache: (stravaSegmentsCache) => set({ stravaSegmentsCache }),
+            setStravaRoutesCache: (stravaRoutesCache) => set({ stravaRoutesCache }),
         }),
         {
             name: 'velotrace-storage-v3', // New name for IndexedDB storage
