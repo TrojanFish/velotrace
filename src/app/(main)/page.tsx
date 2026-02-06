@@ -111,15 +111,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Floating Action Button Section (Ride Mode Only) */}
-      <div className="fixed bottom-32 right-6 z-50 flex flex-col gap-4">
-        <Link
-          href="/ride/setup"
-          className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-white shadow-[0_0_25px_rgba(0,212,255,0.4)] hover:scale-110 active:scale-95 transition-all border border-white/20"
-        >
-          <Maximize2 size={24} />
-        </Link>
-      </div>
+
     </main>
   );
 }
