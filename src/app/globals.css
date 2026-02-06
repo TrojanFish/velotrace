@@ -125,20 +125,32 @@ body {
 }
 
 /* ============================================
-   📜 Native App Style - Hide Scrollbars
+   📜 Native App Style - Hide Scrollbars (Aggressive)
    ============================================ */
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-*::-webkit-scrollbar {
-  display: none !important;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
+/* 全局禁用滚动条显示 */
+html,
+body,
 * {
   -ms-overflow-style: none !important;
   /* IE and Edge */
   scrollbar-width: none !important;
   /* Firefox */
+}
+
+/* 针对 Webkit 引擎 (Chrome, Safari, Edge, Opera) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* 彻底禁绝滚动条占位 */
+html {
+  scrollbar-gutter: auto !important;
 }
 
 /* Animated Aurora Background */
