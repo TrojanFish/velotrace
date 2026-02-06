@@ -8,17 +8,15 @@ export default function Template({ children }: { children: ReactNode }) {
     const pathname = usePathname();
 
     return (
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false}>
             <motion.div
                 key={pathname}
-                initial={{ opacity: 0, scale: 0.98, x: 8 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.98, x: -8 }}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
                 transition={{
-                    type: "spring",
-                    stiffness: 380,
-                    damping: 30,
-                    mass: 1
+                    duration: 0.2,
+                    ease: "easeOut"
                 }}
                 className="w-full flex-1"
             >
