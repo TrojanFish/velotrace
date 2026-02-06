@@ -21,7 +21,7 @@ export function Navigation() {
             href: isRideActive ? "/ride" : "/ride/setup",
             label: isRideActive ? "进行中" : "部署",
             icon: isRideActive ? Activity : Target,
-            className: isRideActive ? "text-cyan-400 animate-cyan-breathing glow-cyan" : ""
+            className: isRideActive ? "text-cyan-400 glow-cyan" : ""
         },
         { href: "/tools", label: "工具", icon: Wrench },
         { href: "/garage", label: "车手", icon: UserCog },
@@ -29,7 +29,7 @@ export function Navigation() {
 
     return (
         <nav className="liquid-nav fixed bottom-0 left-0 right-0 z-[100] pb-[max(0.5rem,calc(env(safe-area-inset-bottom)-16px))]">
-            <div className="max-w-md mx-auto px-6 py-1.5 flex justify-between items-center">
+            <div className="max-w-md mx-auto px-6 py-1.5 flex justify-between items-center overflow-visible">
                 {links.map((link) => {
                     const Icon = link.icon;
                     const isActive = pathname === link.href || (link.href === "/ride" && pathname === "/ride");
