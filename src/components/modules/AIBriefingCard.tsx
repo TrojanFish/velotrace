@@ -109,15 +109,20 @@ export function AIBriefingCard() {
 
     useEffect(() => {
         if (showDetails) {
+            // Use a class-based approach if possible, but for now we optimize the inline style
+            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
             document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = `${scrollBarWidth}px`;
             document.body.style.touchAction = 'none';
         } else {
-            document.body.style.overflow = 'unset';
-            document.body.style.touchAction = 'unset';
+            document.body.style.overflow = 'auto';
+            document.body.style.paddingRight = '0px';
+            document.body.style.touchAction = 'auto';
         }
         return () => {
-            document.body.style.overflow = 'unset';
-            document.body.style.touchAction = 'unset';
+            document.body.style.overflow = 'auto';
+            document.body.style.paddingRight = '0px';
+            document.body.style.touchAction = 'auto';
         };
     }, [showDetails]);
 
@@ -367,7 +372,7 @@ export function AIBriefingCard() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/80 backdrop-blur-xl"
+                        className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/80 backdrop-blur-xl transform-gpu"
                         onClick={handleBottomSheetClose}
                     >
                         <motion.div
@@ -383,7 +388,7 @@ export function AIBriefingCard() {
                                     handleBottomSheetClose();
                                 }
                             }}
-                            className="w-full max-w-md mx-auto bg-slate-900/40 backdrop-blur-2xl border-x border-t border-white/10 rounded-t-[2.5rem] p-6 pb-[calc(env(safe-area-inset-bottom,24px)+1.5rem)] space-y-6 shadow-[0_-20px_100px_-12px_rgba(168,85,247,0.4)] flex flex-col max-h-[95vh] overflow-hidden touch-none"
+                            className="w-full max-w-md mx-auto bg-slate-900/40 backdrop-blur-2xl border-x border-t border-white/10 rounded-t-[2.5rem] p-6 pb-[calc(env(safe-area-inset-bottom,24px)+1.5rem)] space-y-6 shadow-[0_-20px_100px_-12px_rgba(168,85,247,0.4)] flex flex-col max-h-[95vh] overflow-hidden touch-none transform-gpu will-change-transform"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Grab Bar */}
