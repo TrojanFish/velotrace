@@ -35,10 +35,15 @@ export function AIBriefingCard() {
 
     const handleExport = async () => {
         const { toPng } = await import('html-to-image');
+        const { shareReport } = await import('@/lib/share');
+        const { toast } = await import('sonner');
+
         const element = document.getElementById('tactical-report-capture');
         if (!element) return;
 
         setIsExporting(true);
+        const t = toast.loading("正在生成高品质战术卡...", { duration: 5000 });
+
         try {
             // Wait a frame for UI to be ready
             await new Promise(r => setTimeout(r, 200));
@@ -47,12 +52,20 @@ export function AIBriefingCard() {
                 backgroundColor: '#050810',
                 cacheBust: true,
             });
-            const link = document.createElement('a');
-            link.download = `VeloTrace-Report-${new Date().toISOString().split('T')[0]}.png`;
-            link.href = dataUrl;
-            link.click();
+
+            const fileName = `VeloTrace-Report-${new Date().toISOString().split('T')[0]}.png`;
+            const result = await shareReport(dataUrl, fileName, "VeloTrace 战术简报");
+
+            if (result.success) {
+                if (result.method === 'native') toast.success("战报已呼起系统分享", { id: t });
+                else if (result.method === 'download') toast.success("浏览器不支持直接分享，图片已下载至本地", { id: t });
+                else toast.dismiss(t);
+            } else {
+                toast.error("战报生成失败", { id: t });
+            }
         } catch (err) {
             console.error("Export failed:", err);
+            toast.error("渲染引擎故障", { id: t });
         } finally {
             setIsExporting(false);
         }

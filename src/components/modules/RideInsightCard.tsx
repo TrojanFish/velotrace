@@ -17,11 +17,15 @@ import {
     ShieldCheck,
     BarChart3,
     Share2,
-    Download
+    Download,
+    Loader2
 } from "lucide-react";
 import { calculateMetabolism, getRecoveryTime, simulatePowerZones, calculateTSS } from "@/lib/calculators/activityInsight";
 import { calculateCdA, getCdARating } from "@/lib/calculators/aerodynamics";
 import { Skeleton } from "@/lib/utils";
+import { toast } from "sonner";
+import { shareReport } from "@/lib/share";
+
 
 interface ActivityInsight {
     id: number;
@@ -51,24 +55,35 @@ export function RideInsightCard() {
     const [error, setError] = useState<string | null>(null);
     const [isSharing, setIsSharing] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
+    const exportRef = useRef<HTMLDivElement>(null);
 
     const handleShare = async () => {
-        if (!cardRef.current) return;
+        if (!exportRef.current) return;
         setIsSharing(true);
+        const t = toast.loading("正在生成高品质战报...", { duration: 5000 });
+
         try {
-            await new Promise(r => setTimeout(r, 100));
-            const dataUrl = await toPng(cardRef.current, {
+            // Wait a moment for layout to settle
+            await new Promise(r => setTimeout(r, 300));
+            const dataUrl = await toPng(exportRef.current, {
                 cacheBust: true,
-                backgroundColor: '#0f172a',
-                style: { borderRadius: '0' }
+                pixelRatio: 3,
+                backgroundColor: '#050810',
             });
-            const link = document.createElement('a');
-            link.download = `VeloTrace-Insight-${activity?.id || 'Ride'}.png`;
-            link.href = dataUrl;
-            link.click();
+
+            const fileName = `VeloTrace-Recap-${activity?.id}.png`;
+            const result = await shareReport(dataUrl, fileName, "VeloTrace 骑行洞察战报");
+
+            if (result.success) {
+                if (result.method === 'native') toast.success("战报已呼起系统分享", { id: t });
+                else if (result.method === 'download') toast.success("浏览器不支持直接分享，图片已保存本地", { id: t });
+                else toast.dismiss(t);
+            } else {
+                toast.error("生成战报失败", { id: t });
+            }
         } catch (err) {
             console.error('Failed to share:', err);
-            alert('战报预览生成失败，请稍后重试');
+            toast.error("战报引擎故障，请重试", { id: t });
         } finally {
             setIsSharing(false);
         }
@@ -177,6 +192,109 @@ export function RideInsightCard() {
 
     return (
         <div className="space-y-4">
+            {/* Hidden Poster Target */}
+            <div className="fixed -left-[2000px] -top-[2000px]">
+                <div
+                    ref={exportRef}
+                    className="w-[480px] bg-[#050810] p-12 relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-pink-500/10 blur-[120px] rounded-full" />
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/10 blur-[120px] rounded-full" />
+
+                    {/* Header */}
+                    <div className="flex justify-between items-start mb-16">
+                        <div className="space-y-2">
+                            <h1 className="text-4xl font-black italic tracking-tighter text-white">VELOTRACE</h1>
+                            <p className="text-[10px] font-black text-pink-500 uppercase tracking-[0.5em] italic">Bio-Engine Recap v0.1</p>
+                        </div>
+                        <div className="text-right border-r-4 border-pink-500 pr-4">
+                            <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">{new Date(activity.startTime).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                            <p className="text-sm font-black italic text-white/90 uppercase truncate max-w-[200px]">{activity.name}</p>
+                        </div>
+                    </div>
+
+                    {/* Main Score - RP Index */}
+                    <div className="mb-16">
+                        <div className="flex items-baseline gap-4">
+                            <span className="text-9xl font-black italic tracking-tighter text-white">
+                                {activity.hasPower ? Math.round((activity.weightedAveragePower || activity.averagePower) / user.ftp * 100) : '--'}
+                            </span>
+                            <div className="space-y-1">
+                                <p className="text-2xl font-black italic text-pink-500 uppercase">RP INDEX</p>
+                                <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Relative Performance Score</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Triple Metric Grid */}
+                    <div className="grid grid-cols-3 gap-6 mb-16">
+                        <div className="p-6 bg-white/[0.03] border border-white/10 rounded-2xl text-center">
+                            <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Load (TSS)</p>
+                            <p className="text-3xl font-black italic text-cyan-400">{tss}</p>
+                        </div>
+                        <div className="p-6 bg-white/[0.03] border border-white/10 rounded-2xl text-center">
+                            <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Intensity (IF)</p>
+                            <p className="text-3xl font-black italic text-purple-500">{(activity.weightedAveragePower / user.ftp).toFixed(2)}</p>
+                        </div>
+                        <div className="p-6 bg-white/[0.03] border border-white/10 rounded-2xl text-center">
+                            <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Restore (Hrs)</p>
+                            <p className="text-3xl font-black italic text-emerald-500">{recoveryTime}</p>
+                        </div>
+                    </div>
+
+                    {/* Detailed Data Rows */}
+                    <div className="space-y-8 mb-16">
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 bg-pink-500 rotate-45" />
+                                <h3 className="text-xs font-black text-white uppercase tracking-widest italic">Aerodynamics & Power</h3>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="flex justify-between items-baseline p-4 bg-white/[0.02] rounded-xl border border-white/5">
+                                    <span className="text-[10px] font-bold text-white/30 uppercase">Virtual CdA</span>
+                                    <span className="text-lg font-black italic text-cyan-400">{cdaData?.value.toFixed(3) || '--'}</span>
+                                </div>
+                                <div className="flex justify-between items-baseline p-4 bg-white/[0.02] rounded-xl border border-white/5">
+                                    <span className="text-[10px] font-bold text-white/30 uppercase">Rating</span>
+                                    <span className="text-lg font-black italic text-purple-400 uppercase">{cdaData?.rating || '--'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 bg-cyan-500 rotate-45" />
+                                <h3 className="text-xs font-black text-white uppercase tracking-widest italic">Metabolism Fueling</h3>
+                            </div>
+                            <div className="p-6 bg-white/[0.02] rounded-xl border border-white/5 space-y-4">
+                                <div className="flex h-3 w-full rounded-full bg-white/5 overflow-hidden">
+                                    <div className="h-full bg-orange-500" style={{ width: `${metabolism?.fatPercent}%` }} />
+                                    <div className="h-full bg-cyan-500" style={{ width: `${metabolism?.carbPercent}%` }} />
+                                </div>
+                                <div className="flex justify-between font-black italic">
+                                    <div className="flex flex-col">
+                                        <span className="text-[9px] text-white/30 uppercase">Lipid Usage</span>
+                                        <span className="text-lg text-orange-500">{metabolism?.fatPercent}%</span>
+                                    </div>
+                                    <div className="flex flex-col text-right">
+                                        <span className="text-[9px] text-white/30 uppercase">Glycogen Usage</span>
+                                        <span className="text-lg text-cyan-500">{metabolism?.carbPercent}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Signature */}
+                    <div className="border-t border-white/10 pt-10 flex justify-between items-center">
+                        <div className="flex gap-1.5">
+                            {[1, 2, 3, 4].map(i => <div key={i} className="w-6 h-1 bg-white/10" />)}
+                        </div>
+                        <p className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">Engineered for Performance Elite</p>
+                    </div>
+                </div>
+            </div>
+
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div className="w-1 h-3 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]" />
@@ -188,7 +306,7 @@ export function RideInsightCard() {
                     className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50"
                 >
                     {isSharing ? (
-                        <div className="w-3 h-3 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
+                        <Loader2 size={12} className="animate-spin text-purple-400" />
                     ) : (
                         <Share2 size={12} />
                     )}
