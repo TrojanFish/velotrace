@@ -107,6 +107,20 @@ export function AIBriefingCard() {
         }
     }, [weatherLoading]);
 
+    useEffect(() => {
+        if (showDetails) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.touchAction = 'none';
+        } else {
+            document.body.style.overflow = 'unset';
+            document.body.style.touchAction = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.body.style.touchAction = 'unset';
+        };
+    }, [showDetails]);
+
     const handleBottomSheetClose = () => {
         setShowDetails(false);
         if (pathname !== "/") {
@@ -353,7 +367,7 @@ export function AIBriefingCard() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[110] flex items-end justify-center bg-black/60 backdrop-blur-xl"
+                        className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/80 backdrop-blur-xl"
                         onClick={handleBottomSheetClose}
                     >
                         <motion.div
@@ -369,13 +383,13 @@ export function AIBriefingCard() {
                                     handleBottomSheetClose();
                                 }
                             }}
-                            className="w-full liquid-modal rounded-t-[2.5rem] p-6 pb-12 space-y-6 shadow-[0_-20px_100px_-12px_rgba(168,85,247,0.4)] flex flex-col max-h-[92vh] overflow-hidden touch-none"
+                            className="w-full max-w-md mx-auto bg-slate-900/40 backdrop-blur-2xl border-x border-t border-white/10 rounded-t-[2.5rem] p-6 pb-[calc(env(safe-area-inset-bottom,24px)+1.5rem)] space-y-6 shadow-[0_-20px_100px_-12px_rgba(168,85,247,0.4)] flex flex-col max-h-[95vh] overflow-hidden touch-none"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Grab Bar */}
                             <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-2 shrink-0" />
 
-                            <div className="overflow-y-auto space-y-6 pr-1 custom-scrollbar">
+                            <div className="overflow-y-auto space-y-6 pr-1 custom-scrollbar overscroll-contain">
                                 {/* Header */}
                                 <div className="flex justify-between items-start">
                                     <div className="space-y-1">
