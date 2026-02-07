@@ -2,28 +2,17 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { LayoutDashboard, BarChart3, Wrench, UserCog, Target, Activity } from "lucide-react";
-import { useStore } from "@/store/useStore";
+import { LayoutDashboard, BarChart3, Wrench, UserCog } from "lucide-react";
 
 export function Navigation() {
     const router = useRouter();
-    const { rideSession } = useStore();
     const pathname = usePathname();
 
     if (pathname === "/ride") return null;
 
-    const isRideActive = rideSession?.isActive;
-
     const links = [
         { id: 'home', href: "/", label: "预览", icon: LayoutDashboard },
         { id: 'analytics', href: "/analytics", label: "记录", icon: BarChart3 },
-        {
-            id: 'ride',
-            href: (rideSession && (rideSession.isActive || rideSession.accumulatedTime > 0)) ? "/ride" : "/ride/setup",
-            label: (rideSession && (rideSession.isActive || rideSession.accumulatedTime > 0)) ? "进行中" : "部署",
-            icon: (rideSession && rideSession.isActive) ? Activity : Target,
-            className: (rideSession && rideSession.isActive) ? "text-cyan-400 animate-pulse" : ""
-        },
         { id: 'tools', href: "/tools", label: "工具", icon: Wrench },
         { id: 'pilot', href: "/pilot-office", label: "车手", icon: UserCog },
     ];
@@ -39,9 +28,6 @@ export function Navigation() {
                     switch (link.id) {
                         case 'home':
                             isActive = pathname === "/";
-                            break;
-                        case 'ride':
-                            isActive = pathname === "/ride" || pathname === "/ride/setup";
                             break;
                         case 'pilot':
                             isActive = pathname.startsWith("/pilot-office");

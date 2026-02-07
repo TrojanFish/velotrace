@@ -60,15 +60,6 @@ export interface StravaCache {
     timestamp: number;
 }
 
-export interface RideSession {
-    startTime?: number; // timestamp when timer started
-    accumulatedTime: number; // seconds accumulated before last start
-    isActive: boolean;
-    fuelInterval: number;
-    waterInterval: number;
-    targetDistance: number;
-    intensity: Intensity;
-}
 
 export interface TorqueSetting {
     id: string;
@@ -131,8 +122,6 @@ interface VeloState {
     stravaSegmentsCache: StravaCache | null;
     stravaRoutesCache: StravaCache | null;
 
-    // Ride Session
-    rideSession: RideSession | null;
 
     // Actions
     updateUser: (user: Partial<UserSettings>) => void;
@@ -161,7 +150,6 @@ interface VeloState {
     setStravaStatsCache: (cache: StravaCache | null) => void;
     setStravaSegmentsCache: (cache: StravaCache | null) => void;
     setStravaRoutesCache: (cache: StravaCache | null) => void;
-    setRideSession: (session: RideSession | null) => void;
 }
 
 // Type for persisted state during migration
@@ -236,7 +224,6 @@ export const useStore = create<VeloState>()(
             stravaStatsCache: null,
             stravaSegmentsCache: null,
             stravaRoutesCache: null,
-            rideSession: null,
 
             updateUser: (newUser) => set((state) => ({ user: { ...state.user, ...newUser } })),
             updateBike: (index, newBike) => set((state) => {
@@ -319,7 +306,6 @@ export const useStore = create<VeloState>()(
             setStravaStatsCache: (stravaStatsCache) => set({ stravaStatsCache }),
             setStravaSegmentsCache: (stravaSegmentsCache) => set({ stravaSegmentsCache }),
             setStravaRoutesCache: (stravaRoutesCache) => set({ stravaRoutesCache }),
-            setRideSession: (rideSession) => set({ rideSession }),
         }),
         {
             name: 'velotrace-storage-v4', // Internal migration
