@@ -5,6 +5,8 @@ import { useWeather } from "@/hooks/useWeather";
 import { Brain, Sparkles, ChevronRight, Loader2, ThermometerSun, Wind, Zap, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
+import { motion, AnimatePresence } from "framer-motion";
+import { useRouter, usePathname } from "next/navigation";
 
 const getTSBHeading = (tsb: number) => {
     if (tsb > 20) return { title: "极度渴望战斗", color: "text-emerald-400", hex: "#34d399" };
@@ -17,6 +19,8 @@ const getTSBHeading = (tsb: number) => {
 export function AIBriefingCard() {
     const { user, bikes, activeBikeIndex, aiBriefingCache, setAIBriefingCache, dailyLoads } = useStore();
     const { data: weather, loading: weatherLoading } = useWeather();
+    const router = useRouter();
+    const pathname = usePathname();
     const [isLoading, setIsLoading] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
 
@@ -35,15 +39,10 @@ export function AIBriefingCard() {
 
     const handleExport = async () => {
         const { toPng } = await import('html-to-image');
-        const { shareReport } = await import('@/lib/share');
-        const { toast } = await import('sonner');
-
         const element = document.getElementById('tactical-report-capture');
         if (!element) return;
 
         setIsExporting(true);
-        const t = toast.loading("正在生成高品质战术卡...", { duration: 5000 });
-
         try {
             // Wait a frame for UI to be ready
             await new Promise(r => setTimeout(r, 200));
@@ -52,20 +51,12 @@ export function AIBriefingCard() {
                 backgroundColor: '#050810',
                 cacheBust: true,
             });
-
-            const fileName = `VeloTrace-Report-${new Date().toISOString().split('T')[0]}.png`;
-            const result = await shareReport(dataUrl, fileName, "VeloTrace 战术简报");
-
-            if (result.success) {
-                if (result.method === 'native') toast.success("战报已呼起系统分享", { id: t });
-                else if (result.method === 'download') toast.success("浏览器不支持直接分享，图片已下载至本地", { id: t });
-                else toast.dismiss(t);
-            } else {
-                toast.error("战报生成失败", { id: t });
-            }
+            const link = document.createElement('a');
+            link.download = `VeloTrace-Report-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = dataUrl;
+            link.click();
         } catch (err) {
             console.error("Export failed:", err);
-            toast.error("渲染引擎故障", { id: t });
         } finally {
             setIsExporting(false);
         }
@@ -115,6 +106,13 @@ export function AIBriefingCard() {
             generateBriefing();
         }
     }, [weatherLoading]);
+
+    const handleBottomSheetClose = () => {
+        setShowDetails(false);
+        if (pathname !== "/") {
+            router.push("/");
+        }
+    };
 
     return (
         <>
@@ -349,118 +347,143 @@ export function AIBriefingCard() {
 
 
             {/* Tactical intelligence Detail Overlay */}
-            {showDetails && (
-                <div
-                    className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-xl transition-all animate-in fade-in duration-300"
-                    onClick={() => setShowDetails(false)}
-                >
-                    <div
-                        className="w-full max-w-lg liquid-modal rounded-t-[2rem] p-6 pb-10 space-y-6 shadow-[0_-20px_80px_-12px_rgba(168,85,247,0.3)] animate-in slide-in-from-bottom duration-500 ease-out flex flex-col max-h-[90vh] overflow-y-auto"
-                        onClick={(e) => e.stopPropagation()}
+            <AnimatePresence>
+                {showDetails && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[110] flex items-end justify-center bg-black/60 backdrop-blur-xl"
+                        onClick={handleBottomSheetClose}
                     >
-                        {/* Header */}
-                        <div className="flex justify-between items-start">
-                            <div className="space-y-1">
-                                <h3 className="text-xl font-bold text-gradient-aurora">战术推演详情报告</h3>
-                                <p className="text-[9px] text-purple-400/60 font-bold uppercase tracking-[0.25em]">Tactical Intelligence Deep-Dive</p>
-                            </div>
-                            <button
-                                onClick={() => setShowDetails(false)}
-                                className="liquid-icon p-2 hover:scale-110 transition-transform"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
+                        <motion.div
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            exit={{ y: "100%" }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            drag="y"
+                            dragConstraints={{ top: 0 }}
+                            dragElastic={0.2}
+                            onDragEnd={(_, info) => {
+                                if (info.offset.y > 100) {
+                                    handleBottomSheetClose();
+                                }
+                            }}
+                            className="w-full liquid-modal rounded-t-[2.5rem] p-6 pb-12 space-y-6 shadow-[0_-20px_100px_-12px_rgba(168,85,247,0.4)] flex flex-col max-h-[92vh] overflow-hidden touch-none"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Grab Bar */}
+                            <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-2 shrink-0" />
 
-                        {/* Raw Metrics Section */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-3">
-                                <h4 className="text-[9px] font-bold text-white/40 uppercase flex items-center gap-2 tracking-widest">
-                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full" /> 骑手档案
-                                </h4>
-                                <div className="space-y-2 font-mono">
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-white/40">FTP</span>
-                                        <span className="text-white/90">{user.ftp}W</span>
+                            <div className="overflow-y-auto space-y-6 pr-1 custom-scrollbar">
+                                {/* Header */}
+                                <div className="flex justify-between items-start">
+                                    <div className="space-y-1">
+                                        <h3 className="text-2xl font-black italic text-gradient-aurora tracking-tighter">战术推演详情报告</h3>
+                                        <p className="text-[10px] text-purple-400/60 font-bold uppercase tracking-[0.25em]">Tactical Intelligence Deep-Dive</p>
                                     </div>
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-white/40">WEIGHT</span>
-                                        <span className="text-white/90">{user.weight}kg</span>
-                                    </div>
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-white/40">TSB</span>
-                                        <span className={`font-bold ${(user.tsb ?? 0) > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{user.tsb ?? 0}</span>
-                                    </div>
+                                    <button
+                                        onClick={handleBottomSheetClose}
+                                        className="liquid-icon p-2 hover:scale-110 transition-transform bg-white/5 rounded-full"
+                                    >
+                                        <X size={18} />
+                                    </button>
                                 </div>
-                            </div>
-                            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-3">
-                                <h4 className="text-[9px] font-bold text-white/40 uppercase flex items-center gap-2 tracking-widest">
-                                    <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" /> 环境参数
-                                </h4>
-                                <div className="space-y-2 font-mono">
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-white/40">TEMP</span>
-                                        <span className="text-white/90">{weather?.temp}°C</span>
-                                    </div>
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-white/40">WIND</span>
-                                        <span className="text-white/90">{weather?.windSpeed}km/h</span>
-                                    </div>
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-white/40">DIRECTION</span>
-                                        <span className="text-blue-400">{weather?.windDirection}°</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* Detailed Content */}
-                        <div className="space-y-5">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="liquid-icon purple p-1.5">
-                                        <Zap size={12} />
-                                    </div>
-                                    <h4 className="text-[10px] font-bold text-white/60 uppercase tracking-widest">战术建议详情</h4>
-                                </div>
-                                <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/15 text-[11px] text-white/70 leading-relaxed font-medium">
-                                    {isLoading ? (
-                                        <div className="space-y-2">
-                                            <div className="liquid-skeleton h-3 w-full" />
-                                            <div className="liquid-skeleton h-3 w-5/6" />
+                                {/* Raw Metrics Section */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-4">
+                                        <h4 className="text-[10px] font-black text-white/40 uppercase flex items-center gap-2 tracking-[0.2em]">
+                                            <span className="w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.5)]" /> 骑手档案
+                                        </h4>
+                                        <div className="space-y-2.5 font-mono">
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-white/30 uppercase tracking-tighter">FTP</span>
+                                                <span className="text-white font-black">{user.ftp}W</span>
+                                            </div>
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-white/30 uppercase tracking-tighter">Weight</span>
+                                                <span className="text-white font-black">{user.weight}kg</span>
+                                            </div>
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-white/30 uppercase tracking-tighter">TSB</span>
+                                                <span className={`font-black ${(user.tsb ?? 0) > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0}</span>
+                                            </div>
                                         </div>
-                                    ) : (
-                                        structuredData?.advice
-                                    )}
+                                    </div>
+                                    <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-4">
+                                        <h4 className="text-[10px] font-black text-white/40 uppercase flex items-center gap-2 tracking-[0.2em]">
+                                            <span className="w-2 h-2 bg-orange-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]" /> 环境参数
+                                        </h4>
+                                        <div className="space-y-2.5 font-mono">
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-white/30 uppercase tracking-tighter">Temp</span>
+                                                <span className="text-white font-black">{weather?.temp}°C</span>
+                                            </div>
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-white/30 uppercase tracking-tighter">Wind</span>
+                                                <span className="text-white font-black">{weather?.windSpeed}km/h</span>
+                                            </div>
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-white/30 uppercase tracking-tighter">Gst</span>
+                                                <span className="text-blue-400 font-black">{weather?.windGusts || '--'}km/h</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <Brain size={14} className="text-white/30" />
-                                    <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-widest">推导逻辑储备</h4>
-                                </div>
-                                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] text-[10px] text-white/40 font-medium italic">
-                                    {isLoading ? (
-                                        <div className="liquid-skeleton h-8" />
-                                    ) : (
-                                        structuredData?.logic
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                                {/* Detailed Content */}
+                                <div className="space-y-6">
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="liquid-icon purple p-2">
+                                                <Zap size={14} className="text-purple-400" />
+                                            </div>
+                                            <h4 className="text-xs font-black text-white/70 uppercase tracking-widest italic">核心战术推演</h4>
+                                        </div>
+                                        <div className="p-6 rounded-3xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 text-sm text-white/80 leading-relaxed font-bold italic shadow-inner">
+                                            {isLoading ? (
+                                                <div className="space-y-3">
+                                                    <div className="liquid-skeleton h-4 w-full" />
+                                                    <div className="liquid-skeleton h-4 w-5/6" />
+                                                    <div className="liquid-skeleton h-4 w-4/6" />
+                                                </div>
+                                            ) : (
+                                                `"${structuredData?.advice || "数据解析中，建议维持高踏频有氧耐力输出。"}"`
+                                            )}
+                                        </div>
+                                    </div>
 
-                        {/* Footer Info */}
-                        <div className="flex items-center gap-3 pt-4 opacity-40 mt-auto">
-                            <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                            <div className="text-[7px] font-bold text-white/40 uppercase tracking-[0.4em]">
-                                VT-INTELLIGENCE
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="liquid-icon p-2 bg-white/5 border border-white/10">
+                                                <Brain size={14} className="text-white/40" />
+                                            </div>
+                                            <h4 className="text-xs font-black text-white/40 uppercase tracking-widest italic">系统判定逻辑</h4>
+                                        </div>
+                                        <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-white/40 font-medium italic leading-relaxed">
+                                            {isLoading ? (
+                                                <div className="liquid-skeleton h-12 w-full" />
+                                            ) : (
+                                                structuredData?.logic || "基于 TSB 生理模型与实时大气环境，由 VeloTrace AI 引擎计算得出。"
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Footer Info */}
+                                <div className="flex items-center gap-4 pt-4 opacity-20">
+                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+                                    <div className="text-[8px] font-black italic text-white uppercase tracking-[0.5em]">
+                                        VT-INTELLIGENCE PRO v0.1
+                                    </div>
+                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+                                </div>
                             </div>
-                            <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                        </div>
-                    </div>
-                </div>
-            )}
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </>
     );
 }
