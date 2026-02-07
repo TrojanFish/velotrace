@@ -365,141 +365,184 @@ export function AIBriefingCard() {
 
 
 
-            {/* Tactical intelligence Detail Overlay */}
+            {/* Tactical intelligence Detail Overlay - REDESIGNED as Pilot HUD */}
             <AnimatePresence>
                 {showDetails && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/80 backdrop-blur-xl transform-gpu"
-                        onClick={handleBottomSheetClose}
+                        className="fixed inset-0 z-[1000] bg-black flex flex-col overflow-hidden transform-gpu"
                     >
-                        <motion.div
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            exit={{ y: "100%" }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            drag="y"
-                            dragConstraints={{ top: 0 }}
-                            dragElastic={0.2}
-                            onDragEnd={(_, info) => {
-                                if (info.offset.y > 100) {
-                                    handleBottomSheetClose();
-                                }
-                            }}
-                            className="w-full max-w-md mx-auto bg-slate-900/40 backdrop-blur-2xl border-x border-t border-white/10 rounded-t-[2.5rem] p-6 pb-[calc(env(safe-area-inset-bottom,24px)+1.5rem)] space-y-6 shadow-[0_-20px_100px_-12px_rgba(168,85,247,0.4)] flex flex-col max-h-[95vh] overflow-hidden touch-none transform-gpu will-change-transform"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {/* Grab Bar */}
-                            <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-2 shrink-0" />
+                        {/* 1. Immersive Topographic Background */}
+                        <div className="absolute inset-0 pointer-events-none opacity-20">
+                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+                            <div className="absolute top-0 left-0 right-0 h-[50vh] bg-gradient-to-b from-purple-500/20 to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-cyan-500/20 to-transparent" />
 
-                            <div className="overflow-y-auto space-y-6 pr-1 custom-scrollbar overscroll-contain">
-                                {/* Header */}
-                                <div className="flex justify-between items-start">
-                                    <div className="space-y-1">
-                                        <h3 className="text-2xl font-black italic text-gradient-aurora tracking-tighter">战术推演详情报告</h3>
-                                        <p className="text-[10px] text-purple-400/60 font-bold uppercase tracking-[0.25em]">Tactical Intelligence Deep-Dive</p>
+                            {/* Scanning Line Effect */}
+                            <motion.div
+                                animate={{ y: ['0%', '100%'] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                className="absolute left-0 right-0 h-[1px] bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                            />
+                        </div>
+
+                        {/* Top HUD Bar */}
+                        <div className="relative z-10 flex justify-between items-start p-6 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                                    <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">System Live // Tactical Hub</span>
+                                </div>
+                                <h3 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">
+                                    Digital Co-Pilot
+                                </h3>
+                            </div>
+                            <button
+                                onClick={handleBottomSheetClose}
+                                className="group relative liquid-icon p-3 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all overflow-hidden"
+                            >
+                                <X size={20} className="relative z-10" />
+                                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500 to-cyan-500 opacity-0 group-hover:opacity-20 transition-opacity" />
+                            </button>
+                        </div>
+
+                        {/* 2. Central Tactical Orbit */}
+                        <div className="relative flex-1 flex flex-col items-center justify-center -mt-10">
+                            <div className="relative w-72 h-72 flex items-center justify-center">
+                                {/* Rotating Rings */}
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-0 border-[0.5px] border-dashed border-white/10 rounded-full group"
+                                />
+                                <motion.div
+                                    animate={{ rotate: -360 }}
+                                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-4 border-[0.5px] border-white/5 rounded-full"
+                                />
+
+                                {/* The Central Visualization */}
+                                <div className="relative z-10 text-center space-y-2">
+                                    <div className="relative">
+                                        <motion.div
+                                            animate={{ scale: [1, 1.05, 1] }}
+                                            transition={{ duration: 4, repeat: Infinity }}
+                                            className={`text-6xl font-black italic tracking-tighter ${tsbHeading.color} drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]`}
+                                        >
+                                            {(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0}
+                                        </motion.div>
+                                        <div className="absolute -top-4 -right-8">
+                                            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest border border-white/10 px-1.5 py-0.5 rounded">TSB</span>
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={handleBottomSheetClose}
-                                        className="liquid-icon p-2 hover:scale-110 transition-transform bg-white/5 rounded-full"
-                                    >
-                                        <X size={18} />
-                                    </button>
+                                    <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] px-2 py-1 bg-white/5 rounded backdrop-blur-sm">
+                                        Physio-Status
+                                    </p>
                                 </div>
 
-                                {/* Raw Metrics Section */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-4">
-                                        <h4 className="text-[10px] font-black text-white/40 uppercase flex items-center gap-2 tracking-[0.2em]">
-                                            <span className="w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.5)]" /> 骑手档案
-                                        </h4>
-                                        <div className="space-y-2.5 font-mono">
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-white/30 uppercase tracking-tighter">FTP</span>
-                                                <span className="text-white font-black">{user.ftp}W</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-white/30 uppercase tracking-tighter">Weight</span>
-                                                <span className="text-white font-black">{user.weight}kg</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-white/30 uppercase tracking-tighter">TSB</span>
-                                                <span className={`font-black ${(user.tsb ?? 0) > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-4">
-                                        <h4 className="text-[10px] font-black text-white/40 uppercase flex items-center gap-2 tracking-[0.2em]">
-                                            <span className="w-2 h-2 bg-orange-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]" /> 环境参数
-                                        </h4>
-                                        <div className="space-y-2.5 font-mono">
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-white/30 uppercase tracking-tighter">Temp</span>
-                                                <span className="text-white font-black">{weather?.temp}°C</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-white/30 uppercase tracking-tighter">Wind</span>
-                                                <span className="text-white font-black">{weather?.windSpeed}km/h</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-white/30 uppercase tracking-tighter">Gst</span>
-                                                <span className="text-blue-400 font-black">{weather?.windGusts || '--'}km/h</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                {/* HUD Corner Indicators */}
+                                <div className="absolute top-0 left-0 p-4 font-mono text-[9px] text-cyan-400/60 flex flex-col">
+                                    <span className="border-l border-t border-cyan-400/30 pl-2 pt-1 uppercase">Wind Vector</span>
+                                    <span className="pl-2 font-black text-white mt-1">{weather?.windSpeed}km/h</span>
                                 </div>
-
-                                {/* Detailed Content */}
-                                <div className="space-y-6">
-                                    <div className="space-y-3">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="liquid-icon purple p-2">
-                                                <Zap size={14} className="text-purple-400" />
-                                            </div>
-                                            <h4 className="text-xs font-black text-white/70 uppercase tracking-widest italic">核心战术推演</h4>
-                                        </div>
-                                        <div className="p-6 rounded-3xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 text-sm text-white/80 leading-relaxed font-bold italic shadow-inner">
-                                            {isLoading ? (
-                                                <div className="space-y-3">
-                                                    <div className="liquid-skeleton h-4 w-full" />
-                                                    <div className="liquid-skeleton h-4 w-5/6" />
-                                                    <div className="liquid-skeleton h-4 w-4/6" />
-                                                </div>
-                                            ) : (
-                                                `"${structuredData?.advice || "数据解析中，建议维持高踏频有氧耐力输出。"}"`
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="liquid-icon p-2 bg-white/5 border border-white/10">
-                                                <Brain size={14} className="text-white/40" />
-                                            </div>
-                                            <h4 className="text-xs font-black text-white/40 uppercase tracking-widest italic">系统判定逻辑</h4>
-                                        </div>
-                                        <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-white/40 font-medium italic leading-relaxed">
-                                            {isLoading ? (
-                                                <div className="liquid-skeleton h-12 w-full" />
-                                            ) : (
-                                                structuredData?.logic || "基于 TSB 生理模型与实时大气环境，由 VeloTrace AI 引擎计算得出。"
-                                            )}
-                                        </div>
-                                    </div>
+                                <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-purple-400/60 flex flex-col items-end text-right">
+                                    <span className="border-r border-t border-purple-400/30 pr-2 pt-1 uppercase">Thermal</span>
+                                    <span className="pr-2 font-black text-white mt-1">{weather?.temp}°C</span>
                                 </div>
-
-                                {/* Footer Info */}
-                                <div className="flex items-center gap-4 pt-4 opacity-20">
-                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
-                                    <div className="text-[8px] font-black italic text-white uppercase tracking-[0.5em]">
-                                        VT-INTELLIGENCE PRO v0.1
-                                    </div>
-                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+                                <div className="absolute bottom-0 left-0 p-4 font-mono text-[9px] text-emerald-400/60 flex flex-col">
+                                    <span className="border-l border-b border-emerald-400/30 pl-2 pb-1 uppercase">Athlete FTP</span>
+                                    <span className="pl-2 font-black text-white mt-1">{user.ftp}W</span>
+                                </div>
+                                <div className="absolute bottom-0 right-0 p-4 font-mono text-[9px] text-amber-400/60 flex flex-col items-end text-right">
+                                    <span className="border-r border-b border-amber-400/30 pr-2 pb-1 uppercase">Weight Class</span>
+                                    <span className="pr-2 font-black text-white mt-1">{user.weight}kg</span>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
+
+                        {/* 3. Radio Comms Briefing */}
+                        <div className="relative z-10 px-6 pb-6 space-y-4">
+                            <div className="relative group">
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                                <div className="relative bg-[#050810]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6  space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="liquid-icon purple p-1.5 rounded-lg">
+                                                <Brain size={12} className="text-purple-400" />
+                                            </div>
+                                            <span className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] italic">Comms Channel 01</span>
+                                        </div>
+                                        <div className="flex gap-0.5">
+                                            {[1, 2, 3, 4].map(i => (
+                                                <motion.div
+                                                    key={i}
+                                                    animate={{ height: [4, 8, 4] }}
+                                                    transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
+                                                    className="w-0.5 bg-purple-500/40"
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <p className="text-sm font-bold text-white/90 leading-relaxed italic border-l-2 border-purple-500/40 pl-4 py-1">
+                                            {isLoading ? "链路同步中..." : `"${structuredData?.advice || "保持节奏，每一瓦特的输出都是对未来的投资。"}"`}
+                                        </p>
+
+                                        <div className="grid grid-cols-2 gap-3 pt-2">
+                                            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                                <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Target Mode</span>
+                                                <span className="block text-xs font-black text-cyan-400 italic leading-none">{structuredData?.intensity || "Loading..."}</span>
+                                            </div>
+                                            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                                <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Logic Stream</span>
+                                                <span className="block text-[10px] font-medium text-white/40 italic leading-snug line-clamp-1">{structuredData?.logic || "AI 推演成功"}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Simulation Scrubber */}
+                            <div className="p-5 bg-white/5 border border-white/10 rounded-2xl space-y-4">
+                                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-white/40">
+                                    <span>Tactical Simulation</span>
+                                    <span className="text-cyan-400 shrink-0">Now Active</span>
+                                </div>
+                                <div className="relative group">
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        defaultValue="0"
+                                        className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-cyan-400 "
+                                    />
+                                    <div className="flex justify-between mt-2 font-mono text-[8px] text-white/20 uppercase tracking-tighter">
+                                        <span>Current Hour</span>
+                                        <span>+4H Forecast</span>
+                                        <span>+8H Forecast</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                                className="flex items-center gap-4 py-2 opacity-30"
+                            >
+                                <div className="flex-1 h-[0.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
+                                <div className="text-[8px] font-black italic text-white uppercase tracking-[0.5em] shrink-0">
+                                    VeloTrace Tactical Engine Pro
+                                </div>
+                                <div className="flex-1 h-[0.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
+                            </motion.div>
+                        </div>
+
+                        {/* Safe Area Spacer */}
+                        <div className="h-[env(safe-area-inset-bottom,24px)] shrink-0" />
                     </motion.div>
                 )}
             </AnimatePresence>
