@@ -56,12 +56,22 @@ export function PMCTrendCard() {
         if (!session) return;
         setIsSyncing(true);
         setSyncSuccess(false);
+
+        // Calculate "after" timestamp: last 90 days or since last data point
+        let afterTimestamp = Math.floor(Date.now() / 1000) - (90 * 24 * 60 * 60);
+        if (dailyLoads.length > 0) {
+            const lastDate = dailyLoads[dailyLoads.length - 1].date;
+            const lastTimestamp = Math.floor(new Date(lastDate).getTime() / 1000);
+            // Move back 1 day to ensure we catch today's early updates
+            afterTimestamp = Math.max(afterTimestamp, lastTimestamp - 86400);
+        }
+
         try {
-            // Pass current FTP to the backend for accurate TSS estimation
-            const res = await fetch(`/api/strava/history?ftp=${user.ftp}`);
+            const res = await fetch(`/api/strava/history?ftp=${user.ftp}&after=${afterTimestamp}`);
             const data = await res.json();
             if (data.dailyLoads) {
-                setDailyLoads(data.dailyLoads);
+                useStore.getState().addDailyLoads(data.dailyLoads);
+                updateUser({ lastHistorySync: Date.now() });
                 setSyncSuccess(true);
                 setTimeout(() => setSyncSuccess(false), 3000);
             }

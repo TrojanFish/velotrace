@@ -4,6 +4,7 @@ import { useWeather } from "@/hooks/useWeather";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { useStore } from "@/store/useStore";
 import { Skeleton } from "@/lib/utils";
+import { converters } from "@/lib/converters";
 import {
     CloudRain,
     Wind,
@@ -20,6 +21,7 @@ import {
 export function WeatherCard() {
     const { data, loading, error, refresh } = useWeather();
     const { user } = useStore();
+    const unit = user.unitSystem;
 
     if (loading && !data) {
         return (
@@ -104,8 +106,10 @@ export function WeatherCard() {
                         )}
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <p className="liquid-stat-value text-3xl pr-2">{data.temp}°C</p>
-                        <span className="text-sm font-medium text-white/40">体感 {data.apparentTemp}°</span>
+                        <p className="liquid-stat-value text-3xl pr-2">
+                            {converters.formatTemp(data.temp, unit)}
+                        </p>
+                        <span className="text-sm font-medium text-white/40">体感 {converters.formatTemp(data.apparentTemp, unit)}</span>
                     </div>
 
                     {/* Meta Row: Sunrise, Sunset, Wind Gusts */}
@@ -128,7 +132,9 @@ export function WeatherCard() {
                             <Zap size={12} className="text-cyan-400" />
                             <div className="flex flex-col -space-y-0.5">
                                 <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">Max Gust</span>
-                                <span className="text-[11px] font-mono font-black text-white/90">{data.windGusts.toFixed(0)}<span className="text-[7px] ml-0.5 opacity-40">KMH</span></span>
+                                <span className="text-[11px] font-mono font-black text-white/90">
+                                    {converters.formatSpeed(data.windGusts, unit)}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -145,8 +151,10 @@ export function WeatherCard() {
                         <Wind size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-white/40 font-medium tracking-tight">风向策略</p>
-                        <p className="text-xs font-semibold text-white/90 truncate">{windAdvice}</p>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">风速指标</p>
+                        <p className="text-xs font-semibold text-white/90 truncate">
+                            {converters.formatSpeed(data.windSpeed, unit)}
+                        </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">

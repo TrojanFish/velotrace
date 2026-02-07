@@ -97,6 +97,8 @@ interface UserSettings {
     sex: 'male' | 'female' | 'other';
     height: number;
     restingHR: number;
+    unitSystem: 'metric' | 'imperial';
+    lastHistorySync?: number;
     lastSyncDate?: string;
     ctl?: number;
     atl?: number;
@@ -125,6 +127,7 @@ interface VeloState {
 
     // Actions
     updateUser: (user: Partial<UserSettings>) => void;
+    toggleUnitSystem: () => void;
     updateBike: (index: number, bike: Partial<BikeProfile>) => void;
     setBikes: (bikes: BikeProfile[]) => void;
     setActiveBikeIndex: (index: number) => void;
@@ -133,6 +136,7 @@ interface VeloState {
     connectStrava: (status: boolean) => void;
     resetMaintenance: (bikeIndex: number, component: keyof MaintenanceState) => void;
     setDailyLoads: (loads: DailyLoad[]) => void;
+    addDailyLoads: (newLoads: DailyLoad[]) => void;
 
     // Wheelset Actions
     setActiveWheelset: (bikeIndex: number, wheelsetIndex: number) => void;
@@ -185,6 +189,7 @@ export const useStore = create<VeloState>()(
                 sex: 'male',
                 height: 175,
                 restingHR: 60,
+                unitSystem: 'metric',
                 ctl: 45,
                 atl: 30,
                 tsb: 15,
@@ -226,6 +231,12 @@ export const useStore = create<VeloState>()(
             stravaRoutesCache: null,
 
             updateUser: (newUser) => set((state) => ({ user: { ...state.user, ...newUser } })),
+            toggleUnitSystem: () => set((state) => ({
+                user: {
+                    ...state.user,
+                    unitSystem: state.user.unitSystem === 'metric' ? 'imperial' : 'metric'
+                }
+            })),
             updateBike: (index, newBike) => set((state) => {
                 const newBikes = [...state.bikes];
                 newBikes[index] = { ...newBikes[index], ...newBike };
@@ -268,6 +279,27 @@ export const useStore = create<VeloState>()(
                 return { bikes: newBikes };
             }),
             setDailyLoads: (loads) => set({ dailyLoads: loads }),
+            addDailyLoads: (newLoads) => set((state) => {
+                const combined = [...state.dailyLoads, ...newLoads];
+                // Keep only latest TSS per date
+                const unique = combined.reduce((acc, curr) => {
+                    if (!acc[curr.date] || acc[curr.date].tss < curr.tss) {
+                        acc[curr.date] = curr;
+                    }
+                    return acc;
+                }, {} as Record<string, DailyLoad>);
+
+                const sorted = Object.values(unique).sort((a, b) => a.date.localeCompare(b.date));
+
+                // Keep only last 180 days for storage efficiency
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - 180);
+                const cutoffStr = cutoff.toISOString().split('T')[0];
+
+                return {
+                    dailyLoads: sorted.filter(l => l.date >= cutoffStr)
+                };
+            }),
 
             setActiveWheelset: (bikeIndex, wheelsetIndex) => set((state) => {
                 const newBikes = [...state.bikes];

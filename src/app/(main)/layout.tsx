@@ -4,7 +4,7 @@ import { Navigation } from "@/components/Navigation";
 export default function MainLayout({ children }: { children: ReactNode }) {
     return (
         <>
-            <div className="relative z-10 max-w-md mx-auto min-h-[100dvh] flex flex-col pt-[calc(env(safe-area-inset-top)+1rem)] pb-32 px-4 overflow-x-hidden">
+            <div className="relative z-10 max-w-md mx-auto min-h-[100dvh] flex flex-col pt-[calc(env(safe-area-inset-top)+1rem)] pb-[calc(80px+env(safe-area-inset-bottom,24px))] px-4 overflow-x-hidden">
                 {children}
             </div>
             <Navigation />

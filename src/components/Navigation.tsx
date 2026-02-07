@@ -8,8 +8,6 @@ export function Navigation() {
     const router = useRouter();
     const pathname = usePathname();
 
-    if (pathname === "/ride") return null;
-
     const links = [
         { id: 'home', href: "/", label: "预览", icon: LayoutDashboard },
         { id: 'analytics', href: "/analytics", label: "记录", icon: BarChart3 },
@@ -18,7 +16,8 @@ export function Navigation() {
     ];
 
     return (
-        <nav className="liquid-nav fixed bottom-0 left-0 right-0 z-[100] pb-[max(0.5rem,calc(env(safe-area-inset-bottom)-16px))]">
+        <nav className="liquid-nav fixed bottom-0 left-0 right-0 z-[100] pb-[env(safe-area-inset-bottom,16px)]">
+
             <div className="max-w-md mx-auto px-6 py-1.5 flex justify-between items-center">
                 {links.map((link) => {
                     const Icon = link.icon;

@@ -3,18 +3,20 @@
 import { useStore, Wheelset } from "@/store/useStore";
 import { calculateBMR } from "@/lib/calculators/physiology";
 import { useStravaSync } from "@/hooks/useStravaSync";
+import { converters } from "@/lib/converters";
 import Image from "next/image";
 import { TorqueManager } from "@/components/modules/TorqueManager";
 import { MaintenanceLogManager } from "@/components/modules/MaintenanceLogManager";
-import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight, Wrench, ShieldAlert } from "lucide-react";
+import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight, Wrench, ShieldAlert, Globe } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 
 export default function GaragePage() {
     const { data: session } = useSession();
-    const { user, bikes, activeBikeIndex, updateUser, updateBike, setBikes, setActiveBikeIndex, addWheelset, setActiveWheelset } = useStore();
+    const { user, bikes, activeBikeIndex, updateUser, updateBike, setBikes, setActiveBikeIndex, addWheelset, setActiveWheelset, toggleUnitSystem } = useStore();
     const bike = bikes[activeBikeIndex] || bikes[0];
+    const unit = user.unitSystem;
 
     const [isAddingWheelset, setIsAddingWheelset] = useState(false);
     const [newWsName, setNewWsName] = useState("");
@@ -275,6 +277,34 @@ export default function GaragePage() {
                 </div>
             </section>
 
+            {/* 2.5 显示偏好 [DISPLAY SETTINGS] */}
+            <section className="space-y-4">
+                <div className="section-header">
+                    <div className="section-indicator blue" />
+                    <h2 className="section-title">界面设定 / Display</h2>
+                </div>
+
+                <div className="pro-card">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="liquid-icon p-2">
+                                <Globe size={16} />
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-white/80">单位系统 / Units</p>
+                                <p className="text-[10px] text-white/30 uppercase font-bold tracking-widest">{user.unitSystem === 'metric' ? 'Metric (KM/KG/°C)' : 'Imperial (MI/LB/°F)'}</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={toggleUnitSystem}
+                            className="liquid-button py-2 px-6 text-[10px] font-black uppercase tracking-widest"
+                        >
+                            切换至 {user.unitSystem === 'metric' ? '英制' : '公制'}
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             {/* 3. 核心参数 [USER CONFIG] */}
             <section className="space-y-4">
                 <div className="section-header">
@@ -297,7 +327,7 @@ export default function GaragePage() {
                                 onChange={(e) => updateUser({ weight: parseFloat(e.target.value) })}
                                 className="liquid-input h-11 w-28 text-center text-sm font-mono text-emerald-400"
                             />
-                            <span className="text-[10px] font-bold text-white/20 w-8">KG</span>
+                            <span className="text-[10px] font-bold text-white/20 w-12 uppercase">{unit === 'metric' ? 'KG' : 'LBS'}</span>
                         </div>
                     </div>
                     <div className="flex items-center justify-between gap-4">
@@ -338,7 +368,9 @@ export default function GaragePage() {
                                 }`}
                         >
                             <p className={`text-[10px] font-bold uppercase mb-1.5 truncate ${activeBikeIndex === idx ? 'text-purple-400' : 'text-white/50'}`}>{b.name}</p>
-                            <p className={`text-sm font-mono font-bold ${activeBikeIndex === idx ? 'text-gradient-cyan' : 'text-white/40'}`}>{b.totalDistance.toFixed(1)} KM</p>
+                            <p className={`text-sm font-mono font-bold ${activeBikeIndex === idx ? 'text-gradient-cyan' : 'text-white/40'}`}>
+                                {converters.formatDistance(b.totalDistance, unit)}
+                            </p>
                         </button>
                     ))}
                 </div>
@@ -402,7 +434,9 @@ export default function GaragePage() {
                                                         {bike.activeWheelsetIndex === idx && <CheckCircle2 size={12} className="text-cyan-400" />}
                                                     </div>
                                                     <div className="flex gap-2">
-                                                        <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">{ws.tireWidth}MM • {ws.isTubeless ? 'TL' : 'CL'} • {ws.mileage.toFixed(0)}KM</span>
+                                                        <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">
+                                                            {ws.tireWidth}MM • {ws.isTubeless ? 'TL' : 'CL'} • {converters.formatDistance(ws.mileage, unit, 0)}
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-2">
