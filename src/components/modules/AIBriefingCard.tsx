@@ -107,27 +107,36 @@ export function AIBriefingCard() {
         }
     }, [weatherLoading]);
 
-    useEffect(() => {
-        if (showDetails) {
-            // Use a class-based approach if possible, but for now we optimize the inline style
-            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.body.style.overflow = 'hidden';
-            document.body.style.paddingRight = `${scrollBarWidth}px`;
-            document.body.style.touchAction = 'none';
-        } else {
-            document.body.style.overflow = 'auto';
-            document.body.style.paddingRight = '0px';
-            document.body.style.touchAction = 'auto';
-        }
-        return () => {
-            document.body.style.overflow = 'auto';
-            document.body.style.paddingRight = '0px';
-            document.body.style.touchAction = 'auto';
+    const [simulatedHour, setSimulatedHour] = useState(0);
+
+    const getSimulatedWeather = () => {
+        if (!weather || !weather.hourly || simulatedHour === 0) return weather;
+
+        // Find current hour index
+        const now = new Date();
+        now.setMinutes(0, 0, 0);
+        const nowISO = now.toISOString().split(':')[0] + ':00';
+
+        let currentIndex = weather.hourly.time.findIndex(t => t.startsWith(nowISO));
+        if (currentIndex === -1) currentIndex = 0;
+
+        const targetIndex = currentIndex + simulatedHour;
+        if (targetIndex >= weather.hourly.time.length) return weather;
+
+        return {
+            ...weather,
+            temp: weather.hourly.temp[targetIndex],
+            windSpeed: weather.hourly.windSpeed[targetIndex],
+            isSimulating: true,
+            simTime: new Date(weather.hourly.time[targetIndex]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
-    }, [showDetails]);
+    };
+
+    const displayWeather = getSimulatedWeather();
 
     const handleBottomSheetClose = () => {
         setShowDetails(false);
+        setSimulatedHour(0);
         if (pathname !== "/") {
             router.push("/");
         }
@@ -392,8 +401,10 @@ export function AIBriefingCard() {
                         <div className="relative z-10 flex justify-between items-start p-6 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                                    <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">System Live // Tactical Hub</span>
+                                    <div className={`w-2 h-2 rounded-full ${displayWeather?.isSimulating ? 'bg-cyan-500 scale-125' : 'bg-emerald-500'} animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)] transition-all`} />
+                                    <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${displayWeather?.isSimulating ? 'text-cyan-400' : 'text-white/40'}`}>
+                                        {displayWeather?.isSimulating ? `Simulation Active // ${displayWeather.simTime}` : 'System Live // Tactical Hub'}
+                                    </span>
                                 </div>
                                 <h3 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">
                                     Digital Co-Pilot
@@ -427,8 +438,8 @@ export function AIBriefingCard() {
                                 <div className="relative z-10 text-center space-y-2">
                                     <div className="relative">
                                         <motion.div
-                                            animate={{ scale: [1, 1.05, 1] }}
-                                            transition={{ duration: 4, repeat: Infinity }}
+                                            animate={{ scale: displayWeather?.isSimulating ? [1, 1.1, 1] : [1, 1.05, 1] }}
+                                            transition={{ duration: displayWeather?.isSimulating ? 1 : 4, repeat: Infinity }}
                                             className={`text-6xl font-black italic tracking-tighter ${tsbHeading.color} drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]`}
                                         >
                                             {(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0}
@@ -445,11 +456,15 @@ export function AIBriefingCard() {
                                 {/* HUD Corner Indicators */}
                                 <div className="absolute top-0 left-0 p-4 font-mono text-[9px] text-cyan-400/60 flex flex-col">
                                     <span className="border-l border-t border-cyan-400/30 pl-2 pt-1 uppercase">Wind Vector</span>
-                                    <span className="pl-2 font-black text-white mt-1">{weather?.windSpeed}km/h</span>
+                                    <span className={`pl-2 font-black mt-1 transition-all ${displayWeather?.isSimulating ? 'text-cyan-400 scale-110' : 'text-white'}`}>
+                                        {displayWeather?.windSpeed || '--'}km/h
+                                    </span>
                                 </div>
                                 <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-purple-400/60 flex flex-col items-end text-right">
                                     <span className="border-r border-t border-purple-400/30 pr-2 pt-1 uppercase">Thermal</span>
-                                    <span className="pr-2 font-black text-white mt-1">{weather?.temp}°C</span>
+                                    <span className={`pr-2 font-black mt-1 transition-all ${displayWeather?.isSimulating ? 'text-purple-400 scale-110' : 'text-white'}`}>
+                                        {displayWeather?.temp || '--'}°C
+                                    </span>
                                 </div>
                                 <div className="absolute bottom-0 left-0 p-4 font-mono text-[9px] text-emerald-400/60 flex flex-col">
                                     <span className="border-l border-b border-emerald-400/30 pl-2 pb-1 uppercase">Athlete FTP</span>
@@ -478,9 +493,9 @@ export function AIBriefingCard() {
                                             {[1, 2, 3, 4].map(i => (
                                                 <motion.div
                                                     key={i}
-                                                    animate={{ height: [4, 8, 4] }}
+                                                    animate={{ height: displayWeather?.isSimulating ? [6, 12, 6] : [4, 8, 4] }}
                                                     transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
-                                                    className="w-0.5 bg-purple-500/40"
+                                                    className={`w-0.5 ${displayWeather?.isSimulating ? 'bg-cyan-500' : 'bg-purple-500/40'}`}
                                                 />
                                             ))}
                                         </div>
@@ -509,20 +524,23 @@ export function AIBriefingCard() {
                             <div className="p-5 bg-white/5 border border-white/10 rounded-2xl space-y-4">
                                 <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-white/40">
                                     <span>Tactical Simulation</span>
-                                    <span className="text-cyan-400 shrink-0">Now Active</span>
+                                    <span className={`${simulatedHour > 0 ? 'text-cyan-400' : 'text-white/20'}`}>
+                                        {simulatedHour > 0 ? `Forecasting +${simulatedHour}H` : 'Real-time'}
+                                    </span>
                                 </div>
                                 <div className="relative group">
                                     <input
                                         type="range"
                                         min="0"
-                                        max="100"
-                                        defaultValue="0"
-                                        className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-cyan-400 "
+                                        max="8"
+                                        value={simulatedHour}
+                                        onChange={(e) => setSimulatedHour(parseInt(e.target.value))}
+                                        className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-cyan-400 hover:accent-cyan-300 transition-all"
                                     />
                                     <div className="flex justify-between mt-2 font-mono text-[8px] text-white/20 uppercase tracking-tighter">
-                                        <span>Current Hour</span>
-                                        <span>+4H Forecast</span>
-                                        <span>+8H Forecast</span>
+                                        <span>Now</span>
+                                        <span className={simulatedHour === 4 ? 'text-cyan-400' : ''}>+4H</span>
+                                        <span className={simulatedHour === 8 ? 'text-cyan-400' : ''}>+8H</span>
                                     </div>
                                 </div>
                             </div>

@@ -13,6 +13,13 @@ export interface WeatherData {
     city: string;
     sunrise?: string;
     sunset?: string;
+    hourly?: {
+        time: string[];
+        temp: number[];
+        windSpeed: number[];
+    };
+    isSimulating?: boolean;
+    simTime?: string;
 }
 
 export function useWeather() {
@@ -38,7 +45,7 @@ export function useWeather() {
 
     const fetchWeatherData = async (latitude: number, longitude: number) => {
         try {
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index&daily=sunrise,sunset&wind_speed_unit=kmh&timezone=auto`);
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index&hourly=temperature_2m,wind_speed_10m&daily=sunrise,sunset&wind_speed_unit=kmh&timezone=auto`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const json = await res.json();
 
@@ -62,7 +69,12 @@ export function useWeather() {
                 isRainy: current.precipitation > 0,
                 city: "本地探测结果",
                 sunrise: daily?.sunrise?.[0] ? formatTime(daily.sunrise[0]) : undefined,
-                sunset: daily?.sunset?.[0] ? formatTime(daily.sunset[0]) : undefined
+                sunset: daily?.sunset?.[0] ? formatTime(daily.sunset[0]) : undefined,
+                hourly: json.hourly ? {
+                    time: json.hourly.time,
+                    temp: json.hourly.temperature_2m,
+                    windSpeed: json.hourly.wind_speed_10m
+                } : undefined
             };
 
             setWeatherCache({
