@@ -65,6 +65,18 @@
 
   --animate-spin-slow: spin-slow 8s linear infinite;
   --animate-spin-fast: spin-fast 0.5s linear infinite;
+
+  @keyframes infinite-scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-33.33%);
+    }
+  }
+
+  --animate-infinite-scroll: infinite-scroll 30s linear infinite;
 }
 
 :root {

@@ -2,7 +2,7 @@
 
 import { useStore } from "@/store/useStore";
 import { useWeather } from "@/hooks/useWeather";
-import { Brain, Sparkles, ChevronRight, Loader2, ThermometerSun, Wind, Zap, X } from "lucide-react";
+import { Brain, Sparkles, ChevronRight, Loader2, ThermometerSun, Wind, Zap, X, Quote } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { motion, AnimatePresence } from "framer-motion";
@@ -398,7 +398,7 @@ export function AIBriefingCard() {
                         </div>
 
                         {/* Top HUD Bar */}
-                        <div className="relative z-10 flex justify-between items-start p-6 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
+                        <div className="relative z-10 flex justify-between items-start p-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                     <div className={`w-2 h-2 rounded-full ${displayWeather?.isSimulating ? 'bg-cyan-500 scale-125' : 'bg-emerald-500'} animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)] transition-all`} />
@@ -419,19 +419,47 @@ export function AIBriefingCard() {
                             </button>
                         </div>
 
+                        {/* Scrolling System Logs (New) */}
+                        <div className="relative z-10 px-6 overflow-hidden h-4 flex items-center gap-4">
+                            <div className="text-[7px] font-mono text-cyan-400/40 uppercase tracking-[0.2em] whitespace-nowrap animate-infinite-scroll">
+                                INITIALIZING TACTICAL OVERLAY... SYNCING BIO-SENSORS... FETCHING ATMOSPHERIC DATA... GPS LOCK: 39.9042° N, 116.4074° E... ENGINE STATUS: OPTIMAL...
+                            </div>
+                        </div>
+
                         {/* 2. Central Tactical Orbit */}
-                        <div className="relative flex-1 flex flex-col items-center justify-center -mt-10">
-                            <div className="relative w-72 h-72 flex items-center justify-center">
+                        <div className="relative flex-1 flex flex-col items-center justify-center min-h-[350px]">
+                            {/* Decorative Background HUD Brackets */}
+                            <div className="absolute inset-x-8 top-10 bottom-10 border-x border-white/5 pointer-events-none">
+                                <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-white/5 to-transparent" />
+                                <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-white/5 to-transparent" />
+                            </div>
+
+                            <div className="relative w-80 h-80 flex items-center justify-center">
+                                {/* Outer Sensor Ring (New) */}
+                                <motion.div
+                                    animate={{ rotate: -360 }}
+                                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                                    className="absolute -inset-10 border border-white/[0.03] rounded-full"
+                                >
+                                    {[0, 90, 180, 270].map(deg => (
+                                        <div
+                                            key={deg}
+                                            style={{ transform: `rotate(${deg}deg) translateY(-100%)` }}
+                                            className="absolute top-1/2 left-1/2 w-1 h-3 bg-cyan-500/20 -translate-x-1/2"
+                                        />
+                                    ))}
+                                </motion.div>
+
                                 {/* Rotating Rings */}
                                 <motion.div
                                     animate={{ rotate: 360 }}
-                                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-0 border-[0.5px] border-dashed border-white/10 rounded-full group"
+                                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-0 border-[0.5px] border-dashed border-white/10 rounded-full"
                                 />
                                 <motion.div
                                     animate={{ rotate: -360 }}
-                                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-4 border-[0.5px] border-white/5 rounded-full"
+                                    transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-6 border-[0.5px] border-white/5 rounded-full"
                                 />
 
                                 {/* The Central Visualization */}
@@ -440,80 +468,105 @@ export function AIBriefingCard() {
                                         <motion.div
                                             animate={{ scale: displayWeather?.isSimulating ? [1, 1.1, 1] : [1, 1.05, 1] }}
                                             transition={{ duration: displayWeather?.isSimulating ? 1 : 4, repeat: Infinity }}
-                                            className={`text-6xl font-black italic tracking-tighter ${tsbHeading.color} drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]`}
+                                            className={`text-7xl font-black italic tracking-tighter ${tsbHeading.color} drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]`}
                                         >
                                             {(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0}
                                         </motion.div>
-                                        <div className="absolute -top-4 -right-8">
-                                            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest border border-white/10 px-1.5 py-0.5 rounded">TSB</span>
+                                        <div className="absolute -top-4 -right-10">
+                                            <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] border border-white/10 px-2 py-0.5 rounded backdrop-blur-md">FORM</span>
                                         </div>
                                     </div>
-                                    <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] px-2 py-1 bg-white/5 rounded backdrop-blur-sm">
-                                        Physio-Status
-                                    </p>
+                                    <div className="flex flex-col items-center">
+                                        <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.5em] px-4 py-1.5 bg-white/5 rounded backdrop-blur-xl border border-white/10">
+                                            Physio-Status
+                                        </p>
+                                        {/* Status Subtext Indicator */}
+                                        <motion.div
+                                            animate={{ opacity: [0.3, 0.6, 0.3] }}
+                                            transition={{ duration: 2, repeat: Infinity }}
+                                            className="text-[7px] font-mono text-cyan-400 mt-2 tracking-widest uppercase"
+                                        >
+                                            &gt;&gt; Live Telemetry Feed &lt;&lt;
+                                        </motion.div>
+                                    </div>
                                 </div>
 
                                 {/* HUD Corner Indicators */}
-                                <div className="absolute top-0 left-0 p-4 font-mono text-[9px] text-cyan-400/60 flex flex-col">
-                                    <span className="border-l border-t border-cyan-400/30 pl-2 pt-1 uppercase">Wind Vector</span>
-                                    <span className={`pl-2 font-black mt-1 transition-all ${displayWeather?.isSimulating ? 'text-cyan-400 scale-110' : 'text-white'}`}>
-                                        {displayWeather?.windSpeed || '--'}km/h
+                                <div className="absolute top-0 left-0 p-4 font-mono text-[10px] text-cyan-400/80 flex flex-col">
+                                    <span className="border-l-2 border-t-2 border-cyan-400/40 pl-3 pt-2 uppercase tracking-tighter opacity-50">Wind Speed</span>
+                                    <span className={`pl-3 font-black mt-1 transition-all text-sm ${displayWeather?.isSimulating ? 'text-cyan-400 scale-110' : 'text-white'}`}>
+                                        {displayWeather?.windSpeed || '--'} <span className="text-[8px] opacity-40">km/h</span>
                                     </span>
                                 </div>
-                                <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-purple-400/60 flex flex-col items-end text-right">
-                                    <span className="border-r border-t border-purple-400/30 pr-2 pt-1 uppercase">Thermal</span>
-                                    <span className={`pr-2 font-black mt-1 transition-all ${displayWeather?.isSimulating ? 'text-purple-400 scale-110' : 'text-white'}`}>
-                                        {displayWeather?.temp || '--'}°C
+                                <div className="absolute top-0 right-0 p-4 font-mono text-[10px] text-purple-400/80 flex flex-col items-end text-right">
+                                    <span className="border-r-2 border-t-2 border-purple-400/40 pr-3 pt-2 uppercase tracking-tighter opacity-50">Temperature</span>
+                                    <span className={`pr-3 font-black mt-1 transition-all text-sm ${displayWeather?.isSimulating ? 'text-purple-400 scale-110' : 'text-white'}`}>
+                                        {displayWeather?.temp || '--'}<span className="text-[8px] opacity-40">°C</span>
                                     </span>
                                 </div>
-                                <div className="absolute bottom-0 left-0 p-4 font-mono text-[9px] text-emerald-400/60 flex flex-col">
-                                    <span className="border-l border-b border-emerald-400/30 pl-2 pb-1 uppercase">Athlete FTP</span>
-                                    <span className="pl-2 font-black text-white mt-1">{user.ftp}W</span>
+                                <div className="absolute bottom-0 left-0 p-4 font-mono text-[10px] text-emerald-400/80 flex flex-col">
+                                    <span className="border-l-2 border-b-2 border-emerald-400/40 pl-3 pb-2 uppercase tracking-tighter opacity-50">Engine FTP</span>
+                                    <span className="pl-3 font-black text-white mt-1 text-sm">{user.ftp}<span className="text-[8px] opacity-40">W</span></span>
                                 </div>
-                                <div className="absolute bottom-0 right-0 p-4 font-mono text-[9px] text-amber-400/60 flex flex-col items-end text-right">
-                                    <span className="border-r border-b border-amber-400/30 pr-2 pb-1 uppercase">Weight Class</span>
-                                    <span className="pr-2 font-black text-white mt-1">{user.weight}kg</span>
+                                <div className="absolute bottom-0 right-0 p-4 font-mono text-[10px] text-amber-400/80 flex flex-col items-end text-right">
+                                    <span className="border-r-2 border-b-2 border-amber-400/40 pr-3 pb-2 uppercase tracking-tighter opacity-50">Mass Class</span>
+                                    <span className="pr-3 font-black text-white mt-1 text-sm">{user.weight}<span className="text-[8px] opacity-40">kg</span></span>
                                 </div>
                             </div>
                         </div>
 
                         {/* 3. Radio Comms Briefing */}
                         <div className="relative z-10 px-6 pb-6 space-y-4">
+                            {/* Decorative HUD Separator (New) */}
+                            <div className="flex items-center gap-2 opacity-10">
+                                <div className="h-[1px] flex-1 bg-white" />
+                                <div className="w-1 h-1 bg-white rotate-45" />
+                                <div className="h-[1px] w-12 bg-white" />
+                                <div className="w-1 h-1 bg-white rotate-45" />
+                                <div className="h-[1px] flex-1 bg-white" />
+                            </div>
+
                             <div className="relative group">
                                 <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                                <div className="relative bg-[#050810]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6  space-y-4">
+                                <div className="relative bg-[#050810]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6  space-y-4 shadow-2xl">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="liquid-icon purple p-1.5 rounded-lg">
+                                            <div className="liquid-icon purple p-1.5 rounded-lg border border-purple-500/20">
                                                 <Brain size={12} className="text-purple-400" />
                                             </div>
-                                            <span className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] italic">Comms Channel 01</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] italic">Comms Channel 01</span>
+                                                <span className="text-white/20 text-[6px] font-mono uppercase tracking-[0.3em]">Encrypted-Auth-Link</span>
+                                            </div>
                                         </div>
-                                        <div className="flex gap-0.5">
-                                            {[1, 2, 3, 4].map(i => (
+                                        <div className="flex gap-0.5 items-end h-6">
+                                            {[1, 2, 3, 4, 5, 2, 1].map((i, idx) => (
                                                 <motion.div
-                                                    key={i}
-                                                    animate={{ height: displayWeather?.isSimulating ? [6, 12, 6] : [4, 8, 4] }}
-                                                    transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
-                                                    className={`w-0.5 ${displayWeather?.isSimulating ? 'bg-cyan-500' : 'bg-purple-500/40'}`}
+                                                    key={idx}
+                                                    animate={{ height: displayWeather?.isSimulating ? [6, 16, 6] : [4, i * 3, 4] }}
+                                                    transition={{ duration: 0.4, repeat: Infinity, delay: idx * 0.05 }}
+                                                    className={`w-0.5 rounded-full ${displayWeather?.isSimulating ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.6)]' : 'bg-purple-500/40'}`}
                                                 />
                                             ))}
                                         </div>
                                     </div>
 
                                     <div className="space-y-4">
-                                        <p className="text-sm font-bold text-white/90 leading-relaxed italic border-l-2 border-purple-500/40 pl-4 py-1">
-                                            {isLoading ? "链路同步中..." : `"${structuredData?.advice || "保持节奏，每一瓦特的输出都是对未来的投资。"}"`}
-                                        </p>
+                                        <div className="relative">
+                                            <Quote size={24} className="absolute -top-2 -left-3 text-white/[0.03] rotate-12" />
+                                            <p className="relative z-10 text-sm font-bold text-white/90 leading-relaxed italic border-l-2 border-purple-500/40 pl-4 py-1">
+                                                {isLoading ? "链路同步中..." : `"${structuredData?.advice || "保持节奏，每一瓦特的输出都是对未来的投资。"}"`}
+                                            </p>
+                                        </div>
 
-                                        <div className="grid grid-cols-2 gap-3 pt-2">
-                                            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                        <div className="grid grid-cols-2 gap-3 pt-1">
+                                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
                                                 <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Target Mode</span>
                                                 <span className="block text-xs font-black text-cyan-400 italic leading-none">{structuredData?.intensity || "Loading..."}</span>
                                             </div>
-                                            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
                                                 <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Logic Stream</span>
-                                                <span className="block text-[10px] font-medium text-white/40 italic leading-snug line-clamp-1">{structuredData?.logic || "AI 推演成功"}</span>
+                                                <span className="block text-[10px] font-medium text-white/50 italic leading-snug line-clamp-1 truncate">{structuredData?.logic || "AI 推演成功"}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -521,14 +574,17 @@ export function AIBriefingCard() {
                             </div>
 
                             {/* Simulation Scrubber */}
-                            <div className="p-5 bg-white/5 border border-white/10 rounded-2xl space-y-4">
+                            <div className="p-5 bg-white/[0.03] border border-white/10 rounded-2xl space-y-4 shadow-xl">
                                 <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-white/40">
-                                    <span>Tactical Simulation</span>
-                                    <span className={`${simulatedHour > 0 ? 'text-cyan-400' : 'text-white/20'}`}>
+                                    <div className="flex items-center gap-2">
+                                        <Zap size={10} className={simulatedHour > 0 ? 'text-cyan-400' : ''} />
+                                        <span>Tactical Simulation</span>
+                                    </div>
+                                    <span className={`${simulatedHour > 0 ? 'text-cyan-400 animate-pulse' : 'text-white/20'}`}>
                                         {simulatedHour > 0 ? `Forecasting +${simulatedHour}H` : 'Real-time'}
                                     </span>
                                 </div>
-                                <div className="relative group">
+                                <div className="relative group px-1">
                                     <input
                                         type="range"
                                         min="0"
@@ -537,10 +593,10 @@ export function AIBriefingCard() {
                                         onChange={(e) => setSimulatedHour(parseInt(e.target.value))}
                                         className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-cyan-400 hover:accent-cyan-300 transition-all"
                                     />
-                                    <div className="flex justify-between mt-2 font-mono text-[8px] text-white/20 uppercase tracking-tighter">
-                                        <span>Now</span>
-                                        <span className={simulatedHour === 4 ? 'text-cyan-400' : ''}>+4H</span>
-                                        <span className={simulatedHour === 8 ? 'text-cyan-400' : ''}>+8H</span>
+                                    <div className="flex justify-between mt-2 font-mono text-[8px] text-white/30 uppercase tracking-tighter">
+                                        <span className={simulatedHour === 0 ? 'text-cyan-400 font-black' : ''}>Now</span>
+                                        <span className={simulatedHour === 4 ? 'text-cyan-400 font-black' : ''}>+4H</span>
+                                        <span className={simulatedHour === 8 ? 'text-cyan-400 font-black' : ''}>+8H</span>
                                     </div>
                                 </div>
                             </div>
@@ -549,7 +605,7 @@ export function AIBriefingCard() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.5 }}
-                                className="flex items-center gap-4 py-2 opacity-30"
+                                className="flex items-center gap-4 pt-1 pb-2 opacity-30"
                             >
                                 <div className="flex-1 h-[0.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
                                 <div className="text-[8px] font-black italic text-white uppercase tracking-[0.5em] shrink-0">
