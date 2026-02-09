@@ -40,8 +40,8 @@ export async function GET() {
         if (statsRes.ok) {
             const activities = await statsRes.json();
             statsData = {
-                distance: Math.round(activities.reduce((acc: number, act: any) => acc + (act.distance || 0), 0) / 100) / 10,
-                elevation: Math.round(activities.reduce((acc: number, act: any) => acc + (act.total_elevation_gain || 0), 0)),
+                distance: Math.round(activities.reduce((acc: number, act: { distance?: number }) => acc + (act.distance || 0), 0) / 100) / 10,
+                elevation: Math.round(activities.reduce((acc: number, act: { total_elevation_gain?: number }) => acc + (act.total_elevation_gain || 0), 0)),
                 count: activities.length
             };
         }
@@ -50,7 +50,7 @@ export async function GET() {
         let routesData = [];
         if (routesRes.ok) {
             const rawRoutes = await routesRes.json();
-            routesData = (rawRoutes || []).map((r: any) => ({
+            routesData = (rawRoutes || []).map((r: { id: string; name?: string; distance?: number; elevation?: number; map?: { summary_polyline?: string } }) => ({
                 id: r.id,
                 name: r.name || "Unknown Route",
                 distance: Math.round((r.distance || 0) / 100) / 10,
@@ -60,13 +60,13 @@ export async function GET() {
         }
 
         // Parse Gear
-        const bikes = (athleteData.bikes || []).map((b: any) => ({
+        const bikes = (athleteData.bikes || []).map((b: { id: string; name?: string; distance?: number; primary?: boolean }) => ({
             id: b.id,
             name: b.name || "Unknown Bike",
             totalDistance: Math.round((b.distance || 0) / 1000),
             primary: !!b.primary,
         }));
-        const shoes = (athleteData.shoes || []).map((s: any) => ({
+        const shoes = (athleteData.shoes || []).map((s: { id: string; name?: string; distance?: number; primary?: boolean }) => ({
             id: s.id,
             name: s.name || "Unknown Shoes",
             totalDistance: Math.round((s.distance || 0) / 1000),
@@ -87,11 +87,12 @@ export async function GET() {
             routes: routesData
         });
 
-    } catch (error: any) {
-        const isTimeout = error.name === 'AbortError';
+    } catch (error: unknown) {
+        const err = error as any;
+        const isTimeout = err.name === 'AbortError';
         return NextResponse.json({
             error: isTimeout ? "Batch sync timeout" : "Failed to sync dashboard",
-            message: error.message
+            message: err.message
         }, { status: isTimeout ? 504 : 500 });
     } finally {
         clearTimeout(timeout);

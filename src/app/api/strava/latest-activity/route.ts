@@ -61,8 +61,9 @@ export async function GET() {
             maxSpeed: detail.max_speed,
             hasPower: detail.device_watts || false,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Latest activity API internal error:", error);
-        return NextResponse.json({ error: "Failed to fetch latest activity", details: error.message }, { status: 500 });
+        const message = error instanceof Error ? error.message : "Unknown error";
+        return NextResponse.json({ error: "Failed to fetch latest activity", details: message }, { status: 500 });
     }
 }

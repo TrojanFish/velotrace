@@ -16,6 +16,21 @@ interface UseStravaSyncReturn {
     sync: () => Promise<StravaSyncResult>;
 }
 
+interface StravaRoute {
+    id: string;
+    name: string;
+    distance: number;
+    elevation: number;
+    polyline: string;
+}
+
+interface StravaBike {
+    id: string;
+    name: string;
+    totalDistance: number;
+    primary: boolean;
+}
+
 /**
  * Custom hook for Strava data synchronization
  * Encapsulates all sync logic and state management
@@ -25,7 +40,7 @@ export function useStravaSync(): UseStravaSyncReturn {
     const [syncSuccess, setSyncSuccess] = useState(false);
     const [syncError, setSyncError] = useState(false);
 
-    const { user, bikes, updateUser, setBikes, setActiveBikeIndex, setStravaStatsCache, setStravaSegmentsCache, setStravaRoutesCache } = useStore();
+    const { user, bikes, updateUser, setBikes, setActiveBikeIndex, setStravaStatsCache, setStravaRoutesCache } = useStore();
 
     const sync = useCallback(async (): Promise<StravaSyncResult> => {
         setIsSyncing(true);
@@ -53,7 +68,7 @@ export function useStravaSync(): UseStravaSyncReturn {
             // 2. Update stats and routes caches immediately
             setStravaStatsCache({ data: stats, timestamp });
             setStravaRoutesCache({
-                data: routes.map((r: any) => ({
+                data: routes.map((r: StravaRoute) => ({
                     id: r.id,
                     name: r.name,
                     distance: r.distance,
@@ -65,7 +80,7 @@ export function useStravaSync(): UseStravaSyncReturn {
 
             // 3. Sync bikes
             if (athlete.bikes && athlete.bikes.length > 0) {
-                const syncedBikes: BikeProfile[] = athlete.bikes.map((b: any) => {
+                const syncedBikes: BikeProfile[] = athlete.bikes.map((b: StravaBike) => {
                     const existing = bikes.find(eb => eb.stravaGearId === b.id);
                     return {
                         id: b.id,
@@ -93,7 +108,7 @@ export function useStravaSync(): UseStravaSyncReturn {
                 setBikes(syncedBikes);
 
                 const primaryIndex = syncedBikes.findIndex((sb) =>
-                    athlete.bikes.find((db: any) => db.id === sb.id && db.primary)
+                    athlete.bikes.find((db: StravaBike) => db.id === sb.id && db.primary)
                 );
                 if (primaryIndex !== -1) {
                     setActiveBikeIndex(primaryIndex);
@@ -111,7 +126,7 @@ export function useStravaSync(): UseStravaSyncReturn {
 
             return {
                 success: false,
-                error: e instanceof Error ? e.message : "Unknown error"
+                error: e instanceof Error ? e.message : "未知同步错误"
             };
         } finally {
             setIsSyncing(false);

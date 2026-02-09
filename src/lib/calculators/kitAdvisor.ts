@@ -3,14 +3,12 @@
  */
 
 interface KitInput {
-    temp: number; // °C
     apparentTemp: number; // °C (RealFeel/WindChill)
     isRainy: boolean;
     isColdRunner: boolean;
 }
 
 export function getKitRecommendation({
-    temp: _temp,
     apparentTemp,
     isRainy,
     isColdRunner

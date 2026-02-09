@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useStore } from '@/store/useStore';
 
 export interface WeatherData {
@@ -29,7 +29,7 @@ export function useWeather() {
 
     const data = weatherCache?.data as WeatherData | null;
 
-    const performLocationRequest = (highAccuracy: boolean = true) => {
+    const performLocationRequest = useCallback((highAccuracy: boolean = true) => {
         return new Promise<GeolocationPosition>((resolve, reject) => {
             if (!navigator.geolocation) {
                 reject(new Error("Geolocation not supported"));
@@ -41,9 +41,9 @@ export function useWeather() {
                 maximumAge: 600000
             });
         });
-    };
+    }, []);
 
-    const fetchWeatherData = async (latitude: number, longitude: number) => {
+    const fetchWeatherData = useCallback(async (latitude: number, longitude: number) => {
         try {
             const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index&hourly=temperature_2m,wind_speed_10m&daily=sunrise,sunset&wind_speed_unit=kmh&timezone=auto`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -82,14 +82,14 @@ export function useWeather() {
                 timestamp: Date.now()
             });
             setError(null);
-        } catch (_err) {
+        } catch {
             setError("Failed to fetch weather");
         } finally {
             setLoading(false);
         }
-    };
+    }, [setWeatherCache]);
 
-    const getLocation = async (force: boolean = false) => {
+    const getLocation = useCallback(async (force: boolean = false) => {
         if (typeof window === 'undefined' || !navigator.geolocation) {
             setError("Geolocation not supported");
             setLoading(false);
@@ -120,11 +120,11 @@ export function useWeather() {
             if (!data) await fetchWeatherData(39.9042, 116.4074);
             setLoading(false);
         }
-    };
+    }, [weatherCache, data, fetchWeatherData, performLocationRequest]);
 
     useEffect(() => {
         getLocation();
-    }, []);
+    }, [getLocation]);
 
     return { data, loading, error, refresh: () => getLocation(true) };
 }

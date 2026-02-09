@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Wind, Navigation, Loader2, AlertTriangle, ChevronDown, Map } from "lucide-react";
+import { Wind, Navigation, Loader2, AlertTriangle, ChevronDown } from "lucide-react";
 import polyline from "polyline-encoded";
 import { useStore } from "@/store/useStore";
 

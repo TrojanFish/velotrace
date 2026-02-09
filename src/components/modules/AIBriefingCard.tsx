@@ -3,7 +3,7 @@
 import { useStore } from "@/store/useStore";
 import { useWeather } from "@/hooks/useWeather";
 import { Brain, Sparkles, ChevronRight, Loader2, ThermometerSun, Wind, Zap, X, Quote } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
@@ -17,7 +17,7 @@ const getTSBHeading = (tsb: number) => {
 };
 
 export function AIBriefingCard() {
-    const { user, bikes, activeBikeIndex, aiBriefingCache, setAIBriefingCache, dailyLoads } = useStore();
+    const { user, bikes, activeBikeIndex, aiBriefingCache, setAIBriefingCache } = useStore();
     const { data: weather, loading: weatherLoading } = useWeather();
     const router = useRouter();
     const pathname = usePathname();
@@ -31,7 +31,6 @@ export function AIBriefingCard() {
     const tsbHeading = getTSBHeading(user.tsb ?? 0);
 
     const kit = weather ? getKitRecommendation({
-        temp: weather.temp,
         apparentTemp: weather.apparentTemp,
         isRainy: weather.isRainy,
         isColdRunner: user.isColdRunner
@@ -62,7 +61,7 @@ export function AIBriefingCard() {
         }
     };
 
-    const generateBriefing = async () => {
+    const generateBriefing = useCallback(async () => {
         setIsLoading(true);
         try {
             const res = await fetch('/api/ai/briefing', {
@@ -97,15 +96,15 @@ export function AIBriefingCard() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user, weather, bike, setAIBriefingCache]);
 
     useEffect(() => {
         // Auto-refresh if data is older than 2 hours or doesn't exist
         const isExpired = !aiBriefingCache || (Date.now() - aiBriefingCache.timestamp > 2 * 60 * 60 * 1000);
-        if (isExpired && !weatherLoading) {
+        if (isExpired && !weatherLoading && weather) {
             generateBriefing();
         }
-    }, [weatherLoading]);
+    }, [weatherLoading, weather, aiBriefingCache, generateBriefing]);
 
     const [simulatedHour, setSimulatedHour] = useState(0);
 

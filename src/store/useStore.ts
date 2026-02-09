@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import { get, set, del } from 'idb-keyval';
-import { Intensity } from '@/lib/calculators/fueling';
+import { WeatherData } from '@/hooks/useWeather';
 
 // Custom IndexedDB storage for local-first architecture
 const idbStorage: StateStorage = {
@@ -46,17 +46,25 @@ export interface PMCData {
 }
 
 export interface WeatherCache {
-    data: any;
+    data: WeatherData;
     timestamp: number;
 }
 
+export interface AIBriefingData {
+    session: string;
+    intensity: string;
+    goal: string;
+    advice: string;
+    logic: string;
+}
+
 export interface AIBriefingCache {
-    data: any;
+    data: AIBriefingData;
     timestamp: number;
 }
 
 export interface StravaCache {
-    data: any;
+    data: any; // Strava's complex API response, keeping as any for now but documented
     timestamp: number;
 }
 

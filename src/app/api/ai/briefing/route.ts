@@ -49,7 +49,7 @@ export async function POST(req: Request) {
                     return { ...defaults, ...parsed };
                 }
                 return defaults;
-            } catch (e) {
+            } catch {
                 return defaults;
             }
         };
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
                 }
             }
         } catch (e) {
-            console.error("AI Fetch error (timeout or api issue)");
+            console.error("AI Fetch error (timeout or api issue)", e);
             // Fall through to hardcoded template
         } finally {
             clearTimeout(timeoutId);
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
             logic: `基于 TSB(${tsb ?? 0}) 及实时气温(${temp}°C) 进行的基准战术推演。`
         });
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({
             session: "离线战术模版",
             intensity: "Z2 基础代谢区",

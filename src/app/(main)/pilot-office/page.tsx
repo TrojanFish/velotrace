@@ -1,13 +1,13 @@
 "use client";
 
 import { useStore, Wheelset } from "@/store/useStore";
-import { calculateBMR } from "@/lib/calculators/physiology";
+import { calculateBMR, getRiderCategory, estimateVO2Max, calculateIdealRacingWeight } from "@/lib/calculators/physiology";
 import { useStravaSync } from "@/hooks/useStravaSync";
 import { converters } from "@/lib/converters";
 import Image from "next/image";
 import { TorqueManager } from "@/components/modules/TorqueManager";
 import { MaintenanceLogManager } from "@/components/modules/MaintenanceLogManager";
-import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight, Wrench, ShieldAlert, Globe } from "lucide-react";
+import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight, Wrench, ShieldAlert, Globe, Sparkles } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
@@ -28,6 +28,16 @@ export default function GaragePage() {
     const { isSyncing, syncSuccess, syncError, sync: handleStravaSync } = useStravaSync();
 
     const bmr = useMemo(() => calculateBMR(user.weight, user.height, user.age, user.sex), [user]);
+
+    const performanceInsights = useMemo(() => {
+        const category = getRiderCategory(user.ftp, user.weight, user.sex);
+        const maxHR = 208 - Math.round(0.7 * user.age);
+        const vo2Max = estimateVO2Max(maxHR, user.restingHR);
+        const idealWeight = calculateIdealRacingWeight(user.height, user.sex);
+        const wpkg = (user.ftp / user.weight).toFixed(2);
+
+        return { category, vo2Max, idealWeight, wpkg };
+    }, [user]);
 
     const handleToggleLock = () => {
         setIsPhysioLocked(!isPhysioLocked);
@@ -274,6 +284,61 @@ export default function GaragePage() {
                             <span>修改基础生理数据将导致系统重新计算你的所有心率分区与体能模型，请谨慎操作。</span>
                         </p>
                     )}
+                </div>
+            </section>
+            <section className="space-y-4">
+                <div className="section-header">
+                    <div className="section-indicator purple" />
+                    <h2 className="section-title text-purple-400">智脑性能评估 / PRO ENGINE</h2>
+                </div>
+
+                <div className="pro-card relative overflow-hidden group">
+                    {/* Background Decorative Elements */}
+                    <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
+                        <Sparkles size={120} className="text-purple-400" />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                        {/* W/Kg and Category */}
+                        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
+                            <div className="flex justify-between items-start">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em]">功率重度比 / W/Kg</p>
+                                    <p className="text-3xl font-black italic text-white tracking-tighter">{performanceInsights.wpkg} <span className="text-xs not-italic text-white/30 uppercase">W/Kg</span></p>
+                                </div>
+                                <div className="liquid-tag purple py-1 px-2 text-[8px] font-black">PRO ENGINE v2.0</div>
+                            </div>
+                            <div className="pt-2 border-t border-white/[0.05]">
+                                <p className="text-[10px] font-bold text-white/30 uppercase mb-1">当前车手等级</p>
+                                <p className="text-sm font-black text-gradient-aurora italic uppercase">{performanceInsights.category}</p>
+                            </div>
+                        </div>
+
+                        {/* VO2 Max and Ideal Weight */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
+                                <p className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em]">最大摄氧量</p>
+                                <div className="py-2">
+                                    <p className="text-2xl font-black italic text-white">{performanceInsights.vo2Max}</p>
+                                    <p className="text-[8px] font-bold text-white/30 uppercase mt-1">ml/kg/min</p>
+                                </div>
+                                <p className="text-[8px] font-medium text-white/20 italic">估算值基于心率储备</p>
+                            </div>
+                            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
+                                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">理想竞赛体重</p>
+                                <div className="py-2">
+                                    <p className="text-lg font-black italic text-white">{performanceInsights.idealWeight.min}-{performanceInsights.idealWeight.max}<span className="text-[10px] not-italic text-white/30 ml-1">KG</span></p>
+                                </div>
+                                <p className="text-[8px] font-medium text-white/20 italic">Hamwi 竞技模型</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Status Text Overlay */}
+                    <div className="mt-4 flex items-center gap-2 opacity-30">
+                        <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                        <span className="text-[8px] font-mono text-white tracking-[0.3em] uppercase">Tactical Engine Sync: Active // Logic-Stream-Stable</span>
+                    </div>
                 </div>
             </section>
 

@@ -47,14 +47,14 @@ export async function GET() {
         }
 
         // Sync gear: Combine bikes and shoes into a unified equipment list
-        const bikes = (data.bikes || []).map((b: any) => ({
+        const bikes = (data.bikes || []).map((b: { id: string; name?: string; distance?: number; primary?: boolean }) => ({
             id: b.id,
             name: b.name || "Unknown Bike",
             totalDistance: Math.round((b.distance || 0) / 1000),
             primary: !!b.primary,
         }));
 
-        const shoes = (data.shoes || []).map((s: any) => ({
+        const shoes = (data.shoes || []).map((s: { id: string; name?: string; distance?: number; primary?: boolean }) => ({
             id: s.id,
             name: s.name || "Unknown Shoes",
             totalDistance: Math.round((s.distance || 0) / 1000),
@@ -67,13 +67,14 @@ export async function GET() {
             sex: data.sex === 'M' ? 'male' : data.sex === 'F' ? 'female' : 'other',
             bikes: [...bikes, ...shoes],
         });
-    } catch (error: any) {
-        const isTimeout = error.name === 'AbortError';
+    } catch (error: unknown) {
+        const err = error as any;
+        const isTimeout = err.name === 'AbortError';
         console.error("Sync Catch Block:", error);
 
         return NextResponse.json({
             error: isTimeout ? "Sync timeout" : "Failed to sync with Strava",
-            message: error.message
+            message: err.message
         }, { status: isTimeout ? 504 : 500 });
     } finally {
         clearTimeout(timeout);

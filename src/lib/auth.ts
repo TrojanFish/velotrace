@@ -1,6 +1,14 @@
 import { NextAuthOptions } from "next-auth";
 import { env } from "@/config/env";
 
+interface StravaProfile {
+    id: number;
+    firstname: string;
+    lastname: string;
+    profile: string;
+    [key: string]: any;
+}
+
 export const authOptions: NextAuthOptions = {
     providers: [
         {
@@ -21,7 +29,7 @@ export const authOptions: NextAuthOptions = {
             client: {
                 token_endpoint_auth_method: "client_secret_post",
             },
-            profile(profile) {
+            profile(profile: StravaProfile) {
                 return {
                     id: profile.id.toString(),
                     name: `${profile.firstname} ${profile.lastname}`,
@@ -33,9 +41,9 @@ export const authOptions: NextAuthOptions = {
         },
     ],
     callbacks: {
-        async jwt({ token, account, user }) {
+        async jwt({ token, account }) {
             // Initial sign in
-            if (account && user) {
+            if (account) {
                 return {
                     ...token,
                     accessToken: account.access_token,
@@ -72,7 +80,7 @@ export const authOptions: NextAuthOptions = {
                     expiresAt: Date.now() + tokens.expires_in * 1000,
                     refreshToken: tokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
                 };
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error("RefreshAccessTokenError", error);
                 return { ...token, error: "RefreshAccessTokenError" };
             }
