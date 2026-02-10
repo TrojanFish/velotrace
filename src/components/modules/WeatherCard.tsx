@@ -69,7 +69,6 @@ export function WeatherCard() {
     if (!data) return null;
 
     const kit = getKitRecommendation({
-        temp: data.temp,
         apparentTemp: data.apparentTemp,
         isRainy: data.isRainy,
         isColdRunner: user.isColdRunner
