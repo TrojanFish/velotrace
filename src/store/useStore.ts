@@ -83,6 +83,16 @@ export interface MaintenanceLog {
     mileage: number;
 }
 
+export interface BikeFit {
+    stack: number;      // mm
+    reach: number;      // mm
+    saddleHeight: number; // mm
+    saddleOffset: number; // mm (膝盖补偿/后移)
+    handlebarWidth: number; // mm
+    crankLength: number;   // mm
+    stemLength: number;    // mm
+}
+
 export interface BikeProfile {
     id: string;
     name: string;
@@ -90,10 +100,13 @@ export interface BikeProfile {
     totalDistance: number;
     stravaGearId?: string;
     maintenance: MaintenanceState;
+    // Predictive factors
+    powerFactor: number;   // 1.0 = normal, 1.2 = high power rider (wear faster)
     wheelsets: Wheelset[];
     activeWheelsetIndex: number;
     torqueSettings: TorqueSetting[];
     maintenanceLogs: MaintenanceLog[];
+    fit?: BikeFit;
 }
 
 interface UserSettings {
@@ -215,6 +228,7 @@ export const useStore = create<VeloState>()(
                     weight: 8.5,
                     totalDistance: 0,
                     maintenance: { ...DEFAULT_MAINTENANCE },
+                    powerFactor: 1.0,
                     activeWheelsetIndex: 0,
                     wheelsets: [
                         {
@@ -227,7 +241,16 @@ export const useStore = create<VeloState>()(
                         }
                     ],
                     torqueSettings: [],
-                    maintenanceLogs: []
+                    maintenanceLogs: [],
+                    fit: {
+                        stack: 540,
+                        reach: 380,
+                        saddleHeight: 720,
+                        saddleOffset: 50,
+                        handlebarWidth: 400,
+                        crankLength: 170,
+                        stemLength: 100
+                    }
                 }
             ],
             activeBikeIndex: 0,
@@ -268,11 +291,13 @@ export const useStore = create<VeloState>()(
                     bike.wheelsets[bike.activeWheelsetIndex].mileage += distance;
                 }
 
-                bike.maintenance.chainLube += distance;
-                bike.maintenance.chainWear += distance;
-                bike.maintenance.tires += distance;
-                bike.maintenance.brakePads += distance;
-                bike.maintenance.service += distance;
+                const weightedDistance = distance * (bike.powerFactor || 1.0);
+
+                bike.maintenance.chainLube += weightedDistance;
+                bike.maintenance.chainWear += weightedDistance;
+                bike.maintenance.tires += weightedDistance;
+                bike.maintenance.brakePads += weightedDistance;
+                bike.maintenance.service += weightedDistance;
 
                 return { bikes: newBikes };
             }),
@@ -348,9 +373,9 @@ export const useStore = create<VeloState>()(
             setStravaRoutesCache: (stravaRoutesCache) => set({ stravaRoutesCache }),
         }),
         {
-            name: 'velotrace-storage-v4', // Internal migration
+            name: 'velotrace-storage-v5', // Internal migration
             storage: createJSONStorage(() => idbStorage),
-            version: 4,
+            version: 5,
             migrate: (persistedState: unknown, version: number) => {
                 const state = persistedState as PersistedState;
                 if (version < 3) {
@@ -382,6 +407,24 @@ export const useStore = create<VeloState>()(
                             ...b,
                             torqueSettings: b.torqueSettings || [],
                             maintenanceLogs: b.maintenanceLogs || []
+                        }));
+                    }
+                }
+
+                if (version < 5) {
+                    if (state.bikes) {
+                        state.bikes = state.bikes.map((b) => ({
+                            ...b,
+                            powerFactor: b.powerFactor ?? 1.0,
+                            fit: b.fit || {
+                                stack: 0,
+                                reach: 0,
+                                saddleHeight: 0,
+                                saddleOffset: 0,
+                                handlebarWidth: 0,
+                                crankLength: 0,
+                                stemLength: 0
+                            }
                         }));
                     }
                 }

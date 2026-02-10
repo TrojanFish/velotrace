@@ -7,6 +7,8 @@ import { converters } from "@/lib/converters";
 import Image from "next/image";
 import { TorqueManager } from "@/components/modules/TorqueManager";
 import { MaintenanceLogManager } from "@/components/modules/MaintenanceLogManager";
+import { BikeFitManager } from "@/components/modules/BikeFitManager";
+import { MaintenancePredictor } from "@/components/modules/MaintenancePredictor";
 import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash2, CheckCircle2, Zap, History, Calendar, VenusAndMars, Activity, Flame, X, ChevronRight, Wrench, ShieldAlert, Globe, Sparkles } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useMemo } from "react";
@@ -23,7 +25,7 @@ export default function GaragePage() {
     const [newWsWidth, setNewWsWidth] = useState(25);
     const [newWsTubeless, setNewWsTubeless] = useState(false);
     const [isPhysioLocked, setIsPhysioLocked] = useState(true);
-    const [assetTab, setAssetTab] = useState<'wheelset' | 'torque' | 'log'>('wheelset');
+    const [assetTab, setAssetTab] = useState<'wheelset' | 'torque' | 'log' | 'fit' | 'prediction'>('wheelset');
 
     const { isSyncing, syncSuccess, syncError, sync: handleStravaSync } = useStravaSync();
 
@@ -450,22 +452,34 @@ export default function GaragePage() {
 
                 <div className="pro-card p-0 overflow-hidden">
                     {/* Segmented Control */}
-                    <div className="flex p-1.5 bg-white/[0.03] border-b border-white/5">
+                    <div className="flex p-1.5 bg-white/[0.03] border-b border-white/5 overflow-x-auto scrollbar-hide">
                         <button
                             onClick={() => setAssetTab('wheelset')}
-                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'wheelset' ? 'bg-white/10 text-cyan-400' : 'text-white/30 hover:text-white/50'}`}
+                            className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'wheelset' ? 'bg-white/10 text-cyan-400' : 'text-white/30 hover:text-white/50'}`}
                         >
                             轮组资产
                         </button>
                         <button
+                            onClick={() => setAssetTab('fit')}
+                            className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'fit' ? 'bg-white/10 text-emerald-400' : 'text-white/30 hover:text-white/50'}`}
+                        >
+                            几何数据
+                        </button>
+                        <button
+                            onClick={() => setAssetTab('prediction')}
+                            className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'prediction' ? 'bg-white/10 text-orange-400' : 'text-white/30 hover:text-white/50'}`}
+                        >
+                            维护预测
+                        </button>
+                        <button
                             onClick={() => setAssetTab('torque')}
-                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'torque' ? 'bg-white/10 text-purple-400' : 'text-white/30 hover:text-white/50'}`}
+                            className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'torque' ? 'bg-white/10 text-purple-400' : 'text-white/30 hover:text-white/50'}`}
                         >
                             扭矩设定
                         </button>
                         <button
                             onClick={() => setAssetTab('log')}
-                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'log' ? 'bg-white/10 text-orange-400' : 'text-white/30 hover:text-white/50'}`}
+                            className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'log' ? 'bg-white/10 text-white' : 'text-white/30 hover:text-white/50'}`}
                         >
                             维护日志
                         </button>
@@ -524,6 +538,8 @@ export default function GaragePage() {
                             </div>
                         )}
 
+                        {assetTab === 'fit' && <BikeFitManager />}
+                        {assetTab === 'prediction' && <MaintenancePredictor />}
                         {assetTab === 'torque' && <TorqueManager />}
                         {assetTab === 'log' && <MaintenanceLogManager />}
                     </div>
