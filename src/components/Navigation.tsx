@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { LayoutDashboard, BarChart3, Wrench, UserCog, Zap } from "lucide-react";
+import { LayoutDashboard, BarChart3, Wrench, UserCog } from "lucide-react";
 
 export function Navigation() {
     const router = useRouter();
@@ -11,7 +11,6 @@ export function Navigation() {
     const links = [
         { id: 'home', href: "/", label: "预览", icon: LayoutDashboard },
         { id: 'analytics', href: "/analytics", label: "记录", icon: BarChart3 },
-        { id: 'ride', href: "/ride", label: "出击", icon: Zap },
         { id: 'tools', href: "/tools", label: "工具", icon: Wrench },
         { id: 'pilot', href: "/pilot-office", label: "车手", icon: UserCog },
     ];
