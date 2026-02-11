@@ -42,7 +42,7 @@ export function TorqueManager() {
                     <div className="liquid-icon info p-1.5">
                         <ShieldCheck size={14} />
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white/70">{t('title')} / Standards</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-white/70">{t('title')}</span>
                 </div>
                 <div className="grid grid-cols-1 gap-2">
                     {COMMON_TORQUES.slice(0, 5).map((item, idx) => (

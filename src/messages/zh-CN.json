@@ -8,7 +8,10 @@
         "unit": "单位",
         "loading": "加载中...",
         "error": "出错了",
-        "refresh": "刷新"
+        "refresh": "刷新",
+        "confirm": "确认",
+        "success": "成功",
+        "logout": "退出"
     },
     "Navigation": {
         "preview": "预览",
@@ -41,9 +44,9 @@
             "wet": "湿性油 (Heavy Wet)"
         },
         "conditions": {
-            "new": "全新 / 低损耗 (<0.5%)",
-            "worn": "磨损 / 建议关注 (0.5%-0.75%)",
-            "bad": "极差 / 需更换 (>0.75%)"
+            "new": "全新 (低损耗 <0.5%)",
+            "worn": "磨损 (建议关注 0.5%-0.75%)",
+            "bad": "极差 (需更换 >0.75%)"
         },
         "alignments": {
             "straight": "平直 (无偏移)",
@@ -63,10 +66,56 @@
         "unitSystem": "度量衡系统",
         "language": "语言设置",
         "stravaSync": "Strava 数据同步",
-        "physioTitle": "生理特征 / BIOMETRICS",
-        "physioLocked": "生理数据已锁定。点击图标解锁进行编辑。",
-        "physioUnlocked": "注意：手动修改生理数据后，系统将重新计算您的体能模型。",
-        "equipmentTitle": "器材档案馆 / ARCHIVE"
+        "stravaLink": "连接 Strava",
+        "physioTitle": "生理特征",
+        "physioLocked": "🔒 锁定模式",
+        "physioUnlocked": "🔓 解锁编辑",
+        "physioWarning": "注意：手动修改生理数据后，系统将重新计算您的体能模型。",
+        "equipmentTitle": "器材档案馆",
+        "offlineMode": "离线同步模式",
+        "syncing": "正在拉取 Strava...",
+        "synced": "已同步 Strava",
+        "unlinked": "未同步用户",
+        "syncDisconnected": "数据同步已中断",
+        "syncDisconnectedDesc": "连接 Strava 账号以自动同步您的器材使用里程、生理指标 (FTP/体重) 以及最近训练负荷。离线模式下数据将仅保存在本地浏览器中。",
+        "enableSync": "立即启用同步",
+        "age": "年龄",
+        "sex": "性别",
+        "male": "男性",
+        "female": "女性",
+        "other": "其他",
+        "height": "身高",
+        "bmr": "基础代谢",
+        "restingHR": "静息心率 (RHR)",
+        "restingHRDesc": "用于计算 Karvonen 心率区间",
+        "proEngine": "智脑性能评估",
+        "wpkg": "功重比",
+        "vo2max": "最大摄氧量",
+        "vo2maxDesc": "估算值基于心率储备",
+        "idealWeight": "理想竞赛体重",
+        "idealWeightDesc": "Hamwi 竞技模型",
+        "tacticalSync": "战术引擎同步: 已激活 // 逻辑流稳定",
+        "weightPower": "权重与功率",
+        "weight": "体重",
+        "ftp": "当前 FTP",
+        "registeredBikes": "已注册单车 ({count})",
+        "mechanical": "机械档案",
+        "wheelsets": "轮组资产",
+        "geometry": "几何数据",
+        "torque": "扭矩设定",
+        "maintenance": "维护日志",
+        "savedWheelsets": "已保存轮组 ({count})",
+        "new": "新增",
+        "activeLabel": "激活",
+        "confirmDeleteWheelset": "确定要删除这套轮组吗？其里程记录将永久丢失。",
+        "minWheelsetWarning": "至少需要保留一套轮组。",
+        "dbSync": "自动同步至 IndexedDB",
+        "configWheelset": "配置新轮组",
+        "wsName": "型号名称",
+        "wsPlaceholder": "例如: AD350 Stock",
+        "wsWidth": "胎宽",
+        "wsSystem": "系统",
+        "wsConfirm": "确认新增"
     },
     "Language": {
         "zh-CN": "简体中文",
@@ -110,11 +159,14 @@
         },
         "export": {
             "title": "战术情报报告",
-            "logic": "战术逻辑"
+            "logic": "战术逻辑",
+            "formStatus": "当前体能形态 (TSB)",
+            "scoreDesc": "分值基于 EWMA 加权移动平均分析"
         },
         "offline": {
             "session": "离线模式",
-            "advice": "⚠️ 智脑连接超时。系统已启用离线基准策略。"
+            "advice": "⚠️ 智脑连接超时。系统已启用离线基准策略。",
+            "logic": "智脑同步: 离线"
         }
     },
     "Weather": {
@@ -330,10 +382,10 @@
         "title": "MMP 功率维度曲线",
         "analysis": "战力评价",
         "labels": {
-            "sprint": "5s (Sprint)",
-            "anaerobic": "1m (Anaerobic)",
-            "vo2": "5m (VO2Max)",
-            "ftp": "20m (FTP)"
+            "sprint": "5秒 (冲刺)",
+            "anaerobic": "1分钟 (无氧)",
+            "vo2": "5分钟 (最大摄氧量)",
+            "ftp": "20分钟 (FTP)"
         },
         "ranks": {
             "WorldTour": "世巡赛级",
@@ -347,10 +399,10 @@
         }
     },
     "TirePressure": {
-        "title": "胎压建议 / Pressure",
+        "title": "胎压建议",
         "subtitle": "基于车辆负载与路况推演",
-        "front": "前轮 (FRONT)",
-        "rear": "后轮 (REAR)",
+        "front": "前轮",
+        "rear": "后轮",
         "surfaceLabel": "路面状况选择",
         "surfaces": {
             "perfect": "极佳 (赛道)",
@@ -368,7 +420,7 @@
     },
     "SweatRate": {
         "title": "精准排汗率计算",
-        "analytics": "计算结果 / ANALYTICS",
+        "analytics": "计算结果",
         "indicator": "精准排汗率指标",
         "dehydration": "脱水比例",
         "totalLoss": "总排汗量",
@@ -423,29 +475,29 @@
         }
     },
     "Ranks": {
-        "worldTour": "世巡赛级 / World Tour",
-        "elite": "业余大神 (Cat 1)",
-        "advanced": "业余顶尖 (Cat 2)",
-        "intermediate": "进阶水平 (Cat 3)",
-        "novice": "新手入门 (Cat 4)",
-        "recreational": "养生骑行",
+        "worldTour": "世巡赛级",
+        "elite": "精英级",
+        "advanced": "进阶级",
+        "intermediate": "中级水平",
+        "novice": "新手级",
+        "recreational": "休闲骑行",
         "next": "下一级: {rank}"
     },
     "BikeFit": {
-        "title": "战车几何参数",
+        "title": "战机几何参数",
         "subtitle": "精确记录 Bike Fit 数据，确保竞技状态统一",
         "save": "保存记录",
         "success": "几何数据已保存",
         "successDesc": "Bike Fit 参数已更新至云端及本地备份",
-        "core": "车架基础",
+        "core": "核心参数",
         "cockpit": "座舱系统",
-        "touch": "传动接触",
+        "touch": "身体接触",
         "stack": "Stack (堆叠)",
         "reach": "Reach (前伸)",
         "saddleHeight": "Saddle Height (高度)",
-        "saddleOffset": "Saddle Offset (偏移)",
-        "barWidth": "Bar Width (变径)",
-        "crank": "Crank (曲柄)",
+        "saddleOffset": "Saddle Offset (偏移量)",
+        "barWidth": "Bar Width (车把宽度)",
+        "crank": "Crank (曲柄长度)",
         "notice": "* 注意：修改 Stack/Reach 等核心参数仅作为数字化资产存档。物理调整建议咨询专业 Fitter。"
     },
     "MaintenanceLog": {
@@ -464,13 +516,13 @@
         "subtitle": "基于当前输出功耗权重推演硬件磨损寿命",
         "powerFactor": "磨损权重修正",
         "powerFactorDesc": "高扭力/爬坡手建议调高至 1.2x 以获得更准确的预警",
-        "remaining": "{count} KM REMAINING",
-        "lifespan": "Lifespan Used",
+        "remaining": "剩余 {count} KM",
+        "lifespan": "已消耗寿命",
         "aiTip": "AI 提示：当前的维护周期已根据你的 Power Factor ({factor}x) 进行加权计算。这意味着当你在进行大功率间歇或爬坡训练时，系统会加速模拟器材的损耗进度，确保在极端赛况下设备依然稳定可靠。",
         "status": {
-            "optimal": "良好 / Optimal",
-            "caution": "注意 / Caution",
-            "urgent": "警告 / Urgent"
+            "optimal": "良好",
+            "caution": "待检查",
+            "urgent": "立即维护"
         }
     },
     "PMC": {
@@ -514,14 +566,14 @@
         "time": "{min}分{sec}秒"
     },
     "Torque": {
-        "title": "扭矩标准库",
+        "title": "官方扭矩标准库",
         "settingsTitle": "此单车设定 ({count})",
         "add": "手动输入",
         "placeholderComponent": "部件名称",
         "placeholderValue": "扭矩 (e.g. 5Nm)",
         "save": "保存参数",
         "empty": "暂无本地记录，点击上方“+”或快速导入常用参数",
-        "specified": "Specified Torque",
+        "specified": "指定扭矩",
         "success": "已添加扭矩参数"
     }
 }

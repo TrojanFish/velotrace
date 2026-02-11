@@ -8,7 +8,10 @@
         "unit": "Unit",
         "loading": "Loading...",
         "error": "Error",
-        "refresh": "Refresh"
+        "refresh": "Refresh",
+        "confirm": "Confirm",
+        "success": "Success",
+        "logout": "Logout"
     },
     "Navigation": {
         "preview": "Dashboard",
@@ -63,10 +66,56 @@
         "unitSystem": "Unit System",
         "language": "Language",
         "stravaSync": "Strava Sync",
+        "stravaLink": "Link Strava",
         "physioTitle": "BIOMETRICS",
-        "physioLocked": "Physiological data is locked. Click icon to unlock for editing.",
-        "physioUnlocked": "Notice: Manually modifying physiological data will trigger a recalculation of your performance model.",
-        "equipmentTitle": "EQUIPMENT ARCHIVE"
+        "physioLocked": "🔒 LOCKED",
+        "physioUnlocked": "🔓 UNLOCKED",
+        "physioWarning": "Notice: Manually modifying physiological data will trigger a recalculation of your performance model.",
+        "equipmentTitle": "EQUIPMENT ARCHIVE",
+        "offlineMode": "Offline Sync Mode",
+        "syncing": "Fetching Strava data...",
+        "synced": "Strava Connected",
+        "unlinked": "User not synced",
+        "syncDisconnected": "Data Sync Interrupted",
+        "syncDisconnectedDesc": "Connect your Strava account to automatically sync equipment mileage, physiological metrics (FTP/Weight), and recent training load. Offline mode stores data locally only.",
+        "enableSync": "Enable Sync Now",
+        "age": "Age",
+        "sex": "Sex",
+        "male": "Male",
+        "female": "Female",
+        "other": "Other",
+        "height": "Height",
+        "bmr": "BMR",
+        "restingHR": "Resting HR (RHR)",
+        "restingHRDesc": "Used for Karvonen HR Zone calculation",
+        "proEngine": "PRO PERFORMANCE ENGINE",
+        "wpkg": "W/Kg Ratio",
+        "vo2max": "VO2 Max",
+        "vo2maxDesc": "Estimated via HR Reserve",
+        "idealWeight": "Ideal Racing Weight",
+        "idealWeightDesc": "Hamwi Performance Model",
+        "tacticalSync": "Tactical Engine Sync: Active // Logic-Stream-Stable",
+        "weightPower": "Weight & Power",
+        "weight": "Weight",
+        "ftp": "Current FTP",
+        "registeredBikes": "Registered Bikes ({count})",
+        "mechanical": "MECHANICAL ARCHIVE",
+        "wheelsets": "Wheelsets",
+        "geometry": "Geometry",
+        "torque": "Torque Settings",
+        "maintenance": "Maintenance Log",
+        "savedWheelsets": "Saved Wheelsets ({count})",
+        "new": "New",
+        "activeLabel": "Activate",
+        "confirmDeleteWheelset": "Are you sure you want to delete this wheelset? All mileage records will be permanently lost.",
+        "minWheelsetWarning": "At least one wheelset is required.",
+        "dbSync": "Auto-sync to IndexedDB",
+        "configWheelset": "Configure New Wheelset",
+        "wsName": "Model Name",
+        "wsPlaceholder": "e.g. AD350 Stock",
+        "wsWidth": "Tire Width",
+        "wsSystem": "System",
+        "wsConfirm": "Confirm Addition"
     },
     "Language": {
         "zh-CN": "简体中文",
@@ -110,12 +159,15 @@
             "forecast": "Forecast +{hour}H"
         },
         "export": {
-            "title": "Tactical Intelligence Report",
-            "logic": "Race Logic"
+            "title": "TACTICAL INTEL REPORT",
+            "logic": "TACTICAL LOGIC",
+            "formStatus": "CURRENT FORM (TSB)",
+            "scoreDesc": "Score derived via EWMA analytics"
         },
         "offline": {
             "session": "OFFLINE MODE",
-            "advice": "⚠️ Connection timeout. Offline baseline strategy enabled."
+            "advice": "⚠️ Connection timeout. Offline baseline strategy enabled.",
+            "logic": "Bio-Sync: Offline"
         }
     },
     "Weather": {
@@ -349,7 +401,7 @@
     },
     "TirePressure": {
         "title": "TIRE PRESSURE STRATEGY",
-        "subtitle": "推演基于车辆负载与路况",
+        "subtitle": "Inferred via vehicle load and surface",
         "front": "FRONT WHEEL",
         "rear": "REAR WHEEL",
         "surfaceLabel": "SURFACE CONDITION",
@@ -424,11 +476,11 @@
         }
     },
     "Ranks": {
-        "worldTour": "World Tour / Pro",
-        "elite": "Domestic Elite (Cat 1)",
-        "advanced": "Advanced (Cat 2)",
-        "intermediate": "Intermediate (Cat 3)",
-        "novice": "Novice (Cat 4)",
+        "worldTour": "World Tour",
+        "elite": "Elite",
+        "advanced": "Advanced",
+        "intermediate": "Intermediate",
+        "novice": "Novice",
         "recreational": "Recreational",
         "next": "Next rank: {rank}"
     },
@@ -438,15 +490,15 @@
         "save": "Save Records",
         "success": "Geometry data saved",
         "successDesc": "Bike Fit parameters updated to cloud and local backup",
-        "core": "Core",
-        "cockpit": "Cockpit",
-        "touch": "Touch",
+        "core": "Core Parameters",
+        "cockpit": "Cockpit System",
+        "touch": "Body Contact",
         "stack": "Stack",
         "reach": "Reach",
         "saddleHeight": "Saddle Height",
         "saddleOffset": "Saddle Offset",
         "barWidth": "Bar Width",
-        "crank": "Crank",
+        "crank": "Crank Length",
         "notice": "* Note: Modifying core parameters like Stack/Reach is for digital archiving only. Consult a professional Fitter for physical adjustments."
     },
     "MaintenanceLog": {

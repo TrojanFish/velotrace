@@ -67,12 +67,12 @@ export default function GaragePage() {
 
     const handleDeleteWheelset = (wsIndex: number) => {
         if (bike.wheelsets.length <= 1) {
-            toast.error("操作失败", {
-                description: "至少需要保留一套轮组。"
+            toast.error(commonT('error'), {
+                description: t('minWheelsetWarning')
             });
             return;
         }
-        if (confirm("确定要删除这套轮组吗？其里程记录将永久丢失。")) {
+        if (confirm(t('confirmDeleteWheelset'))) {
             const newWheelsets = bike.wheelsets.filter((_, i) => i !== wsIndex);
             updateBike(activeBikeIndex, {
                 wheelsets: newWheelsets,
@@ -85,7 +85,7 @@ export default function GaragePage() {
         if (!session) return;
         const result = await handleStravaSync();
         if (result.success) {
-            toast.success(commonT('active'), {
+            toast.success(commonT('success'), {
                 description: "Strava Sync Success"
             });
         } else {
@@ -136,8 +136,8 @@ export default function GaragePage() {
                                 {session && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-orange-400 border-2 border-[#050810] rounded-full animate-status-blink" />}
                             </div>
                             <div>
-                                <p className="text-sm font-bold text-white/90 truncate max-w-[140px]">{session?.user?.name || "未同步用户"}</p>
-                                <p className="text-[10px] text-white/40 uppercase font-medium">{session ? (isSyncing ? "正在拉取 Strava..." : "已链接 Strava") : "离线同步模式"}</p>
+                                <p className="text-sm font-bold text-white/90 truncate max-w-[140px]">{session?.user?.name || t('unlinked')}</p>
+                                <p className="text-[10px] text-white/40 uppercase font-medium">{session ? (isSyncing ? t('syncing') : t('synced')) : t('offlineMode')}</p>
                             </div>
                         </div>
                         <div className="flex gap-2">
@@ -164,7 +164,7 @@ export default function GaragePage() {
                                 }}
                                 className={session ? 'liquid-button py-2 px-4 text-xs' : 'liquid-button-primary py-2 px-4 text-xs'}
                             >
-                                {session ? '退出' : 'Strava 登录'}
+                                {session ? commonT('logout') : t('stravaLink')}
                             </button>
                         </div>
                     </div>
@@ -176,15 +176,15 @@ export default function GaragePage() {
                             <RefreshCw size={80} className="text-orange-400 rotate-12" />
                         </div>
                         <div className="space-y-3 relative z-10">
-                            <h3 className="text-sm font-bold text-orange-400">数据同步已中断</h3>
+                            <h3 className="text-sm font-bold text-orange-400">{t('syncDisconnected')}</h3>
                             <p className="text-xs text-white/50 leading-relaxed">
-                                连接 Strava 账号以自动同步您的<b>器材使用里程</b>、<b>生理指标</b> (FTP/体重) 以及<b>最近训练负荷</b>。离线模式下数据将仅保存在本地浏览器中。
+                                {t('syncDisconnectedDesc')}
                             </p>
                             <button
                                 onClick={() => signIn("strava", { callbackUrl: window.location.href })}
                                 className="flex items-center gap-1.5 text-[10px] font-black text-orange-400 uppercase tracking-widest hover:gap-2 transition-all mt-2"
                             >
-                                立即启用同步 <ChevronRight size={10} />
+                                {t('enableSync')} <ChevronRight size={10} />
                             </button>
                         </div>
                     </div>
@@ -196,7 +196,7 @@ export default function GaragePage() {
                 <div className="flex items-center justify-between">
                     <div className="section-header mb-0">
                         <div className="section-indicator pink" />
-                        <h2 className="section-title">生理参数</h2>
+                        <h2 className="section-title">{t('physioTitle')}</h2>
                     </div>
                     <button
                         onClick={handleToggleLock}
@@ -205,7 +205,7 @@ export default function GaragePage() {
                             : 'danger animate-pulse border-rose-500/30'
                             }`}
                     >
-                        {isPhysioLocked ? '🔒 锁定模式' : '🔓 解锁编辑'}
+                        {isPhysioLocked ? t('physioLocked') : t('physioUnlocked')}
                     </button>
                 </div>
 
@@ -213,7 +213,7 @@ export default function GaragePage() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                                <Calendar size={10} /> 年龄 / AGE
+                                <Calendar size={10} /> {t('age')}
                             </label>
                             <input
                                 type="number"
@@ -225,7 +225,7 @@ export default function GaragePage() {
                         </div>
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                                <VenusAndMars size={10} /> 性别 / SEX
+                                <VenusAndMars size={10} /> {t('sex')}
                             </label>
                             <select
                                 disabled={isPhysioLocked}
@@ -233,9 +233,9 @@ export default function GaragePage() {
                                 onChange={(e) => updateUser({ sex: e.target.value as any })}
                                 className="liquid-select w-full h-11 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
                             >
-                                <option value="male">MALE / 男性</option>
-                                <option value="female">FEMALE / 女性</option>
-                                <option value="other">OTHER</option>
+                                <option value="male">{t('male')}</option>
+                                <option value="female">{t('female')}</option>
+                                <option value="other">{t('other')}</option>
                             </select>
                         </div>
                     </div>
@@ -243,7 +243,7 @@ export default function GaragePage() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                                <Ruler size={10} /> 身高 / HEIGHT (CM)
+                                <Ruler size={10} /> {t('height')} (CM)
                             </label>
                             <input
                                 type="number"
@@ -255,7 +255,7 @@ export default function GaragePage() {
                         </div>
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                                <Flame size={10} /> 基础代谢 / BMR
+                                <Flame size={10} /> {t('bmr')}
                             </label>
                             <div className="liquid-input h-11 flex items-center justify-between disabled:opacity-80">
                                 <span className="text-sm font-mono font-bold text-gradient-sunset">{bmr}</span>
@@ -272,7 +272,7 @@ export default function GaragePage() {
                                 <div className="liquid-icon danger p-2">
                                     <Activity size={16} />
                                 </div>
-                                <span className="text-sm font-medium text-white/80 whitespace-nowrap">静息心率 (RHR)</span>
+                                <span className="text-sm font-medium text-white/80 whitespace-nowrap">{t('restingHR')}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <input
@@ -286,14 +286,14 @@ export default function GaragePage() {
                             </div>
                         </div>
                         <p className="text-[9px] text-white/20 uppercase font-bold tracking-widest pl-11">
-                            用于计算 Karvonen 心率区间
+                            {t('restingHRDesc')}
                         </p>
                     </div>
 
                     {!isPhysioLocked && (
                         <p className="text-[9px] text-rose-400/70 font-medium leading-tight px-1 flex gap-2 p-3 rounded-xl bg-rose-500/5 border border-rose-500/10">
                             <span>⚠️</span>
-                            <span>修改基础生理数据将导致系统重新计算你的所有心率分区与体能模型，请谨慎操作。</span>
+                            <span>{t('physioWarning')}</span>
                         </p>
                     )}
                 </div>
@@ -301,7 +301,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="section-header">
                     <div className="section-indicator purple" />
-                    <h2 className="section-title text-purple-400">智脑性能评估 / PRO ENGINE</h2>
+                    <h2 className="section-title text-purple-400">{t('proEngine')}</h2>
                 </div>
 
                 <div className="pro-card relative overflow-hidden group">
@@ -315,33 +315,33 @@ export default function GaragePage() {
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-3">
                             <div className="flex justify-between items-start">
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em]">功率重度比 / W/Kg</p>
+                                    <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em]">{t('wpkg')}</p>
                                     <p className="text-3xl font-black italic text-white tracking-tighter">{performanceInsights.wpkg} <span className="text-xs not-italic text-white/30 uppercase">W/Kg</span></p>
                                 </div>
                                 <div className="liquid-tag purple py-1 px-2 text-[8px] font-black">PRO ENGINE v2.0</div>
                             </div>
                             <div className="pt-2 border-t border-white/[0.05]">
-                                <p className="text-[10px] font-bold text-white/30 uppercase mb-1">当前车手等级</p>
-                                <p className="text-sm font-black text-gradient-aurora italic uppercase">{performanceInsights.category}</p>
+                                <p className="text-[10px] font-bold text-white/30 uppercase mb-1">{useTranslations('RiderDNA')('progress')}</p>
+                                <p className="text-sm font-black text-gradient-aurora italic uppercase">{useTranslations('Ranks')(performanceInsights.category)}</p>
                             </div>
                         </div>
 
                         {/* VO2 Max and Ideal Weight */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
-                                <p className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em]">最大摄氧量</p>
+                                <p className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em]">{t('vo2max')}</p>
                                 <div className="py-2">
                                     <p className="text-2xl font-black italic text-white">{performanceInsights.vo2Max}</p>
                                     <p className="text-[8px] font-bold text-white/30 uppercase mt-1">ml/kg/min</p>
                                 </div>
-                                <p className="text-[8px] font-medium text-white/20 italic">估算值基于心率储备</p>
+                                <p className="text-[8px] font-medium text-white/20 italic">{t('vo2maxDesc')}</p>
                             </div>
                             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
-                                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">理想竞赛体重</p>
+                                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">{t('idealWeight')}</p>
                                 <div className="py-2">
                                     <p className="text-lg font-black italic text-white">{performanceInsights.idealWeight.min}-{performanceInsights.idealWeight.max}<span className="text-[10px] not-italic text-white/30 ml-1">KG</span></p>
                                 </div>
-                                <p className="text-[8px] font-medium text-white/20 italic">Hamwi 竞技模型</p>
+                                <p className="text-[8px] font-medium text-white/20 italic">{t('idealWeightDesc')}</p>
                             </div>
                         </div>
                     </div>
@@ -349,7 +349,7 @@ export default function GaragePage() {
                     {/* Status Text Overlay */}
                     <div className="mt-4 flex items-center gap-2 opacity-30">
                         <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-                        <span className="text-[8px] font-mono text-white tracking-[0.3em] uppercase">Tactical Engine Sync: Active // Logic-Stream-Stable</span>
+                        <span className="text-[8px] font-mono text-white tracking-[0.3em] uppercase">{t('tacticalSync')}</span>
                     </div>
                 </div>
             </section>
@@ -358,7 +358,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="section-header">
                     <div className="section-indicator blue" />
-                    <h2 className="section-title">界面设定 / Settings</h2>
+                    <h2 className="section-title">{t('language')}</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -410,7 +410,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="section-header">
                     <div className="section-indicator" />
-                    <h2 className="section-title">权重与功率</h2>
+                    <h2 className="section-title">{t('weightPower')}</h2>
                 </div>
 
                 <div className="pro-card space-y-5">
@@ -419,7 +419,7 @@ export default function GaragePage() {
                             <div className="liquid-icon success p-2">
                                 <Weight size={16} />
                             </div>
-                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">体重 / WEIGHT</span>
+                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">{t('weight')}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <input
@@ -436,7 +436,7 @@ export default function GaragePage() {
                             <div className="liquid-icon p-2">
                                 <Zap size={16} />
                             </div>
-                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">当前 FTP</span>
+                            <span className="text-sm font-medium text-white/80 whitespace-nowrap">{t('ftp')}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <input
@@ -455,7 +455,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="section-header">
                     <div className="section-indicator purple" />
-                    <h2 className="section-title">已注册单车 ({bikes.length})</h2>
+                    <h2 className="section-title">{t('registeredBikes', { count: bikes.length })}</h2>
                 </div>
 
                 <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
@@ -481,7 +481,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="section-header">
                     <div className="section-indicator blue" />
-                    <h2 className="section-title">机械档案 / MECHANICAL</h2>
+                    <h2 className="section-title">{t('mechanical')}</h2>
                 </div>
 
                 <div className="pro-card p-0 overflow-hidden">
@@ -491,25 +491,25 @@ export default function GaragePage() {
                             onClick={() => setAssetTab('wheelset')}
                             className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'wheelset' ? 'bg-white/10 text-cyan-400' : 'text-white/30 hover:text-white/50'}`}
                         >
-                            轮组资产
+                            {t('wheelsets')}
                         </button>
                         <button
                             onClick={() => setAssetTab('fit')}
                             className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'fit' ? 'bg-white/10 text-emerald-400' : 'text-white/30 hover:text-white/50'}`}
                         >
-                            几何数据
+                            {t('geometry')}
                         </button>
                         <button
                             onClick={() => setAssetTab('torque')}
                             className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'torque' ? 'bg-white/10 text-purple-400' : 'text-white/30 hover:text-white/50'}`}
                         >
-                            扭矩设定
+                            {t('torque')}
                         </button>
                         <button
                             onClick={() => setAssetTab('log')}
                             className={`flex-1 min-w-[80px] py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assetTab === 'log' ? 'bg-white/10 text-white' : 'text-white/30 hover:text-white/50'}`}
                         >
-                            维护日志
+                            {t('maintenance')}
                         </button>
                     </div>
 
@@ -517,12 +517,12 @@ export default function GaragePage() {
                         {assetTab === 'wheelset' && (
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">已保存轮组 ({bike?.wheelsets?.length})</p>
+                                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">{t('savedWheelsets', { count: bike?.wheelsets?.length })}</p>
                                     <button
                                         onClick={() => setIsAddingWheelset(true)}
                                         className="liquid-tag cursor-pointer"
                                     >
-                                        <Plus size={10} /> 新增
+                                        <Plus size={10} /> {t('new')}
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-1 gap-3">
@@ -552,7 +552,7 @@ export default function GaragePage() {
                                                             onClick={() => setActiveWheelset(activeBikeIndex, idx)}
                                                             className="text-[10px] font-black text-cyan-400 uppercase tracking-widest hover:brightness-125"
                                                         >
-                                                            激活
+                                                            {t('activeLabel')}
                                                         </button>
                                                     )}
                                                     <button onClick={() => handleDeleteWheelset(idx)} className="text-white/20 hover:text-rose-500 transition-colors">
@@ -578,7 +578,7 @@ export default function GaragePage() {
                 <div className="flex items-center justify-center gap-3">
                     <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                     <div className="flex items-center gap-2 text-[10px] text-white/20 font-bold uppercase tracking-widest">
-                        <Save size={10} /> 自动同步至 IndexedDB
+                        <Save size={10} /> {t('dbSync')}
                     </div>
                     <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 </div>
@@ -589,7 +589,7 @@ export default function GaragePage() {
                 <div className="liquid-overlay">
                     <div className="liquid-modal space-y-5">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-gradient-cyan">配置新轮组</h3>
+                            <h3 className="text-lg font-bold text-gradient-cyan">{t('configWheelset')}</h3>
                             <button
                                 onClick={() => setIsAddingWheelset(false)}
                                 className="liquid-icon p-1.5 hover:scale-105 transition-transform"
@@ -600,18 +600,18 @@ export default function GaragePage() {
 
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">型号名称</label>
+                                <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">{t('wsName')}</label>
                                 <input
                                     autoFocus
                                     value={newWsName}
                                     onChange={(e) => setNewWsName(e.target.value)}
-                                    placeholder="例如: AD350 Stock"
+                                    placeholder={t('wsPlaceholder')}
                                     className="liquid-input text-sm"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-2">
-                                    <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">胎宽</label>
+                                    <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">{t('wsWidth')}</label>
                                     <select
                                         value={newWsWidth}
                                         onChange={(e) => setNewWsWidth(parseInt(e.target.value))}
@@ -621,7 +621,7 @@ export default function GaragePage() {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">系统</label>
+                                    <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">{t('wsSystem')}</label>
                                     <button
                                         onClick={() => setNewWsTubeless(!newWsTubeless)}
                                         className={`w-full py-2.5 rounded-xl text-[10px] font-bold uppercase transition-all ${newWsTubeless
@@ -642,13 +642,13 @@ export default function GaragePage() {
                                 onClick={() => setIsAddingWheelset(false)}
                                 className="flex-1 py-3 text-sm font-bold text-white/50 hover:text-white transition-colors rounded-xl hover:bg-white/5"
                             >
-                                取消
+                                {commonT('cancel')}
                             </button>
                             <button
                                 onClick={handleAddWheelset}
                                 className="liquid-button-primary flex-1 py-3 text-sm font-bold rounded-xl"
                             >
-                                确认新增
+                                {t('wsConfirm')}
                             </button>
                         </div>
                     </div>

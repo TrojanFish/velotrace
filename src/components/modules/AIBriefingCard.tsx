@@ -100,7 +100,7 @@ export function AIBriefingCard() {
                     intensity: "Z2 Endurance",
                     goal: "生理基础维护",
                     advice: t('offline.advice'),
-                    logic: "网络链路中断，自动调用本地缓存模型。"
+                    logic: t('offline.logic')
                 },
                 timestamp: Date.now()
             });
@@ -178,7 +178,7 @@ export function AIBriefingCard() {
                     {/* Main TSB Metric - Huge */}
                     <div className="mb-12 relative">
                         <div className="absolute -left-10 top-0 bottom-0 w-2 bg-gradient-to-b from-cyan-500 to-purple-600" />
-                        <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4">Current Form / TSB Status</p>
+                        <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4">{t('export.formStatus')}</p>
                         <div className="flex items-baseline gap-4">
                             <span className="text-8xl font-black italic tracking-tighter text-white">
                                 {(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0}
@@ -187,7 +187,7 @@ export function AIBriefingCard() {
                                 <p className={`text-xl font-black uppercase tracking-tight ${tsbHeading.color}`}>
                                     {tsbHeading.title}
                                 </p>
-                                <p className="text-[10px] font-bold text-white/30 uppercase">Score derived via EWMA analytics</p>
+                                <p className="text-[10px] font-bold text-white/30 uppercase">{t('export.scoreDesc')}</p>
                             </div>
                         </div>
                     </div>

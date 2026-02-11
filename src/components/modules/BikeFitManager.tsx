@@ -36,7 +36,7 @@ export function BikeFitManager() {
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <h3 className="text-sm font-bold text-white/90 uppercase tracking-widest">{t('title')} / GEOMETRY</h3>
+                    <h3 className="text-sm font-bold text-white/90 uppercase tracking-widest">{t('title')}</h3>
                     <p className="text-[10px] text-white/30 font-medium">{t('subtitle')}</p>
                 </div>
                 <button
@@ -52,7 +52,7 @@ export function BikeFitManager() {
                 <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-cyan-400">
                         <Ruler size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">{t('core')} / Core</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t('core')}</span>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-1.5">
@@ -86,7 +86,7 @@ export function BikeFitManager() {
                 <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-purple-400">
                         <Layers size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">{t('cockpit')} / Cockpit</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t('cockpit')}</span>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-1.5">
@@ -120,7 +120,7 @@ export function BikeFitManager() {
                 <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-emerald-400">
                         <Activity size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">{t('touch')} / Touch</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t('touch')}</span>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-1.5">

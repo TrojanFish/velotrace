@@ -52,7 +52,7 @@ export function MaintenancePredictor() {
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <h3 className="text-sm font-bold text-white/90 uppercase tracking-widest">{t('title')} / MAINTENANCE AI</h3>
+                    <h3 className="text-sm font-bold text-white/90 uppercase tracking-widest">{t('title')}</h3>
                     <p className="text-[10px] text-white/30 font-medium">{t('subtitle')}</p>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -64,7 +64,7 @@ export function MaintenancePredictor() {
             {/* Power Input Integration */}
             <div className="pro-card p-4 flex items-center justify-between bg-white/[0.02] border border-white/5">
                 <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-white/50 uppercase">{t('powerFactor')} / Wear Factor</p>
+                    <p className="text-[10px] font-bold text-white/50 uppercase">{t('powerFactor')}</p>
                     <p className="text-[9px] text-white/20 italic">{t('powerFactorDesc')}</p>
                 </div>
                 <div className="flex items-center gap-2">
