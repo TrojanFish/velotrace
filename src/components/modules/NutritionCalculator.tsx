@@ -5,8 +5,10 @@ import { useStore } from "@/store/useStore";
 import { calculateNutrition } from "@/lib/calculators/nutrition";
 import { FUEL_PRODUCTS, FuelProduct } from "@/config/nutrition";
 import { Utensils, Droplets, Zap, Clock, Thermometer, Info, Package, Check } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export function NutritionCalculator() {
+    const t = useTranslations('NutritionCalculator');
     const { user } = useStore();
 
     const [duration, setDuration] = useState(2);
@@ -68,8 +70,8 @@ export function NutritionCalculator() {
         <div className="pro-card space-y-6">
             <div className="flex justify-between items-start">
                 <div>
-                    <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">补给战策 (GLYCOTANK)</h2>
-                    <p className="text-[10px] text-muted-foreground uppercase mt-1">根据骑行时长与强度规划</p>
+                    <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('title')}</h2>
+                    <p className="text-[10px] text-muted-foreground uppercase mt-1">{t('subtitle')}</p>
                 </div>
                 <div className="p-2 bg-amber-500/10 rounded-full text-amber-500">
                     <Utensils size={20} />
@@ -80,7 +82,7 @@ export function NutritionCalculator() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-3">
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
-                        <div className="flex items-center gap-1"><Clock size={10} /> 骑行时长</div>
+                        <div className="flex items-center gap-1"><Clock size={10} /> {t('duration')}</div>
                         <span className="text-amber-400">{duration}h</span>
                     </div>
                     <input
@@ -92,7 +94,7 @@ export function NutritionCalculator() {
 
                 <div className="space-y-3">
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
-                        <div className="flex items-center gap-1"><Zap size={10} /> 强度 (RPE)</div>
+                        <div className="flex items-center gap-1"><Zap size={10} /> {t('intensity')}</div>
                         <span className="text-amber-400">{intensity}%</span>
                     </div>
                     <input
@@ -104,7 +106,7 @@ export function NutritionCalculator() {
 
                 <div className="space-y-3">
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
-                        <div className="flex items-center gap-1"><Thermometer size={10} /> 环境温度</div>
+                        <div className="flex items-center gap-1"><Thermometer size={10} /> {t('temperature')}</div>
                         <span className="text-amber-400">{temp}°C</span>
                     </div>
                     <input
@@ -117,9 +119,9 @@ export function NutritionCalculator() {
 
             {/* Product Inventory Section */}
             <div className="space-y-4">
-                <div className="flex items-center gap-2">
+                <div className="items-center flex gap-2">
                     <Package size={14} className="text-white/40" />
-                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">选择您拥有的补给品</h3>
+                    <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{t('inventory')}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {FUEL_PRODUCTS.map(product => (
@@ -148,7 +150,7 @@ export function NutritionCalculator() {
                     </div>
                     <div className="flex items-center gap-2 text-amber-500">
                         <Zap size={14} />
-                        <span className="text-[10px] font-black uppercase">总碳水需求</span>
+                        <span className="text-[10px] font-black uppercase">{t('carbsDemand')}</span>
                     </div>
                     <div className="flex items-baseline gap-1">
                         <span className="text-4xl font-black italic tracking-tighter text-white pr-2">{result.totalCarbs}</span>
@@ -161,7 +163,7 @@ export function NutritionCalculator() {
                     </div>
                     <div className="flex items-center gap-2 text-blue-400">
                         <Droplets size={14} />
-                        <span className="text-[10px] font-black uppercase">总水分需求</span>
+                        <span className="text-[10px] font-black uppercase">{t('fluidDemand')}</span>
                     </div>
                     <div className="flex items-baseline gap-1">
                         <span className="text-4xl font-black italic tracking-tighter text-white pr-2">{result.totalFluid}</span>
@@ -173,7 +175,7 @@ export function NutritionCalculator() {
             {/* Specific Packing List */}
             <div className="space-y-3">
                 <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
-                    建议物资清单 (Packing List)
+                    {t('packingList')}
                 </h3>
                 <div className="space-y-2">
                     {fuelingPlan.length > 0 ? fuelingPlan.map((item, idx) => (
@@ -187,8 +189,8 @@ export function NutritionCalculator() {
                                 <div>
                                     <p className="text-xs font-bold text-white/90">{item.product.name}</p>
                                     <p className="text-[9px] text-white/30 font-medium uppercase tracking-tighter">
-                                        每{item.product.unit}含 {item.product.carbs}g 碳水
-                                        {item.product.sodium ? ` • ${item.product.sodium}mg 钠` : ''}
+                                        {t('perUnit', { unit: item.product.unit, carbs: item.product.carbs })}
+                                        {item.product.sodium ? t('sodium', { sodium: item.product.sodium }) : ''}
                                     </p>
                                 </div>
                             </div>
@@ -199,7 +201,7 @@ export function NutritionCalculator() {
                         </div>
                     )) : (
                         <div className="py-8 text-center border-2 border-dashed border-slate-800 rounded-xl">
-                            <p className="text-[10px] text-slate-500 uppercase font-bold">请从上方库存中选择补给品</p>
+                            <p className="text-[10px] text-slate-500 uppercase font-bold">{t('emptyInventory')}</p>
                         </div>
                     )}
                 </div>
@@ -212,12 +214,10 @@ export function NutritionCalculator() {
                 </div>
                 <div className="space-y-1 relative z-10">
                     <p className="text-xs font-bold text-amber-400 flex items-center gap-2">
-                        智能建议 Intelligence
+                        {t('intelligence')}
                     </p>
                     <p className="text-[10px] text-white/50 leading-relaxed font-medium">
-                        {result.needsElectrolytes
-                            ? "🔥 关键预警：当前气温偏高或时长处于抽筋风险区。强烈建议携带并按时补充电解质盐丸。"
-                            : "✅ 环境契合度良好。按每 45 分钟一支能量胶的频率稳定补充即可保持糖原输出。"}
+                        {result.needsElectrolytes ? t('highTempWarning') : t('optimalAdvice')}
                     </p>
                 </div>
             </div>

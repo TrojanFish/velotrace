@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 import withPWAInit from "@ducanh2912/next-pwa";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const withPWA = withPWAInit({
   dest: "public",
@@ -8,7 +11,7 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  turbopack: {}, // Silence the Next.js 16 Turbopack warning for PWA webpack integration
+  turbopack: {},
   images: {
     remotePatterns: [
       {
@@ -23,4 +26,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPWA(nextConfig);
+export default withNextIntl(withPWA(nextConfig));

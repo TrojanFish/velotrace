@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import { Toaster } from "sonner";
+import { I18nProvider } from "@/components/I18nProvider";
+import { getLocale } from 'next-intl/server';
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
 
@@ -31,19 +33,21 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="zh-CN" className="dark">
+    <html lang={locale} className="dark">
       <body
         className={`${inter.variable} antialiased min-h-[100dvh] selection:bg-cyan-500/30`}
       >
-        <Providers>
+        <I18nProvider>
           {children}
-        </Providers>
+        </I18nProvider>
         <Toaster
           position="top-center"
           offset={60}

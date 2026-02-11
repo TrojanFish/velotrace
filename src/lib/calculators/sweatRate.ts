@@ -36,13 +36,13 @@ export function calculateSweatRate(input: SweatRateInput): SweatRateResult {
 
     let recommendation = "";
     if (dehydrationPercent > 2) {
-        recommendation = "脱水严重 (>2%)。这会导致功率大幅下降和核心水温显著升高。建议在未来的骑行中增加每小时 200-400ml 的补给量。";
+        recommendation = "dehydrated";
     } else if (dehydrationPercent < 0) {
-        recommendation = "补给过量（体重增加）。注意低钠血症风险，建议减少非口渴状态下的强制性饮水。";
+        recommendation = "overhydrated";
     } else if (sweatRate > 1.2) {
-        recommendation = "高排汗率。即使体重下降在 2% 以内，也建议强制添加电解质（钠离子）以维持血浆渗透压。";
+        recommendation = "highRate";
     } else {
-        recommendation = "补给策略良好。目前的方案能有效维持你的体液平衡。";
+        recommendation = "good";
     }
 
     return {

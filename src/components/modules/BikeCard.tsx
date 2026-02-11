@@ -11,8 +11,11 @@ import {
     History
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
+import { useTranslations, useLocale } from 'next-intl';
 
 export function BikeCard() {
+    const t = useTranslations('Bike');
+    const locale = useLocale();
     const { bikes, activeBikeIndex, user, resetMaintenance, setActiveWheelset } = useStore();
     const [condition, setCondition] = useState<SurfaceType>("normal");
     const [view, setView] = useState<'pressure' | 'lifecycle'>('pressure');
@@ -42,10 +45,10 @@ export function BikeCard() {
     });
 
     const conditions: { value: SurfaceType; label: string }[] = [
-        { value: "perfect", label: "赛道" },
-        { value: "normal", label: "干路" },
-        { value: "rough", label: "湿滑" },
-        { value: "gravel", label: "砂石" },
+        { value: "perfect", label: t('surfaces.perfect') },
+        { value: "normal", label: t('surfaces.normal') },
+        { value: "rough", label: t('surfaces.rough') },
+        { value: "gravel", label: t('surfaces.gravel') },
     ];
 
     const alerts = useMemo(() => {
@@ -67,7 +70,7 @@ export function BikeCard() {
                         onClick={() => setView('pressure')}
                         className={`liquid-segment-button py-1.5 px-4 whitespace-nowrap ${view === 'pressure' ? 'active' : ''}`}
                     >
-                        胎压策略
+                        {t('pressure')}
                     </button>
                     <button
                         onClick={() => setView('lifecycle')}
@@ -76,7 +79,7 @@ export function BikeCard() {
                             background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.9) 0%, rgba(249, 115, 22, 0.8) 100%)',
                         } : {}}
                     >
-                        生命周期
+                        {t('lifecycle')}
                     </button>
                 </div>
                 <div className="flex items-center gap-2">
@@ -93,7 +96,7 @@ export function BikeCard() {
                             <div className="liquid-icon p-1.5">
                                 <Layers size={12} />
                             </div>
-                            <span className="text-[10px] font-bold uppercase text-white/40">活动轮组</span>
+                            <span className="text-[10px] font-bold uppercase text-white/40">{t('activeWheelset')}</span>
                         </div>
                         <select
                             value={bike.activeWheelsetIndex}
@@ -112,11 +115,11 @@ export function BikeCard() {
                             <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">{bike.name}</h2>
                             <div className="flex items-baseline gap-2">
                                 <span className="liquid-stat-value text-4xl pr-2">{pressure.front.psi}/{pressure.rear.psi}</span>
-                                <span className="text-[10px] text-white/30 font-bold uppercase italic pr-1">PSI (F/R)</span>
+                                <span className="text-[10px] text-white/30 font-bold uppercase italic pr-1">{t('psi')}</span>
                             </div>
                         </div>
                         <div className="text-right space-y-0.5">
-                            <p className="text-[9px] font-bold text-white/30 uppercase">当前配置</p>
+                            <p className="text-[9px] font-bold text-white/30 uppercase">{t('config')}</p>
                             <p className="text-xs font-bold text-white/70">{wheelset?.tireWidth}MM / {wheelset?.isTubeless ? 'TL' : 'CL'}</p>
                         </div>
                     </div>
@@ -141,8 +144,8 @@ export function BikeCard() {
                                 <AlertTriangle size={16} />
                             </div>
                             <div className="flex-1">
-                                <p className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">警告: 器材亚健康</p>
-                                <p className="text-[9px] font-medium text-orange-200/50 italic">共有 {alerts.length} 项维护任务接近临界值</p>
+                                <p className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">{t('maintenanceTitle')}</p>
+                                <p className="text-[9px] font-medium text-orange-200/50 italic">{t('maintenanceStatus', { count: alerts.length })}</p>
                             </div>
                             <button
                                 onClick={() => setView('lifecycle')}
@@ -171,7 +174,7 @@ export function BikeCard() {
                                             <Icon size={12} />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">{config.label}</p>
+                                            <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">{t('maintenance.' + key)}</p>
                                             <p className="text-[8px] text-white/30 uppercase font-medium">{val.toFixed(0)}km / {config.target}km</p>
                                         </div>
                                     </div>
@@ -179,7 +182,7 @@ export function BikeCard() {
                                         onClick={() => resetMaintenance(activeBikeIndex, key)}
                                         className="text-[8px] font-bold uppercase text-white/20 hover:text-cyan-400 tracking-tighter transition-colors opacity-0 group-hover:opacity-100"
                                     >
-                                        [ 重置 ]
+                                        [ {t('reset')} ]
                                     </button>
                                 </div>
                                 <div className="liquid-progress">
@@ -197,7 +200,7 @@ export function BikeCard() {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Layers size={12} className="text-white/30" />
-                            <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest">当前轮组损耗 ({wheelset?.name})</span>
+                            <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest">{t('wheelsetWear', { name: wheelset?.name })}</span>
                         </div>
                         <p className="text-xs font-bold text-gradient-cyan">{wheelset?.mileage.toFixed(0)} KM</p>
                     </div>
@@ -210,10 +213,10 @@ export function BikeCard() {
                 <div className="flex items-center gap-1.5">
                     <History size={12} className="text-white/20" />
                     <span className="text-[8px] font-bold text-white/20 uppercase tracking-widest">
-                        最近同步: {mounted ? (user.lastSyncDate ? new Date(user.lastSyncDate).toLocaleDateString() : new Date().toLocaleDateString()) : "--"}
+                        {t('lastSync')}: {mounted ? (user.lastSyncDate ? new Date(user.lastSyncDate).toLocaleDateString(locale) : new Date().toLocaleDateString(locale)) : "--"}
                     </span>
                 </div>
-                <div className="text-[8px] font-bold text-white/30 uppercase italic">ODO: {bike.totalDistance.toFixed(0)} KM</div>
+                <div className="text-[8px] font-bold text-white/30 uppercase italic">{t('odo')}: {bike.totalDistance.toFixed(0)} KM</div>
             </div>
         </div>
     );

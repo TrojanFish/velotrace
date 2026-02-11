@@ -7,16 +7,19 @@ import { useState, useEffect, useCallback } from "react";
 import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations, useLocale } from 'next-intl';
 
-const getTSBHeading = (tsb: number) => {
-    if (tsb > 20) return { title: "极度渴望战斗", color: "text-emerald-400", hex: "#34d399" };
-    if (tsb > 5) return { title: "竞技巅峰期", color: "text-cyan-400", hex: "#22d3ee" };
-    if (tsb > -5) return { title: "中性维持期", color: "text-white/60", hex: "#94a3b8" };
-    if (tsb > -20) return { title: "疲劳累积中", color: "text-amber-400", hex: "#fbbf24" };
-    return { title: "战损状态", color: "text-rose-500 animate-pulse", hex: "#f43f5e" };
+const getTSBHeadingKey = (tsb: number) => {
+    if (tsb > 20) return "stoked";
+    if (tsb > 5) return "peak";
+    if (tsb > -5) return "neutral";
+    if (tsb > -20) return "fatigue";
+    return "damaged";
 };
 
 export function AIBriefingCard() {
+    const t = useTranslations('AIBriefing');
+    const locale = useLocale();
     const { user, bikes, activeBikeIndex, aiBriefingCache, setAIBriefingCache } = useStore();
     const { data: weather, loading: weatherLoading } = useWeather();
     const router = useRouter();
@@ -28,7 +31,14 @@ export function AIBriefingCard() {
     const [showDetails, setShowDetails] = useState(false);
 
     const structuredData = aiBriefingCache?.data;
-    const tsbHeading = getTSBHeading(user.tsb ?? 0);
+    const tsbKey = getTSBHeadingKey(user.tsb ?? 0);
+    const tsbHeading = {
+        title: t(`tsbHeading.${tsbKey}`),
+        color: tsbKey === 'stoked' ? 'text-emerald-400' :
+            tsbKey === 'peak' ? 'text-cyan-400' :
+                tsbKey === 'neutral' ? 'text-white/60' :
+                    tsbKey === 'fatigue' ? 'text-amber-400' : 'text-rose-500 animate-pulse'
+    };
 
     const kit = weather ? getKitRecommendation({
         apparentTemp: weather.apparentTemp,
@@ -71,7 +81,8 @@ export function AIBriefingCard() {
                     user,
                     weather,
                     bike: bike,
-                    tsb: user.tsb ?? 0
+                    tsb: user.tsb ?? 0,
+                    locale
                 })
             });
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -85,10 +96,10 @@ export function AIBriefingCard() {
         } catch (e) {
             setAIBriefingCache({
                 data: {
-                    session: "OFFLINE MODE",
+                    session: t('offline.session'),
                     intensity: "Z2 Endurance",
                     goal: "生理基础维护",
-                    advice: `⚠️ 智脑连接超时。基于当前 TSB (${user.tsb || 15})，系统已启用离线基准策略。`,
+                    advice: t('offline.advice'),
                     logic: "网络链路中断，自动调用本地缓存模型。"
                 },
                 timestamp: Date.now()
@@ -157,10 +168,10 @@ export function AIBriefingCard() {
                     <div className="flex justify-between items-end mb-12 border-b-4 border-white pb-6">
                         <div className="space-y-1">
                             <h1 className="text-4xl font-black italic tracking-tighter text-white">VELOTRACE</h1>
-                            <p className="text-[10px] font-bold text-white/50 tracking-[0.4em] uppercase">Tactical Intelligence Report</p>
+                            <p className="text-[10px] font-bold text-white/50 tracking-[0.4em] uppercase">{t('export.title')}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                            <p className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">{new Date().toLocaleDateString(locale as string, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                         </div>
                     </div>
 
@@ -185,8 +196,8 @@ export function AIBriefingCard() {
                     <div className="grid grid-cols-1 gap-10 mb-12">
                         <div className="space-y-6">
                             <div className="flex items-center gap-3">
-                                <span className="px-2 py-1 bg-purple-600 text-white text-[8px] font-black uppercase tracking-widest italic">Race Logic</span>
-                                <h3 className="text-sm font-black text-white/90 uppercase italic tracking-widest">推演建议</h3>
+                                <span className="px-2 py-1 bg-purple-600 text-white text-[8px] font-black uppercase tracking-widest italic">{t('export.logic')}</span>
+                                <h3 className="text-sm font-black text-white/90 uppercase italic tracking-widest">{t('labels.session')}</h3>
                             </div>
                             <div className="space-y-4">
                                 <div className="p-6 bg-white/[0.03] border border-white/[0.1] rounded-2xl">
@@ -268,7 +279,7 @@ export function AIBriefingCard() {
                             <Sparkles size={14} className="animate-pulse" />
                         </div>
                         <h2 className="text-xs font-bold text-purple-400 uppercase tracking-widest">
-                            AI 战术简报
+                            {t('title')}
                         </h2>
                     </div>
                     {isLoading && <Loader2 size={14} className="animate-spin text-purple-400" />}
@@ -280,7 +291,7 @@ export function AIBriefingCard() {
                         {tsbHeading.title}
                     </p>
                     <p className="text-[8px] font-bold text-white/30 uppercase mt-1 tracking-widest leading-none">
-                        Current Physiological State / Bio-Dynamic Status
+                        {t('statusHeadline')} / Bio-Dynamic Status
                     </p>
                 </div>
 
@@ -339,15 +350,15 @@ export function AIBriefingCard() {
                 {/* Sub Metrics */}
                 <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/[0.06] relative z-10">
                     <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center">
-                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">形态</span>
+                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">{t('metrics.form')}</span>
                         <span className={`text-xs font-bold ${(user.tsb ?? 0) > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0} TSB</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center">
-                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">体感</span>
+                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">{t('metrics.feel')}</span>
                         <span className="text-xs text-gradient-sunset font-bold">{weather?.temp || '--'}°C</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center">
-                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">风阻</span>
+                        <span className="block text-[9px] text-white/30 uppercase font-bold mb-1 tracking-widest">{t('metrics.wind')}</span>
                         <span className="text-xs font-bold text-blue-400">{(weather?.windSpeed || 0).toFixed(0)} KM/H</span>
                     </div>
                 </div>
@@ -360,13 +371,13 @@ export function AIBriefingCard() {
                         className="text-[9px] font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1.5 transition-all"
                     >
                         {isExporting ? <Loader2 size={10} className="animate-spin" /> : <Zap size={10} />}
-                        导出战报卡
+                        {t('actions.export')}
                     </button>
                     <button
                         onClick={() => setShowDetails(true)}
                         className="flex items-center gap-1 text-[9px] font-bold text-white/40 hover:text-purple-400 transition-all hover:gap-2"
                     >
-                        详情建议 <ChevronRight size={12} />
+                        {t('actions.details')} <ChevronRight size={12} />
                     </button>
                 </div>
             </div>
@@ -402,11 +413,11 @@ export function AIBriefingCard() {
                                 <div className="flex items-center gap-2">
                                     <div className={`w-2 h-2 rounded-full ${displayWeather?.isSimulating ? 'bg-cyan-500 scale-125' : 'bg-emerald-500'} animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)] transition-all`} />
                                     <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${displayWeather?.isSimulating ? 'text-cyan-400' : 'text-white/40'}`}>
-                                        {displayWeather?.isSimulating ? `Simulation Active // ${displayWeather.simTime}` : 'System Live // Tactical Hub'}
+                                        {displayWeather?.isSimulating ? t('hud.simulation', { time: displayWeather.simTime || '--:--' }) : t('hud.live')}
                                     </span>
                                 </div>
                                 <h3 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">
-                                    Digital Co-Pilot
+                                    {t('hud.title')}
                                 </h3>
                             </div>
                             <button
@@ -477,7 +488,7 @@ export function AIBriefingCard() {
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.5em] px-4 py-1.5 bg-white/5 rounded backdrop-blur-xl border border-white/10">
-                                            Physio-Status
+                                            {t('hud.physioStatus')}
                                         </p>
                                         {/* Status Subtext Indicator */}
                                         <motion.div
@@ -534,7 +545,7 @@ export function AIBriefingCard() {
                                                 <Brain size={12} className="text-purple-400" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] italic">Comms Channel 01</span>
+                                                <span className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] italic">{t('hud.comms')}</span>
                                                 <span className="text-white/20 text-[6px] font-mono uppercase tracking-[0.3em]">Encrypted-Auth-Link</span>
                                             </div>
                                         </div>
@@ -554,7 +565,7 @@ export function AIBriefingCard() {
                                         <div className="relative">
                                             <Quote size={24} className="absolute -top-2 -left-3 text-white/[0.03] rotate-12" />
                                             <p className="relative z-10 text-sm font-bold text-white/90 leading-relaxed italic border-l-2 border-purple-500/40 pl-4 py-1">
-                                                {isLoading ? "链路同步中..." : `"${structuredData?.advice || "保持节奏，每一瓦特的输出都是对未来的投资。"}"`}
+                                                {isLoading ? t('actions.details') : `"${structuredData?.advice || "Keep it up."}"`}
                                             </p>
                                         </div>
 
@@ -577,10 +588,10 @@ export function AIBriefingCard() {
                                 <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-white/40">
                                     <div className="flex items-center gap-2">
                                         <Zap size={10} className={simulatedHour > 0 ? 'text-cyan-400' : ''} />
-                                        <span>Tactical Simulation</span>
+                                        <span>{t('hud.tacticalSimulation')}</span>
                                     </div>
                                     <span className={`${simulatedHour > 0 ? 'text-cyan-400 animate-pulse' : 'text-white/20'}`}>
-                                        {simulatedHour > 0 ? `Forecasting +${simulatedHour}H` : 'Real-time'}
+                                        {simulatedHour > 0 ? t('hud.forecast', { hour: simulatedHour }) : t('hud.now')}
                                     </span>
                                 </div>
                                 <div className="relative group px-1">

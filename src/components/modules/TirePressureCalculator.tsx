@@ -4,8 +4,10 @@ import { useState, useMemo } from "react";
 import { useStore } from "@/store/useStore";
 import { calculateTirePressure, SurfaceType } from "@/lib/calculators/tirePressure";
 import { Gauge, Info, CloudRain, Sun, Activity } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export function TirePressureCalculator() {
+    const t = useTranslations('TirePressure');
     const { user, bikes, activeBikeIndex } = useStore();
     const bike = bikes[activeBikeIndex];
     const activeWheelset = bike.wheelsets[bike.activeWheelsetIndex];
@@ -21,18 +23,18 @@ export function TirePressureCalculator() {
     }), [user.weight, bike.weight, activeWheelset.tireWidth, activeWheelset.isTubeless, surface]);
 
     const surfaceOptions = useMemo(() => [
-        { id: 'perfect', label: '极佳 (赛道)', icon: <Sun size={12} /> },
-        { id: 'normal', label: '常规 (柏油)', icon: <Activity size={12} /> },
-        { id: 'rough', label: '粗糙 (颠簸)', icon: <Activity size={12} /> },
-        { id: 'wet', label: '湿滑 (雨天)', icon: <CloudRain size={12} /> },
-    ], []);
+        { id: 'perfect', label: t('surfaces.perfect'), icon: <Sun size={12} /> },
+        { id: 'normal', label: t('surfaces.normal'), icon: <Activity size={12} /> },
+        { id: 'rough', label: t('surfaces.rough'), icon: <Activity size={12} /> },
+        { id: 'wet', label: t('surfaces.wet'), icon: <CloudRain size={12} /> },
+    ], [t]);
 
     return (
         <div className="pro-card space-y-6">
             <div className="flex justify-between items-start">
                 <div>
-                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">胎压建议 / Pressure</h2>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1 tracking-tight">基于车辆负载与路况推演</p>
+                    <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">{t('title')}</h2>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1 tracking-tight">{t('subtitle')}</p>
                 </div>
                 <div className="p-2 bg-emerald-500/10 rounded-full text-emerald-500">
                     <Gauge size={20} />
@@ -41,14 +43,14 @@ export function TirePressureCalculator() {
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 text-center">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">前轮 (FRONT)</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">{t('front')}</p>
                     <div className="flex flex-col">
                         <span className="text-3xl font-black italic tracking-tighter text-emerald-400">{pressure.front.psi}</span>
                         <span className="text-[10px] font-mono text-slate-500 mt-1 uppercase">{pressure.front.bar} BAR / PSI</span>
                     </div>
                 </div>
                 <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 text-center">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">后轮 (REAR)</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">{t('rear')}</p>
                     <div className="flex flex-col">
                         <span className="text-3xl font-black italic tracking-tighter text-emerald-400">{pressure.rear.psi}</span>
                         <span className="text-[10px] font-mono text-slate-500 mt-1 uppercase">{pressure.rear.bar} BAR / PSI</span>
@@ -57,7 +59,7 @@ export function TirePressureCalculator() {
             </div>
 
             <div className="space-y-3">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase px-1">路面状况选择</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase px-1">{t('surfaceLabel')}</p>
                 <div className="grid grid-cols-2 gap-2">
                     {surfaceOptions.map((opt) => (
                         <button
@@ -79,10 +81,15 @@ export function TirePressureCalculator() {
                 <Info size={14} className="text-slate-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                     <p className="text-[10px] text-slate-500 leading-normal">
-                        系统已自动关联: <strong>{user.weight}kg</strong> 骑手 + <strong>{activeWheelset.tireWidth}mm</strong> {activeWheelset.isTubeless ? '真空' : '开口'}胎。
+                        {t.rich('info', {
+                            weight: user.weight,
+                            width: activeWheelset.tireWidth,
+                            tireType: activeWheelset.isTubeless ? t('tireType.tubeless') : t('tireType.clincher'),
+                            strong: (chunks) => <strong>{chunks}</strong>
+                        })}
                     </p>
                     <p className="text-[10px] text-slate-600 leading-normal italic">
-                        * 建议仅供参考，请勿超过轮组/外胎标称最大值。
+                        {t('warning')}
                     </p>
                 </div>
             </div>

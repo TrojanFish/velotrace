@@ -5,6 +5,7 @@ import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
 import { useStore } from "@/store/useStore";
 import { Skeleton } from "@/lib/utils";
 import { converters } from "@/lib/converters";
+import { useTranslations } from 'next-intl';
 import {
     CloudRain,
     Wind,
@@ -19,6 +20,8 @@ import {
 } from "lucide-react";
 
 export function WeatherCard() {
+    const t = useTranslations('Weather');
+    const kitT = useTranslations('Kit');
     const { data, loading, error, refresh } = useWeather();
     const { user } = useStore();
     const unit = user.unitSystem;
@@ -54,14 +57,14 @@ export function WeatherCard() {
                 <CloudRain size={20} />
             </div>
             <div>
-                <p className="text-xs font-bold uppercase text-red-400/80">定位未就绪</p>
-                <p className="text-[10px] text-white/30 uppercase mt-1">请重试或检查浏览器权限</p>
+                <p className="text-xs font-bold uppercase text-red-400/80">{t('locationError')}</p>
+                <p className="text-[10px] text-white/30 uppercase mt-1">{t('locationRetry')}</p>
             </div>
             <button
                 onClick={() => refresh()}
                 className="liquid-button-primary py-2 px-6 text-[10px]"
             >
-                手动获取位置
+                {t('manualLocation')}
             </button>
         </div>
     );
@@ -74,20 +77,12 @@ export function WeatherCard() {
         isColdRunner: user.isColdRunner
     });
 
-    // Calculate wind strategy
-    const windDir = data.windDirection;
-    let windAdvice = "侧风";
-    if (windDir > 315 || windDir < 45) windAdvice = "北风 (建议南骑)";
-    else if (windDir >= 45 && windDir <= 135) windAdvice = "东风 (建议西骑)";
-    else if (windDir > 135 && windDir <= 225) windAdvice = "南风 (建议北骑)";
-    else windAdvice = "西风 (建议东骑)";
-
     // UV Index interpretation
-    let uvAdvice = "低";
+    let uvAdvice = t('uv.low');
     let uvColor = "text-emerald-400";
-    if (data.uvIndex >= 8) { uvAdvice = "极强"; uvColor = "text-purple-400"; }
-    else if (data.uvIndex >= 6) { uvAdvice = "强"; uvColor = "text-red-400"; }
-    else if (data.uvIndex >= 3) { uvAdvice = "中"; uvColor = "text-amber-400"; }
+    if (data.uvIndex >= 8) { uvAdvice = t('uv.extreme'); uvColor = "text-purple-400"; }
+    else if (data.uvIndex >= 6) { uvAdvice = t('uv.high'); uvColor = "text-red-400"; }
+    else if (data.uvIndex >= 3) { uvAdvice = t('uv.medium'); uvColor = "text-amber-400"; }
 
     return (
         <div className="pro-card space-y-6">
@@ -96,7 +91,7 @@ export function WeatherCard() {
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
                         <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">
-                            今日预警
+                            {t('title')}
                         </h2>
                         {error && (
                             <span className="liquid-tag warning text-[8px] py-0.5 px-2">
@@ -108,7 +103,7 @@ export function WeatherCard() {
                         <p className="liquid-stat-value text-3xl pr-2">
                             {converters.formatTemp(data.temp, unit)}
                         </p>
-                        <span className="text-sm font-medium text-white/40">体感 {converters.formatTemp(data.apparentTemp, unit)}</span>
+                        <span className="text-sm font-medium text-white/40">{t('feelsLike', { temp: converters.formatTemp(data.apparentTemp, unit) })}</span>
                     </div>
 
                     {/* Meta Row: Sunrise, Sunset, Wind Gusts */}
@@ -130,7 +125,7 @@ export function WeatherCard() {
                         <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                             <Zap size={12} className="text-cyan-400" />
                             <div className="flex flex-col -space-y-0.5">
-                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">Max Gust</span>
+                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">{t('maxGust')}</span>
                                 <span className="text-[11px] font-mono font-black text-white/90">
                                     {converters.formatSpeed(data.windGusts, unit)}
                                 </span>
@@ -150,7 +145,7 @@ export function WeatherCard() {
                         <Wind size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-white/40 font-medium tracking-tight">风速指标</p>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">{t('windSpeed')}</p>
                         <p className="text-xs font-semibold text-white/90 truncate">
                             {converters.formatSpeed(data.windSpeed, unit)}
                         </p>
@@ -161,8 +156,8 @@ export function WeatherCard() {
                         <Droplets size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-white/40 font-medium tracking-tight">降水概率</p>
-                        <p className="text-xs font-semibold text-white/90">{data.isRainy ? "有雨 💧" : "干爽 ☀️"}</p>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">{t('precipitation')}</p>
+                        <p className="text-xs font-semibold text-white/90">{data.isRainy ? `${t('rainStatus.rainy')} 💧` : `${t('rainStatus.dry')} ☀️`}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
@@ -170,7 +165,7 @@ export function WeatherCard() {
                         <Sun size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-white/40 font-medium tracking-tight">紫外线指数</p>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">{t('uvIndex')}</p>
                         <p className="text-xs font-semibold text-white/90">
                             {data.uvIndex.toFixed(1)} <span className={`text-[9px] font-black ${uvColor} uppercase ml-1`}>{uvAdvice}</span>
                         </p>
@@ -181,8 +176,8 @@ export function WeatherCard() {
                         <Waves size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-white/40 font-medium tracking-tight">相对湿度</p>
-                        <p className="text-xs font-semibold text-white/90">{data.humidity}% <span className="text-[9px] font-black text-white/30 uppercase ml-1">{data.humidity > 70 ? "闷热" : "适宜"}</span></p>
+                        <p className="text-[10px] text-white/40 font-medium tracking-tight">{t('humidity')}</p>
+                        <p className="text-xs font-semibold text-white/90">{data.humidity}% <span className="text-[9px] font-black text-white/30 uppercase ml-1">{data.humidity > 70 ? t('humidityStatus.humid') : t('humidityStatus.comfortable')}</span></p>
                     </div>
                 </div>
             </div>
@@ -194,22 +189,22 @@ export function WeatherCard() {
                     <div className="liquid-icon purple p-1.5">
                         <Shirt size={14} />
                     </div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-white/60">建议穿戴</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-white/60">{t('kitSuggestion')}</h3>
                 </div>
 
                 <div className="space-y-2.5">
                     <div className="flex justify-between items-center text-sm">
-                        <span className="text-white/40 font-medium">内层</span>
-                        <span className="text-white/90 font-medium">{kit.baseLayer}</span>
+                        <span className="text-white/40 font-medium">{t('baseLayer')}</span>
+                        <span className="text-white/90 font-medium">{kitT(kit.baseLayer)}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                        <span className="text-white/40 font-medium">车衣</span>
-                        <span className="text-white/90 font-medium">{kit.jersey}</span>
+                        <span className="text-white/40 font-medium">{t('jersey')}</span>
+                        <span className="text-white/90 font-medium">{kitT(kit.jersey)}</span>
                     </div>
                     <div className="flex flex-wrap gap-1.5 mt-3">
                         {kit.accessories.map((acc, i) => (
                             <span key={i} className="liquid-tag text-[9px]">
-                                {acc}
+                                {kitT(acc)}
                             </span>
                         ))}
                     </div>

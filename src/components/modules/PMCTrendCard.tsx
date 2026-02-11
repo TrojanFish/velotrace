@@ -17,8 +17,10 @@ import {
     ReferenceLine
 } from "recharts";
 import { TrendingUp, Activity, Info, RefreshCw, BarChart } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export function PMCTrendCard() {
+    const t = useTranslations('PMC');
     const { data: session } = useSession();
     const { dailyLoads, setDailyLoads } = useStore();
     const [isSyncing, setIsSyncing] = useState(false);
@@ -92,7 +94,7 @@ export function PMCTrendCard() {
             <div className="flex justify-between items-center relative z-10">
                 <div className="flex items-center gap-2">
                     <TrendingUp size={14} className="text-emerald-400" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">体能管理动态 (PMC)</h2>
+                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{t('title')}</h2>
                 </div>
                 <button
                     onClick={syncHistory}
@@ -107,12 +109,12 @@ export function PMCTrendCard() {
                     ) : syncSuccess ? (
                         <div className="flex items-center gap-1 animate-in zoom-in duration-300">
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                            <span>已同步</span>
+                            <span>{t('synced')}</span>
                         </div>
                     ) : (
                         <RefreshCw size={10} />
                     )}
-                    {isSyncing ? "同步中" : !syncSuccess && "同步历史"}
+                    {isSyncing ? t('syncing') : !syncSuccess && t('sync')}
                 </button>
             </div>
 
@@ -195,7 +197,7 @@ export function PMCTrendCard() {
                 ) : (
                     <div className="h-full flex flex-col items-center justify-center border border-dashed border-slate-800 rounded-xl bg-slate-900/20">
                         <BarChart size={32} className="text-slate-700 mb-2" />
-                        <p className="text-[10px] text-slate-500 uppercase font-black">同步历史数据以生成趋势图</p>
+                        <p className="text-[10px] text-slate-500 uppercase font-black">{t('empty')}</p>
                     </div>
                 )}
             </div>
@@ -213,7 +215,7 @@ export function PMCTrendCard() {
                     </div>
                 </div>
                 <div className="text-emerald-500/80 italic font-black">
-                    {latest && latest.tsb > 5 ? "状态极佳: 适合比赛" : latest && latest.tsb < -20 ? "过度疲劳: 注意恢复" : "体能建设期"}
+                    {latest && latest.tsb > 5 ? t('status.stoked') : latest && latest.tsb < -20 ? t('status.fatigued') : t('status.building')}
                 </div>
             </div>
         </div>

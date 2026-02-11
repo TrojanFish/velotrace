@@ -16,32 +16,32 @@ export function getKitRecommendation({
     // Use apparent temp as the primary driver for wind-chill consideration
     const effectiveTemp = isColdRunner ? apparentTemp - 3 : apparentTemp;
 
-    let baseLayer = "无需排汗内衣";
-    let jersey = "短袖车衣";
+    let baseLayer = "noBase";
+    let jersey = "shortJersey";
     let accessories: string[] = [];
 
     if (effectiveTemp > 25) {
-        baseLayer = "极薄排汗衫";
-        jersey = "爬坡款轻量车衣";
+        baseLayer = "ultraThin";
+        jersey = "lightJersey";
     } else if (effectiveTemp > 18) {
-        baseLayer = "无袖内衣";
-        accessories = ["根据下坡需要带马甲"];
+        baseLayer = "sleeveless";
+        accessories = ["descendVest"];
     } else if (effectiveTemp > 12) {
-        baseLayer = "短袖内衣";
-        jersey = "长袖车衣 或 短袖+袖套";
-        accessories = ["防风马甲"];
+        baseLayer = "shortSleeve";
+        jersey = "longJersey";
+        accessories = ["vest"];
     } else if (effectiveTemp > 7) {
-        baseLayer = "长袖内衣";
-        jersey = "抓绒长袖车衣";
-        accessories = ["防风马甲", "长指手套", "护膝/腿套"];
+        baseLayer = "longSleeve";
+        jersey = "fleeceJersey";
+        accessories = ["vest", "gloves", "warmers"];
     } else {
-        baseLayer = "加厚排汗衫";
-        jersey = "防风冬季车服";
-        accessories = ["冬季长指手套", "防风鞋套", "围脖"];
+        baseLayer = "thickBase";
+        jersey = "winterJacket";
+        accessories = ["winterGloves", "shoeCovers", "neckWarmer"];
     }
 
     if (isRainy) {
-        accessories.push("防水雨衣/皮肤衣");
+        accessories.push("rainLayer");
     }
 
     return {

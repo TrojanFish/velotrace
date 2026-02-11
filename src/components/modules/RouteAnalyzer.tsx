@@ -4,13 +4,15 @@ import { useState, useEffect } from "react";
 import GpxParser from "gpxparser";
 import { Upload, Map as MapIcon, Mountain, Info, Wind } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useTranslations } from 'next-intl';
 
 const InteractiveRouteMap = dynamic(
     () => import("@/components/ui/InteractiveRouteMap"),
-    { ssr: false, loading: () => <div className="w-full h-full bg-slate-900 animate-pulse flex items-center justify-center text-xs text-slate-500">地图加载中...</div> }
+    { ssr: false, loading: () => <div className="w-full h-full bg-slate-900 animate-pulse flex items-center justify-center text-xs text-slate-500">Loading...</div> }
 );
 
 export function RouteAnalyzer() {
+    const t = useTranslations('RouteAnalyzer');
     const [routeInfo, setRouteInfo] = useState<{
         name: string;
         distance: number;
@@ -34,7 +36,7 @@ export function RouteAnalyzer() {
             if (track) {
                 const points = track.points.map(p => ({ lat: p.lat, lon: p.lon }));
                 setRouteInfo({
-                    name: track.name || "未命名路线",
+                    name: track.name || t('unnamed'),
                     distance: Math.round(track.distance.total / 100) / 10,
                     elevation: Math.round(track.elevation.pos),
                     avgSlope: Math.round((track.elevation.pos / track.distance.total) * 1000) / 10,
@@ -62,38 +64,38 @@ export function RouteAnalyzer() {
                 <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-xl p-8 cursor-pointer hover:border-cyan-500/50 transition-colors group">
                     <input type="file" accept=".gpx" className="hidden" onChange={handleFileUpload} />
                     <Upload className="text-slate-500 group-hover:text-cyan-400 mb-2 transition-colors" size={32} />
-                    <p className="text-sm font-bold text-slate-300">上传 GPX 路线文件</p>
-                    <p className="text-[10px] text-muted-foreground uppercase mt-1">分析爬升、距离与难度</p>
+                    <p className="text-sm font-bold text-slate-300">{t('upload')}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase mt-1">{t('uploadDesc')}</p>
                 </label>
             ) : (
                 <div className="space-y-4">
                     <div className="flex justify-between items-start">
                         <div>
                             <h3 className="text-sm font-bold text-cyan-400 italic uppercase">{routeInfo.name}</h3>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">路线分析报告</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{t('report')}</p>
                         </div>
-                        <button onClick={() => { setRouteInfo(null); setWind(null); }} className="text-[10px] font-bold text-slate-500 hover:text-white uppercase transition-colors">重新上传</button>
+                        <button onClick={() => { setRouteInfo(null); setWind(null); }} className="text-[10px] font-bold text-slate-500 hover:text-white uppercase transition-colors">{t('reupload')}</button>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
                                 <MapIcon size={12} className="text-muted-foreground" />
-                                <span className="text-[10px] text-muted-foreground uppercase font-bold">总里程</span>
+                                <span className="text-[10px] text-muted-foreground uppercase font-bold">{t('distance')}</span>
                             </div>
                             <p className="text-sm font-bold text-slate-200">{routeInfo.distance} <span className="text-[10px] font-normal text-white/30">KM</span></p>
                         </div>
                         <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
                                 <Mountain size={12} className="text-muted-foreground" />
-                                <span className="text-[10px] text-muted-foreground uppercase font-bold">总爬升</span>
+                                <span className="text-[10px] text-muted-foreground uppercase font-bold">{t('elevation')}</span>
                             </div>
                             <p className="text-sm font-bold text-slate-200">+{routeInfo.elevation} <span className="text-[10px] font-normal text-white/30">M</span></p>
                         </div>
                         <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
                                 <Mountain size={12} className="text-muted-foreground" />
-                                <span className="text-[10px] text-muted-foreground uppercase font-bold">平均坡度</span>
+                                <span className="text-[10px] text-muted-foreground uppercase font-bold">{t('slope')}</span>
                             </div>
                             <p className="text-sm font-bold text-slate-200">{routeInfo.avgSlope} <span className="text-[10px] font-normal text-white/30">%</span></p>
                         </div>
@@ -103,7 +105,7 @@ export function RouteAnalyzer() {
                             </div>
                             <div className="flex items-center gap-2 mb-1">
                                 <Wind size={12} className="text-muted-foreground" />
-                                <span className="text-[10px] text-muted-foreground uppercase font-bold">路线风速</span>
+                                <span className="text-[10px] text-muted-foreground uppercase font-bold">{t('wind')}</span>
                             </div>
                             <p className="text-sm font-bold text-cyan-400">{wind?.speed || '--'} <span className="text-[10px] font-normal text-white/30">KM/H</span></p>
                         </div>
@@ -122,9 +124,11 @@ export function RouteAnalyzer() {
                             <Info size={16} className="text-cyan-400" />
                         </div>
                         <div className="space-y-1">
-                            <p className="text-xs font-bold text-cyan-400">实时交互建议</p>
+                            <p className="text-xs font-bold text-cyan-400">{t('adviceTitle')}</p>
                             <p className="text-[10px] text-white/40 leading-relaxed font-medium">
-                                已加载动态风向矢量场。地图上的 <span className="text-cyan-400/80">青色箭头</span> 代表当前路线各个位置的瞬时风向。箭头越不透明，代表风力对通过该处的影响越显著。
+                                {t.rich('advice', {
+                                    span: (chunks) => <span className="text-cyan-400/80">{chunks}</span>
+                                })}
                             </p>
                         </div>
                     </div>

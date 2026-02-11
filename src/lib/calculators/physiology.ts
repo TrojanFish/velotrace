@@ -20,11 +20,11 @@ export function calculateHRZones(age: number, restingHR: number): HRZone[] {
     const hrReserve = maxHR - restingHR;
 
     const zones: { name: string; range: [number, number]; desc: string; color: string }[] = [
-        { name: "动态恢复 / Active Recovery", range: [0.5, 0.6], desc: "极低强度，促进代谢产物清除", color: "text-slate-400" },
-        { name: "基础耐力 / Endurance", range: [0.6, 0.7], desc: "有氧基础建设，最大化脂肪氧化", color: "text-emerald-400" },
-        { name: "节奏区间 / Tempo", range: [0.7, 0.8], desc: "提升糖原储备，中等强度耐力", color: "text-blue-400" },
-        { name: "乳酸阈值 / Threshold", range: [0.8, 0.9], desc: "抗乳酸训练，提升巡航输出能力", color: "text-orange-400" },
-        { name: "无氧极限 / Anaerobic", range: [0.9, 1.0], desc: "提升VO2 Max，核心高强度区间", color: "text-rose-500" },
+        { name: "Active Recovery", range: [0.5, 0.6], desc: "", color: "text-slate-400" },
+        { name: "Endurance", range: [0.6, 0.7], desc: "", color: "text-emerald-400" },
+        { name: "Tempo", range: [0.7, 0.8], desc: "", color: "text-blue-400" },
+        { name: "Threshold", range: [0.8, 0.9], desc: "", color: "text-orange-400" },
+        { name: "Anaerobic", range: [0.9, 1.0], desc: "", color: "text-rose-500" },
     ];
 
     return zones.map((z, i) => ({
@@ -56,19 +56,38 @@ export function getRiderCategory(ftp: number, weight: number, sex: 'male' | 'fem
     const wpkg = ftp / weight;
 
     if (sex === 'male') {
-        if (wpkg >= 6.0) return "World Tour / Pro";
-        if (wpkg >= 5.0) return "Domestic Elite (Cat 1)";
-        if (wpkg >= 4.1) return "Advanced (Cat 2)";
-        if (wpkg >= 3.2) return "Intermediate (Cat 3)";
-        if (wpkg >= 2.3) return "Novice (Cat 4)";
-        return "Recreational";
+        if (wpkg >= 6.0) return "worldTour";
+        if (wpkg >= 5.0) return "elite";
+        if (wpkg >= 4.1) return "advanced";
+        if (wpkg >= 3.2) return "intermediate";
+        if (wpkg >= 2.3) return "novice";
+        return "recreational";
     } else {
-        if (wpkg >= 5.2) return "World Tour / Pro";
-        if (wpkg >= 4.3) return "Domestic Elite (Cat 1)";
-        if (wpkg >= 3.5) return "Advanced (Cat 2)";
-        if (wpkg >= 2.7) return "Intermediate (Cat 3)";
-        if (wpkg >= 1.9) return "Novice (Cat 4)";
-        return "Recreational";
+        if (wpkg >= 5.2) return "worldTour";
+        if (wpkg >= 4.3) return "elite";
+        if (wpkg >= 3.5) return "advanced";
+        if (wpkg >= 2.7) return "intermediate";
+        if (wpkg >= 1.9) return "novice";
+        return "recreational";
+    }
+}
+
+export function getRiderNextRank(ftp: number, weight: number, sex: 'male' | 'female' | 'other'): { name: string, target: number } | null {
+    const wpkg = ftp / weight;
+    if (sex === 'male') {
+        if (wpkg >= 6.0) return null;
+        if (wpkg >= 5.0) return { name: "worldTour", target: 6.0 };
+        if (wpkg >= 4.1) return { name: "elite", target: 5.0 };
+        if (wpkg >= 3.2) return { name: "advanced", target: 4.1 };
+        if (wpkg >= 2.3) return { name: "intermediate", target: 3.2 };
+        return { name: "novice", target: 2.3 };
+    } else {
+        if (wpkg >= 5.2) return null;
+        if (wpkg >= 4.3) return { name: "worldTour", target: 5.2 };
+        if (wpkg >= 3.5) return { name: "elite", target: 4.3 };
+        if (wpkg >= 2.7) return { name: "advanced", target: 3.5 };
+        if (wpkg >= 1.9) return { name: "intermediate", target: 2.7 };
+        return { name: "novice", target: 1.9 };
     }
 }
 

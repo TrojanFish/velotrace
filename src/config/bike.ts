@@ -15,35 +15,35 @@ export interface MaintenanceConfig {
 
 export const MAINTENANCE_CONFIG: Record<keyof MaintenanceState, MaintenanceConfig> = {
     chainLube: {
-        label: "链条润滑",
+        label: "chainLube",
         icon: Droplets,
         target: 300,
         color: "cyan",
         colorClass: "text-cyan-400"
     },
     chainWear: {
-        label: "链条磨损",
+        label: "chainWear",
         icon: History,
         target: 3000,
         color: "warning",
         colorClass: "text-orange-400"
     },
     tires: {
-        label: "外胎寿命",
+        label: "tires",
         icon: CircleDot,
         target: 4000,
         color: "success",
         colorClass: "text-emerald-400"
     },
     brakePads: {
-        label: "刹车皮",
+        label: "brakePads",
         icon: Disc,
         target: 2500,
         color: "danger",
         colorClass: "text-rose-400"
     },
     service: {
-        label: "整车大保养",
+        label: "service",
         icon: Wrench,
         target: 5000,
         color: "purple",
@@ -55,10 +55,10 @@ export const MAINTENANCE_CONFIG: Record<keyof MaintenanceState, MaintenanceConfi
  * Surface condition options for tire pressure calculation
  */
 export const SURFACE_CONDITIONS = [
-    { value: "perfect" as const, label: "赛道" },
-    { value: "normal" as const, label: "干路" },
-    { value: "rough" as const, label: "湿滑" },
-    { value: "gravel" as const, label: "砂石" },
+    { value: "perfect" as const, label: "perfect" },
+    { value: "normal" as const, label: "normal" },
+    { value: "rough" as const, label: "rough" },
+    { value: "gravel" as const, label: "gravel" },
 ] as const;
 
 /**

@@ -3,8 +3,10 @@
 import { useState, useMemo } from "react";
 import { calculateSweatRate, SweatRateInput } from "@/lib/calculators/sweatRate";
 import { Droplets, Info, AlertTriangle, CheckCircle2, Scale, Clock, Beer } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export function SweatRateCalculator() {
+    const t = useTranslations('SweatRate');
     const [preWeight, setPreWeight] = useState<number>(70);
     const [postWeight, setPostWeight] = useState<number>(69.2);
     const [fluidIntake, setFluidIntake] = useState<number>(0.75); // L
@@ -38,7 +40,7 @@ export function SweatRateCalculator() {
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                            <Scale size={10} /> 骑行前体重 (KG)
+                            <Scale size={10} /> {t('labels.preWeight')}
                         </label>
                         <input
                             type="number"
@@ -50,7 +52,7 @@ export function SweatRateCalculator() {
                     </div>
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                            <Scale size={10} /> 骑行后体重 (KG)
+                            <Scale size={10} /> {t('labels.postWeight')}
                         </label>
                         <input
                             type="number"
@@ -62,7 +64,7 @@ export function SweatRateCalculator() {
                     </div>
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                            <Clock size={10} /> 骑行时长 (MIN)
+                            <Clock size={10} /> {t('labels.duration')}
                         </label>
                         <div className="flex items-center gap-3">
                             <input
@@ -82,7 +84,7 @@ export function SweatRateCalculator() {
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                            <Beer size={10} /> 液体摄入总量 (L)
+                            <Beer size={10} /> {t('labels.fluidIntake')}
                         </label>
                         <input
                             type="number"
@@ -94,7 +96,7 @@ export function SweatRateCalculator() {
                     </div>
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
-                            <Droplets size={10} /> 排尿总量 (L) - 可选
+                            <Droplets size={10} /> {t('labels.urineLoss')}
                         </label>
                         <input
                             type="number"
@@ -105,7 +107,7 @@ export function SweatRateCalculator() {
                         />
                     </div>
                     <div className="pro-card bg-white/5 py-4 flex flex-col items-center justify-center border-dashed">
-                        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest mb-1">脱水比例</p>
+                        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest mb-1">{t('dehydration')}</p>
                         <p className={`text-xl font-mono font-black ${result.dehydrationPercent > 2 ? 'text-rose-500' : 'text-emerald-400'}`}>
                             {result.dehydrationPercent}%
                         </p>
@@ -121,8 +123,8 @@ export function SweatRateCalculator() {
                             <Droplets size={16} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">计算结果 / ANALYTICS</p>
-                            <p className="text-sm font-bold text-white/90">精准排汗率指标</p>
+                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{t('analytics')}</p>
+                            <p className="text-sm font-bold text-white/90">{t('indicator')}</p>
                         </div>
                     </div>
                     <div className="text-right">
@@ -142,19 +144,19 @@ export function SweatRateCalculator() {
                             )}
                         </div>
                         <p className="text-[10px] text-white/60 leading-relaxed font-medium">
-                            {result.recommendation}
+                            {t(`recommendations.${result.recommendation}`)}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 pt-2">
                         <div className="p-3 bg-white/[0.03] rounded-xl border border-white/5">
-                            <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest mb-1">总排汗量</p>
+                            <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest mb-1">{t('totalLoss')}</p>
                             <p className="text-sm font-mono font-bold text-white/80">{result.totalLoss} L</p>
                         </div>
                         <div className="p-3 bg-white/[0.03] rounded-xl border border-white/5">
-                            <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest mb-1">强度评估</p>
+                            <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest mb-1">{t('intensityEvaluation')}</p>
                             <p className={`text-sm font-bold uppercase tracking-widest ${getIntensityColor(result.intensity)}`}>
-                                {result.intensity}
+                                {t(`intensities.${result.intensity}`)}
                             </p>
                         </div>
                     </div>
@@ -165,7 +167,7 @@ export function SweatRateCalculator() {
             <div className="flex gap-3 px-1">
                 <Info size={14} className="text-cyan-500 flex-shrink-0 mt-0.5" />
                 <p className="text-[9px] text-white/30 leading-tight italic">
-                    科学建议：排汗率受环境温湿度及运动强度影响巨大。建议在不同季节（夏/冬）及不同强度（巡航/间歇）下各测量一次，建立你的个人体液代谢数据库。
+                    {t('tip')}
                 </p>
             </div>
         </div>

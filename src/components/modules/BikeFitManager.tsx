@@ -4,8 +4,10 @@ import { useStore, BikeFit } from "@/store/useStore";
 import { Ruler, CheckCircle2, Save, Layers, Activity } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from 'next-intl';
 
 export function BikeFitManager() {
+    const t = useTranslations('BikeFit');
     const { bikes, activeBikeIndex, updateBike } = useStore();
     const bike = bikes[activeBikeIndex];
 
@@ -21,8 +23,8 @@ export function BikeFitManager() {
 
     const handleSave = () => {
         updateBike(activeBikeIndex, { fit: tempFit });
-        toast.success("几何数据已保存", {
-            description: "Bike Fit 参数已更新至云端及本地备份"
+        toast.success(t('success'), {
+            description: t('successDesc')
         });
     };
 
@@ -34,14 +36,14 @@ export function BikeFitManager() {
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <h3 className="text-sm font-bold text-white/90 uppercase tracking-widest">战车几何参数 / GEOMETRY</h3>
-                    <p className="text-[10px] text-white/30 font-medium">精确记录 Bike Fit 数据，确保竞技状态统一</p>
+                    <h3 className="text-sm font-bold text-white/90 uppercase tracking-widest">{t('title')} / GEOMETRY</h3>
+                    <p className="text-[10px] text-white/30 font-medium">{t('subtitle')}</p>
                 </div>
                 <button
                     onClick={handleSave}
                     className="liquid-button-primary py-2 px-4 text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
                 >
-                    <Save size={12} /> 保存记录
+                    <Save size={12} /> {t('save')}
                 </button>
             </div>
 
@@ -50,11 +52,11 @@ export function BikeFitManager() {
                 <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-cyan-400">
                         <Ruler size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">车架基础 / Core</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t('core')} / Core</span>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-bold text-white/20 uppercase">Stack (堆叠)</label>
+                            <label className="text-[9px] font-bold text-white/20 uppercase">{t('stack')}</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="number"
@@ -66,7 +68,7 @@ export function BikeFitManager() {
                             </div>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-bold text-white/20 uppercase">Reach (前伸)</label>
+                            <label className="text-[9px] font-bold text-white/20 uppercase">{t('reach')}</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="number"
@@ -84,11 +86,11 @@ export function BikeFitManager() {
                 <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-purple-400">
                         <Layers size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">座舱系统 / Cockpit</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t('cockpit')} / Cockpit</span>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-bold text-white/20 uppercase">Saddle Height (高度)</label>
+                            <label className="text-[9px] font-bold text-white/20 uppercase">{t('saddleHeight')}</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="number"
@@ -100,7 +102,7 @@ export function BikeFitManager() {
                             </div>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-bold text-white/20 uppercase">Saddle Offset (偏移)</label>
+                            <label className="text-[9px] font-bold text-white/20 uppercase">{t('saddleOffset')}</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="number"
@@ -118,11 +120,11 @@ export function BikeFitManager() {
                 <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-emerald-400">
                         <Activity size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">传动接触 / Touch</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t('touch')} / Touch</span>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-bold text-white/20 uppercase">Bar Width (变径)</label>
+                            <label className="text-[9px] font-bold text-white/20 uppercase">{t('barWidth')}</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="number"
@@ -134,7 +136,7 @@ export function BikeFitManager() {
                             </div>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-bold text-white/20 uppercase">Crank (曲柄)</label>
+                            <label className="text-[9px] font-bold text-white/20 uppercase">{t('crank')}</label>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="number"
@@ -151,7 +153,7 @@ export function BikeFitManager() {
             </div>
 
             <p className="text-[9px] text-white/20 font-medium italic leading-relaxed px-2">
-                * 注意：修改 Stack/Reach 等核心参数仅作为数字化资产存档。物理调整建议咨询专业 Fitter。
+                {t('notice')}
             </p>
         </div>
     );

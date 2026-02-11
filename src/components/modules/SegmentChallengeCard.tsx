@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Trophy, ChevronRight, Activity } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
+import { useTranslations } from 'next-intl';
 
 interface SegmentEffort {
     name: string;
@@ -14,6 +15,7 @@ interface SegmentEffort {
 }
 
 export function SegmentChallengeCard() {
+    const t = useTranslations('Segments');
     const { data: session } = useSession();
     const { stravaSegmentsCache, setStravaSegmentsCache } = useStore();
     const [loading, setLoading] = useState(!stravaSegmentsCache);
@@ -75,9 +77,9 @@ export function SegmentChallengeCard() {
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <Activity size={14} className="text-purple-400" />
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">最近分段快讯</h2>
+                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{t('title')}</h2>
                 </div>
-                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">来自最新骑行</span>
+                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">{t('subtitle')}</span>
             </div>
 
             <div className="divide-y divide-slate-800/50">
@@ -85,7 +87,7 @@ export function SegmentChallengeCard() {
                     <div key={i} className="py-3 first:pt-0 last:pb-0 flex items-center justify-between group">
                         <div className="flex-1 min-w-0 pr-4">
                             <h4 className="text-xs font-bold text-slate-200 truncate group-hover:text-purple-400 transition-colors">{s.name}</h4>
-                            <p className="text-[10px] text-muted-foreground font-mono">{s.distance}km • {Math.floor(s.time / 60)}分{s.time % 60}秒</p>
+                            <p className="text-[10px] text-muted-foreground font-mono">{s.distance}km • {t('time', { min: Math.floor(s.time / 60), sec: s.time % 60 })}</p>
                         </div>
                         <div className="flex items-center gap-2">
                             {s.rank !== "-" && (

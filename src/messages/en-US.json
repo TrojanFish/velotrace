@@ -1,0 +1,528 @@
+{
+    "Common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "active": "Active",
+        "unit": "Unit",
+        "loading": "Loading...",
+        "error": "Error",
+        "refresh": "Refresh"
+    },
+    "Navigation": {
+        "preview": "Dashboard",
+        "history": "History",
+        "tools": "Tools",
+        "pilot": "Pilot"
+    },
+    "RiderDNA": {
+        "title": "BIOMETRIC DNA",
+        "pwr": "W/Kg",
+        "vo2max": "VO2 MAX",
+        "ftp": "FTP Intensity",
+        "progress": "LEVEL PROGRESS",
+        "insight": "Calculated based on Coggan Power Profiling. Your current W/Kg suggests strengths in climbing. Maintaining current CTL is recommended for peak performance."
+    },
+    "PowerEffecter": {
+        "title": "DRIVETRAIN EFFICIENCY",
+        "subtitle": "Analysis of chain lube, wear and alignment impact",
+        "inputPower": "Input Power",
+        "lubeType": "Lube Type",
+        "chainCondition": "Chain Condition",
+        "alignment": "Chain Alignment",
+        "loss": "Power Loss",
+        "efficiency": "Efficiency",
+        "adviceTitle": "Diagnostics",
+        "adviceWarning": "Mechanical Alert",
+        "lubes": {
+            "wax": "Chain Wax (Performance)",
+            "dry": "Dry Lube (Standard)",
+            "wet": "Wet Lube (Heavy Duty)"
+        },
+        "conditions": {
+            "new": "New / Low Friction (<0.5%)",
+            "worn": "Worn / Monitoring (0.5%-0.75%)",
+            "bad": "Critical / Replace (>0.75%)"
+        },
+        "alignments": {
+            "straight": "Straight (Perfect)",
+            "moderate": "Moderate (4-5 cog offset)",
+            "cross": "Cross-Chaining (Big-Big / Small-Small)"
+        },
+        "advice": {
+            "perfect": "Your drivetrain is in race-winning condition.",
+            "worn": "Warning: High drivetrain loss detected. Replace chain and optimize routing.",
+            "cross": "Significant friction from cross-chaining detected. Shift to a more optimal gear.",
+            "footer": " Remember, a clean drivetrain is the cheapest speed you can buy."
+        }
+    },
+    "PilotOffice": {
+        "title": "PILOT OFFICE",
+        "subtitle": "Biometrics, performance modeling and equipment management",
+        "unitSystem": "Unit System",
+        "language": "Language",
+        "stravaSync": "Strava Sync",
+        "physioTitle": "BIOMETRICS",
+        "physioLocked": "Physiological data is locked. Click icon to unlock for editing.",
+        "physioUnlocked": "Notice: Manually modifying physiological data will trigger a recalculation of your performance model.",
+        "equipmentTitle": "EQUIPMENT ARCHIVE"
+    },
+    "Language": {
+        "zh-CN": "简体中文",
+        "en-US": "English"
+    },
+    "AIBriefing": {
+        "title": "AI TACTICAL BRIEFING",
+        "statusHeadline": "BIO-DYNAMIC STATUS",
+        "tsbHeadline": "Current Physiological State",
+        "tsbHeading": {
+            "stoked": "Stoked for Combat",
+            "peak": "Fresh & Peaking",
+            "neutral": "Maintenance Phase",
+            "fatigue": "Accumulating Fatigue",
+            "damaged": "Critical Exhaustion"
+        },
+        "labels": {
+            "session": "Tactical Advice",
+            "target": "Intensity Target",
+            "focus": "Strategic Focus",
+            "logic": "Logic Stream"
+        },
+        "actions": {
+            "generate": "Analyze Today's Tactics",
+            "export": "Export Report",
+            "details": "View Detailed Intel"
+        },
+        "metrics": {
+            "form": "Form",
+            "feel": "Feel",
+            "wind": "Wind"
+        },
+        "hud": {
+            "title": "DIGITAL CO-PILOT",
+            "live": "System Live // Tactical Hub",
+            "simulation": "Simulation Active // {time}",
+            "physioStatus": "Physio-Status Feed",
+            "comms": "Comms Channel 01",
+            "tacticalSimulation": "Tactical Simulation",
+            "now": "Now",
+            "forecast": "Forecast +{hour}H"
+        },
+        "export": {
+            "title": "Tactical Intelligence Report",
+            "logic": "Race Logic"
+        },
+        "offline": {
+            "session": "OFFLINE MODE",
+            "advice": "⚠️ Connection timeout. Offline baseline strategy enabled."
+        }
+    },
+    "Weather": {
+        "title": "WEATHER ALERTS",
+        "feelsLike": "Feels {temp}",
+        "maxGust": "Max Gust",
+        "windSpeed": "Wind Speed",
+        "precipitation": "Precipitation",
+        "uvIndex": "UV Index",
+        "humidity": "Humidity",
+        "kitSuggestion": "KIT SUGGESTION",
+        "baseLayer": "Base Layer",
+        "jersey": "Jersey",
+        "locationError": "GPS OFFLINE",
+        "locationRetry": "Check permissions or retry",
+        "manualLocation": "Manual Location",
+        "uv": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "extreme": "Extreme"
+        },
+        "humidityStatus": {
+            "humid": "Humid",
+            "comfortable": "Optimal"
+        },
+        "rainStatus": {
+            "rainy": "Rainy",
+            "dry": "Dry"
+        }
+    },
+    "Kit": {
+        "noBase": "No base layer",
+        "ultraThin": "Ultra-thin mesh",
+        "sleeveless": "Sleeveless base layer",
+        "shortSleeve": "Short sleeve base layer",
+        "longSleeve": "Long sleeve base layer",
+        "thickBase": "Thermal base layer",
+        "shortJersey": "Short sleeve jersey",
+        "lightJersey": "Lightweight climbing jersey",
+        "longJersey": "Long sleeve or Arm warmers",
+        "fleeceJersey": "Thermal fleece jersey",
+        "winterJacket": "Winter cycling jacket",
+        "vest": "Windproof vest",
+        "gloves": "Full finger gloves",
+        "warmers": "Knee/Leg warmers",
+        "winterGloves": "Winter gloves",
+        "shoeCovers": "Shoe covers",
+        "neckWarmer": "Neck warmer",
+        "rainLayer": "Rain jacket",
+        "descendVest": "Vest for descents",
+        "sleeves": "Arm warmers"
+    },
+    "Fuel": {
+        "title": "FUELING STRATEGY",
+        "carbs": "CHO",
+        "duration": "Duration",
+        "hours": "{duration} Hours",
+        "intensity": "Target Intensity",
+        "gels": "{count} Gels",
+        "water": "{count} Bottles",
+        "intensities": {
+            "social": "Recovery",
+            "tempo": "Tempo",
+            "threshold": "Threshold",
+            "race": "Race"
+        }
+    },
+    "Bike": {
+        "pressure": "Pressure Strategy",
+        "lifecycle": "Lifecycle",
+        "activeWheelset": "Active Wheelset",
+        "psi": "PSI (F/R)",
+        "config": "Config",
+        "maintenanceTitle": "Alert: Equipment Maintenance",
+        "maintenanceStatus": "{count} items approaching limit",
+        "reset": "Reset",
+        "odo": "ODO",
+        "lastSync": "Last Sync",
+        "wheelsetWear": "Wheelset Wear ({name})",
+        "surfaces": {
+            "perfect": "Race",
+            "normal": "Dry",
+            "rough": "Wet",
+            "gravel": "Gravel"
+        },
+        "maintenance": {
+            "chainLube": "Chain Lube",
+            "chainWear": "Chain Wear",
+            "tires": "Tire Life",
+            "brakePads": "Brake Pads",
+            "service": "Full Service"
+        }
+    },
+    "WeeklyStats": {
+        "title": "WEEKLY PROGRESS",
+        "rides": "{count} RIDES",
+        "distance": "DISTANCE",
+        "elevation": "ELEVATION",
+        "progress": "GOAL COMPLETION",
+        "unit": {
+            "km": "km",
+            "m": "m"
+        }
+    },
+    "Tools": {
+        "title": "PRO TOOLBOX",
+        "subtitle": "Professional cycling utility suite",
+        "routeAnalyzer": "Route Analysis (GPX)",
+        "tirePressure": "Smart Pressure Strategy",
+        "nutrition": "Nutrition Strategy Planning",
+        "sweatRate": "Sweat Rate Calculation",
+        "powerZones": "Training Intensity Ref",
+        "drivetrain": "Drivetrain Efficiency",
+        "gears": "Gear Selection & Sim",
+        "howToUse": "How to use?",
+        "gearAdvice": "Adjust the cadence slider to see theoretical speeds for each gear combination. Useful for choosing new cassette or chainrings."
+    },
+    "RouteAnalyzer": {
+        "upload": "UPLOAD GPX FILE",
+        "uploadDesc": "Analyze elevation, distance & difficulty",
+        "report": "Route Analysis Report",
+        "reupload": "RE-UPLOAD",
+        "distance": "DISTANCE",
+        "elevation": "ELEVATION",
+        "slope": "AVG SLOPE",
+        "wind": "ROUTE WIND",
+        "adviceTitle": "Interactive Intel",
+        "advice": "Dynamic wind field loaded. <span className=\"text-cyan-400/80\">Cyan arrows</span> on map represent instantaneous wind at points. Higher opacity indicates stronger influence.",
+        "loadingMap": "Loading map...",
+        "unnamed": "Unnamed Route"
+    },
+    "NutritionCalculator": {
+        "title": "GLYCOTANK STRATEGY",
+        "subtitle": "Planning based on duration & intensity",
+        "duration": "DURATION",
+        "intensity": "INTENSITY (RPE)",
+        "temperature": "TEMPERATURE",
+        "inventory": "SELECT YOUR FUEL INVENTORY",
+        "carbsDemand": "TOTAL CARBS DEMAND",
+        "fluidDemand": "TOTAL FLUID DEMAND",
+        "packingList": "SUGGESTED PACKING LIST",
+        "perUnit": "Per {unit}: {carbs}g Carbs",
+        "sodium": " • {sodium}mg Sodium",
+        "emptyInventory": "Please select fuels from inventory above",
+        "intelligence": "Intelligence",
+        "highTempWarning": "🔥 CRITICAL: High temperature or duration increases cramp risk. Electrolyte supplementation strongly advised.",
+        "optimalAdvice": "✅ Optimal conditions. Steady refueling every 45 mins will maintain glycogen levels."
+    },
+    "PowerZones": {
+        "title": "POWER ZONES (Coggan 7-Zone)",
+        "ftpLabel": "W (FTP)",
+        "info": "All training intensity suggestions are automatically calculated based on your <strong>FTP ({ftp}W)</strong>. To change this, go to Pilot Office settings.",
+        "zones": {
+            "z1": {
+                "name": "Active Recovery",
+                "description": "Easy riding, minimal fatigue, aids circulation."
+            },
+            "z2": {
+                "name": "Endurance",
+                "description": "Base endurance, conversational pace, sustainable for hours."
+            },
+            "z3": {
+                "name": "Tempo",
+                "description": "Aerobic rhythm, deeper breathing, requires concentration."
+            },
+            "z4": {
+                "name": "Lactate Threshold",
+                "description": "Burning sensation, 'sweet spot' for performance gains."
+            },
+            "z5": {
+                "name": "VO2 Max",
+                "description": "Max oxygen uptake, high pain, sustainable for 3-8 mins."
+            },
+            "z6": {
+                "name": "Anaerobic Capacity",
+                "description": "Anaerobic endurance, high intensity sprints, high lactate."
+            },
+            "z7": {
+                "name": "Neuromuscular Power",
+                "description": "Max explosive power, less than 15 seconds."
+            }
+        }
+    },
+    "HeartRateZones": {
+        "title": "PHYSIO HR ZONES (Karvonen)",
+        "rhrLabel": "RHR / BPM",
+        "info": "Calculated using the Karvonen formula. Aerobic (Z2) is the core of endurance. Anaerobic (Z4) is your lactate threshold tipping point.",
+        "zones": {
+            "z1": {
+                "name": "Active Recovery",
+                "description": "Ultra low intensity, promotes metabolic clearance."
+            },
+            "z2": {
+                "name": "Endurance",
+                "description": "Aerobic base building, maximizes fat oxidation."
+            },
+            "z3": {
+                "name": "Tempo",
+                "description": "Enhance glycogen storage, medium intensity endurance."
+            },
+            "z4": {
+                "name": "Threshold",
+                "description": "Lactate resistance, improves cruising capacity."
+            },
+            "z5": {
+                "name": "Anaerobic",
+                "description": "Boost VO2 Max, core high-intensity zone."
+            }
+        }
+    },
+    "MMP": {
+        "title": "MMP POWER PROFILE",
+        "analysis": "Analysis",
+        "labels": {
+            "sprint": "5s (Sprint)",
+            "anaerobic": "1m (Anaerobic)",
+            "vo2": "5m (VO2Max)",
+            "ftp": "20m (FTP)"
+        },
+        "ranks": {
+            "WorldTour": "World Tour",
+            "Pro": "Pro",
+            "Advanced": "Advanced",
+            "Regular": "Regular"
+        },
+        "insights": {
+            "pro": "Detected elite athlete level power output. Benchmarks synchronized with official standards.",
+            "improving": "Power performance is in a steady growth phase. Focus on 20m steady output to improve overall rank."
+        }
+    },
+    "TirePressure": {
+        "title": "TIRE PRESSURE STRATEGY",
+        "subtitle": "推演基于车辆负载与路况",
+        "front": "FRONT WHEEL",
+        "rear": "REAR WHEEL",
+        "surfaceLabel": "SURFACE CONDITION",
+        "surfaces": {
+            "perfect": "Perfect (Track)",
+            "normal": "Normal (Road)",
+            "rough": "Rough (Bumpy)",
+            "wet": "Wet (Rainy)"
+        },
+        "info": "Autolinked: <strong>{weight}kg</strong> Rider + <strong>{width}mm</strong> {tireType} tire.",
+        "tireType": {
+            "tubeless": "Tubeless",
+            "tubular": "Tubular",
+            "clincher": "Clincher"
+        },
+        "warning": "* Recommendations for reference only. Do not exceed manufacturer limits."
+    },
+    "SweatRate": {
+        "title": "PRECISION SWEAT RATE",
+        "analytics": "ANALYTICS",
+        "indicator": "SWEAT RATE INDEX",
+        "dehydration": "DEHYDRATION RATIO",
+        "totalLoss": "TOTAL LOSS",
+        "intensityEvaluation": "INTENSITY EVALUATION",
+        "labels": {
+            "preWeight": "Pre-Ride Weight (KG)",
+            "postWeight": "Post-Ride Weight (KG)",
+            "duration": "Duration (MIN)",
+            "fluidIntake": "Total Fluid Intake (L)",
+            "urineLoss": "Total Urine Loss (L) - Optional"
+        },
+        "intensities": {
+            "low": "LOW",
+            "moderate": "MODERATE",
+            "high": "HIGH",
+            "extreme": "EXTREME"
+        },
+        "recommendations": {
+            "dehydrated": "Significant dehydration (>2%). This leads to power loss and elevated core temp. Increase fluid intake by 200-400ml/h for future rides.",
+            "overhydrated": "Over-hydrated (weight gain). Risk of hyponatremia. Drink only when thirsty.",
+            "highRate": "High sweat rate. Electrolyte supplementation strongly advised even if dehydration is under 2%.",
+            "good": "Good hydration strategy. Current plan effectively maintains fluid balance."
+        },
+        "tip": "Scientific Tip: Sweat rate is highly dependent on humidity and intensity. We recommend measuring in different seasons and intensities to build your biometric baseline."
+    },
+    "Gears": {
+        "title": "Speed Distribution",
+        "cadenceLabel": "Cadence Setting",
+        "cogLabel": "Cog",
+        "bigRing": "Big Ring",
+        "smallRing": "Small Ring",
+        "footer": "* Based on 700x28c (2111mm) circumference"
+    },
+    "RideInsight": {
+        "title": "Activity Insights",
+        "engineTitle": "Physics Engine Review",
+        "ifLabel": "IF",
+        "zonesLabel": "Zones",
+        "recoveryTitle": "Recovery",
+        "nextTitle": "Next Session",
+        "hours": "{count} Hours",
+        "nextAdvice": {
+            "recovery": "Low intensity recovery ride",
+            "interval": "Push Z3/Z4 intervals"
+        },
+        "empty": {
+            "title": "No activity data",
+            "desc": "Please sync your first activity or check Strava connection",
+            "retry": "Retry",
+            "error": "Sync Issue",
+            "errorDetail": "Error detail: {error}"
+        }
+    },
+    "Ranks": {
+        "worldTour": "World Tour / Pro",
+        "elite": "Domestic Elite (Cat 1)",
+        "advanced": "Advanced (Cat 2)",
+        "intermediate": "Intermediate (Cat 3)",
+        "novice": "Novice (Cat 4)",
+        "recreational": "Recreational",
+        "next": "Next rank: {rank}"
+    },
+    "BikeFit": {
+        "title": "GEOMETRY",
+        "subtitle": "Precisely record Bike Fit data to ensure consistent performance",
+        "save": "Save Records",
+        "success": "Geometry data saved",
+        "successDesc": "Bike Fit parameters updated to cloud and local backup",
+        "core": "Core",
+        "cockpit": "Cockpit",
+        "touch": "Touch",
+        "stack": "Stack",
+        "reach": "Reach",
+        "saddleHeight": "Saddle Height",
+        "saddleOffset": "Saddle Offset",
+        "barWidth": "Bar Width",
+        "crank": "Crank",
+        "notice": "* Note: Modifying core parameters like Stack/Reach is for digital archiving only. Consult a professional Fitter for physical adjustments."
+    },
+    "MaintenanceLog": {
+        "title": "Full Lifecycle Log ({count})",
+        "add": "Log Maintenance",
+        "placeholderTitle": "Project Title (e.g. Bearing Replacement)",
+        "placeholderDesc": "Detail records...",
+        "inputTitle": "Operation Description",
+        "inputDesc": "Notes",
+        "save": "Persistent Store",
+        "empty": "Log your first major service or part replacement",
+        "success": "Record saved to maintenance log"
+    },
+    "MaintenancePredictor": {
+        "title": "MAINTENANCE AI",
+        "subtitle": "Hardware wear life inferred based on power output weight",
+        "powerFactor": "Wear Factor",
+        "powerFactorDesc": "High torque/climbers should increase to 1.2x for more accurate alerts",
+        "remaining": "{count} KM REMAINING",
+        "lifespan": "Lifespan Used",
+        "aiTip": "AI Tip: Current maintenance cycles are weighted based on your Power Factor ({factor}x). High intensity training accelerates simulated wear to ensure reliability.",
+        "status": {
+            "optimal": "Optimal",
+            "caution": "Caution",
+            "urgent": "Urgent"
+        }
+    },
+    "PMC": {
+        "title": "PMC TRENDS",
+        "sync": "Sync History",
+        "syncing": "Syncing",
+        "synced": "Synced",
+        "empty": "Sync history data to generate trend chart",
+        "status": {
+            "stoked": "Stoked: Peak Performance",
+            "fatigued": "Fatigued: Recovery Needed",
+            "building": "Base Building Phase"
+        }
+    },
+    "RouteWind": {
+        "title": "Next Route Inspection",
+        "match": "MATCH {percent}%",
+        "env": "Wind Environment",
+        "tactical": "Tactical Advice",
+        "directions": {
+            "N": "N",
+            "NE": "NE",
+            "E": "E",
+            "SE": "SE",
+            "S": "S",
+            "SW": "SW",
+            "W": "W",
+            "NW": "NW"
+        },
+        "advice": {
+            "calm": "Calm: Steady pace, ideal for long distance endurance.",
+            "tailwind": "Perfect Tailwind: Aero gains outbound, manage effort inbound.",
+            "lightTailwind": "Light Tailwind: Comfortable, maintain cruise above 30km/h.",
+            "crosswind": "Crosswind: Watch bike handling, keep center of mass stable.",
+            "headwind": "Hardcore Headwind: Tactical phase. Get aero or find a draft."
+        }
+    },
+    "Segments": {
+        "title": "Recent Segment Intel",
+        "subtitle": "From latest ride",
+        "time": "{min}m {sec}s"
+    },
+    "Torque": {
+        "title": "Torque Standards",
+        "settingsTitle": "Bike Setup ({count})",
+        "add": "Manual Input",
+        "placeholderComponent": "Component Name",
+        "placeholderValue": "Torque (e.g. 5Nm)",
+        "save": "Save Parameter",
+        "empty": "No local records. Click '+' or quick-import from standards.",
+        "specified": "Specified Torque",
+        "success": "Torque setting added"
+    }
+}

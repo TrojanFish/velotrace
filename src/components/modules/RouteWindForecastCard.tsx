@@ -6,6 +6,7 @@ import { Wind, Navigation, ChevronLeft, ChevronRight, Shield, MapPin } from "luc
 import { Skeleton } from "@/lib/utils";
 import { decodePolyline, calculateBearing, scoreWindAlignment } from "@/lib/calculators/routeIntel";
 import { useStore } from "@/store/useStore";
+import { useTranslations } from 'next-intl';
 
 interface StravaRoute {
     id: number;
@@ -18,6 +19,7 @@ interface StravaRoute {
 }
 
 export function RouteWindForecastCard() {
+    const t = useTranslations('RouteWind');
     const { data: session } = useSession();
     const { stravaRoutesCache, setStravaRoutesCache } = useStore();
     const [activeIndex, setActiveIndex] = useState(0);
@@ -27,9 +29,10 @@ export function RouteWindForecastCard() {
     const routes = (stravaRoutesCache?.data || []) as StravaRoute[];
 
     const getWindDirectionLabel = useCallback((deg: number) => {
-        const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
-        return directions[Math.round(deg / 45) % 8];
-    }, []);
+        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        const key = directions[Math.round(deg / 45) % 8];
+        return t(`directions.${key}`);
+    }, [t]);
 
     useEffect(() => {
         if (session) {
@@ -109,11 +112,11 @@ export function RouteWindForecastCard() {
     }, [routes, activeIndex, windInfo]);
 
     const getAdvice = (score: number, windSpeed: number) => {
-        if (windSpeed < 10) return "无风环境：稳定输出节奏，适合长距离耐力训练。";
-        if (score > 0.5) return "完美顺风：去程有显著气动增益，回程注意体力分配。";
-        if (score > 0) return "微弱顺风：环境舒适，建议保持 30km/h 以上巡航。";
-        if (score > -0.5) return "侧风袭扰：注意横风对车身的操控影响，保持重心稳定。";
-        return "硬核逆风：战术拉扯期。建议压低身姿，寻找破风编队。";
+        if (windSpeed < 10) return t('advice.calm');
+        if (score > 0.5) return t('advice.tailwind');
+        if (score > 0) return t('advice.lightTailwind');
+        if (score > -0.5) return t('advice.crosswind');
+        return t('advice.headwind');
     };
 
     if (!session) return null;
@@ -153,7 +156,7 @@ export function RouteWindForecastCard() {
                     <div className="liquid-icon p-1.5">
                         <Navigation size={12} />
                     </div>
-                    <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">明日路线巡检</h2>
+                    <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{t('title')}</h2>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <button
@@ -195,16 +198,16 @@ export function RouteWindForecastCard() {
                             <div className="liquid-icon p-1.5">
                                 <Wind size={12} />
                             </div>
-                            <span className="text-[8px] font-bold text-white/40 uppercase">气流环境</span>
+                            <span className="text-[8px] font-bold text-white/40 uppercase">{t('env')}</span>
                         </div>
                         {routeAnalysis && (
                             <div className={`liquid-tag ${routeAnalysis.alignment > 0 ? 'success' : 'danger'} text-[7px] py-0.5 px-1.5`}>
-                                MATCH {routeAnalysis.percent}%
+                                {t('match', { percent: routeAnalysis.percent })}
                             </div>
                         )}
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-bold text-gradient-cyan">{windInfo?.label}风</span>
+                        <span className="text-lg font-bold text-gradient-cyan">{windInfo?.label}</span>
                         <span className="text-[10px] font-mono text-white/40">{windInfo?.speed}km/h</span>
                     </div>
                 </div>
@@ -215,7 +218,7 @@ export function RouteWindForecastCard() {
                         <div className="liquid-icon success p-1">
                             <Shield size={10} />
                         </div>
-                        <span className="text-[8px] font-bold text-white/40 uppercase">战术建议</span>
+                        <span className="text-[8px] font-bold text-white/40 uppercase">{t('tactical')}</span>
                     </div>
                     <p className="text-[9px] font-medium text-white/60 leading-relaxed flex-1">
                         {windInfo && getAdvice(routeAnalysis?.alignment || 0, windInfo.speed)}

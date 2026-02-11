@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { LayoutDashboard, BarChart3, Wrench, UserCog } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export function Navigation() {
     const router = useRouter();
     const pathname = usePathname();
 
+    const t = useTranslations('Navigation');
     const links = [
-        { id: 'home', href: "/", label: "预览", icon: LayoutDashboard },
-        { id: 'analytics', href: "/analytics", label: "记录", icon: BarChart3 },
-        { id: 'tools', href: "/tools", label: "工具", icon: Wrench },
-        { id: 'pilot', href: "/pilot-office", label: "车手", icon: UserCog },
+        { id: 'home', href: "/", label: t('preview'), icon: LayoutDashboard },
+        { id: 'analytics', href: "/analytics", label: t('history'), icon: BarChart3 },
+        { id: 'tools', href: "/tools", label: t('tools'), icon: Wrench },
+        { id: 'pilot', href: "/pilot-office", label: t('pilot'), icon: UserCog },
     ];
 
     return (

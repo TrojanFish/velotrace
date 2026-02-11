@@ -12,8 +12,14 @@ import { Bike, User, Weight, Ruler, Save, RefreshCw, LogOut, Layers, Plus, Trash
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from 'next-intl';
+import Cookies from 'js-cookie';
 
 export default function GaragePage() {
+    const t = useTranslations('PilotOffice');
+    const commonT = useTranslations('Common');
+    const langT = useTranslations('Language');
+    const locale = useLocale();
     const { data: session } = useSession();
     const { user, bikes, activeBikeIndex, updateUser, updateBike, setBikes, setActiveBikeIndex, addWheelset, setActiveWheelset, toggleUnitSystem } = useStore();
     const bike = bikes[activeBikeIndex] || bikes[0];
@@ -79,14 +85,19 @@ export default function GaragePage() {
         if (!session) return;
         const result = await handleStravaSync();
         if (result.success) {
-            toast.success("同步成功", {
-                description: "个人生理数据与器材资产已更新"
+            toast.success(commonT('active'), {
+                description: "Strava Sync Success"
             });
         } else {
-            toast.error("同步失败", {
-                description: result.error || "无法从 Strava 获取数据"
+            toast.error(commonT('error'), {
+                description: result.error || "Strava Sync Failed"
             });
         }
+    };
+
+    const handleLanguageChange = (newLocale: string) => {
+        Cookies.set('NEXT_LOCALE', newLocale, { expires: 365 });
+        window.location.reload();
     };
 
     return (
@@ -94,10 +105,10 @@ export default function GaragePage() {
             {/* Header */}
             <header className="mb-6">
                 <h1 className="text-3xl font-black text-gradient-aurora italic tracking-tighter leading-none mb-1">
-                    PILOT OFFICE
+                    {t('title')}
                 </h1>
                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] ml-0.5">
-                    生理特征、体能模型与器材资产管理
+                    {t('subtitle')}
                 </p>
             </header>
 
@@ -105,7 +116,7 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="section-header">
                     <div className="section-indicator orange" />
-                    <h2 className="section-title">数据同步</h2>
+                    <h2 className="section-title">{t('stravaSync')}</h2>
                 </div>
 
                 <div className="pro-card space-y-4 overflow-hidden relative">
@@ -347,26 +358,50 @@ export default function GaragePage() {
             <section className="space-y-4">
                 <div className="section-header">
                     <div className="section-indicator blue" />
-                    <h2 className="section-title">界面设定 / Display</h2>
+                    <h2 className="section-title">界面设定 / Settings</h2>
                 </div>
 
-                <div className="pro-card">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="liquid-icon p-2">
-                                <Globe size={16} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="pro-card">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="liquid-icon p-2">
+                                    <Globe size={16} />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-white/80">{t('unitSystem')}</p>
+                                    <p className="text-[10px] text-white/30 uppercase font-bold tracking-widest">{user.unitSystem === 'metric' ? 'Metric' : 'Imperial'}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm font-medium text-white/80">单位系统 / Units</p>
-                                <p className="text-[10px] text-white/30 uppercase font-bold tracking-widest">{user.unitSystem === 'metric' ? 'Metric (KM/KG/°C)' : 'Imperial (MI/LB/°F)'}</p>
-                            </div>
+                            <button
+                                onClick={toggleUnitSystem}
+                                className="liquid-button py-2 px-6 text-[10px] font-black uppercase tracking-widest"
+                            >
+                                {commonT('refresh')}
+                            </button>
                         </div>
-                        <button
-                            onClick={toggleUnitSystem}
-                            className="liquid-button py-2 px-6 text-[10px] font-black uppercase tracking-widest"
-                        >
-                            切换至 {user.unitSystem === 'metric' ? '英制' : '公制'}
-                        </button>
+                    </div>
+
+                    <div className="pro-card">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="liquid-icon p-2">
+                                    <Globe size={16} className="text-cyan-400" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-white/80">{t('language')}</p>
+                                    <p className="text-[10px] text-white/30 uppercase font-bold tracking-widest">{langT(locale)}</p>
+                                </div>
+                            </div>
+                            <select
+                                value={locale}
+                                onChange={(e) => handleLanguageChange(e.target.value)}
+                                className="liquid-select h-9 text-[10px] font-black uppercase tracking-widest bg-white/5 border-none"
+                            >
+                                <option value="zh-CN">{langT('zh-CN')}</option>
+                                <option value="en-US">{langT('en-US')}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </section>

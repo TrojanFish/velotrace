@@ -19,6 +19,7 @@ import {
     Share2,
     Download
 } from "lucide-react";
+import { useTranslations } from 'next-intl';
 import { calculateMetabolism, getRecoveryTime, simulatePowerZones, calculateTSS } from "@/lib/calculators/activityInsight";
 import { calculateCdA, getCdARating } from "@/lib/calculators/aerodynamics";
 import { Skeleton } from "@/lib/utils";
@@ -44,6 +45,7 @@ interface ActivityInsight {
 }
 
 export function RideInsightCard() {
+    const t = useTranslations('RideInsight');
     const { data: session } = useSession();
     const { user } = useStore();
     const [activity, setActivity] = useState<ActivityInsight | null>(null);
@@ -129,16 +131,16 @@ export function RideInsightCard() {
                     <Activity size={24} />
                 </div>
                 <div>
-                    <h3 className="text-sm font-bold text-slate-300">{error ? "同步同步遇到问题" : "暂无骑行数据"}</h3>
+                    <h3 className="text-sm font-bold text-slate-300">{error ? t('empty.error') : t('empty.title')}</h3>
                     <p className="text-[10px] text-slate-500 uppercase mt-1">
-                        {error ? `错误详情: ${error}` : "请完成首次运动同步或检查 STRAVA 连接"}
+                        {error ? t('empty.errorDetail', { error }) : t('empty.desc')}
                     </p>
                 </div>
                 <button
                     onClick={() => window.location.reload()}
                     className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-bold transition-colors"
                 >
-                    点击重试
+                    {t('empty.retry')}
                 </button>
             </div>
         );
@@ -155,7 +157,7 @@ export function RideInsightCard() {
         <div className="space-y-4">
             <div className="flex items-center gap-2">
                 <div className="w-1 h-3 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]" />
-                <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">活动复盘 / Activity Insights</h2>
+                <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{t('title')}</h2>
             </div>
 
             <div
@@ -187,7 +189,7 @@ export function RideInsightCard() {
                         <div>
                             <div className="flex items-center gap-2 mb-1">
                                 <Dna size={14} className="text-purple-400" />
-                                <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">物理引擎复盘</h2>
+                                <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest">{t('engineTitle')}</h2>
                             </div>
                             <h3 className="text-sm font-black italic uppercase text-slate-100 truncate max-w-[180px]">
                                 {activity.name}
@@ -197,7 +199,7 @@ export function RideInsightCard() {
                             <div className="px-2 py-0.5 bg-purple-500/20 border border-purple-500/30 rounded text-[10px] font-black italic text-purple-400">
                                 RP {activity.hasPower ? Math.round((activity.weightedAveragePower || activity.averagePower) / user.ftp * 100) : '--'}
                             </div>
-                            <span className="text-[8px] text-slate-500 uppercase mt-1">强度系数 IF: {activity.hasPower ? ((activity.weightedAveragePower || activity.averagePower) / user.ftp).toFixed(2) : '--'}</span>
+                            <span className="text-[8px] text-slate-500 uppercase mt-1">{t('ifLabel')}: {activity.hasPower ? ((activity.weightedAveragePower || activity.averagePower) / user.ftp).toFixed(2) : '--'}</span>
                         </div>
                     </div>
 
@@ -222,7 +224,7 @@ export function RideInsightCard() {
                         <div className="space-y-1.5">
                             <div className="flex items-center gap-2">
                                 <BarChart3 size={12} className="text-slate-500" />
-                                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">功率分区分布 (Zones)</span>
+                                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">{t('zonesLabel')}</span>
                             </div>
                             <div className="flex h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
                                 {powerDistribution.map((percent, i) => (
@@ -274,16 +276,16 @@ export function RideInsightCard() {
                         <div className="flex items-start gap-2">
                             <Clock size={14} className="text-emerald-400 shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-[8px] font-bold text-slate-500 uppercase">恢复建议</p>
-                                <p className="text-xs font-black italic text-slate-100">{recoveryTime} 小时</p>
+                                <p className="text-[8px] font-bold text-slate-500 uppercase">{t('recoveryTitle')}</p>
+                                <p className="text-xs font-black italic text-slate-100">{t('hours', { count: recoveryTime })}</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-2">
                             <TrendingUp size={14} className="text-cyan-400 shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-[8px] font-bold text-slate-500 uppercase">下次建议</p>
+                                <p className="text-[8px] font-bold text-slate-500 uppercase">{t('nextTitle')}</p>
                                 <p className="text-[10px] font-bold text-slate-300 leading-tight">
-                                    {recoveryTime > 24 ? "低强度恢复骑行" : "冲击 Z3/Z4 间歇"}
+                                    {recoveryTime > 24 ? t('nextAdvice.recovery') : t('nextAdvice.interval')}
                                 </p>
                             </div>
                         </div>

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useStore } from "@/store/useStore";
 import { Zap, Wrench, AlertTriangle, Info, Gauge } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 interface DrivetrainEfficiencyResult {
     efficiency: number; // 0-1
@@ -11,6 +12,7 @@ interface DrivetrainEfficiencyResult {
 }
 
 export function DrivetrainEfficiencyCalculator() {
+    const t = useTranslations('PowerEffecter');
     const { bikes, activeBikeIndex } = useStore();
     const [inputPower, setInputPower] = useState(250);
     const [lubeType, setLubeType] = useState<'dry' | 'wet' | 'wax'>('dry');
@@ -46,19 +48,19 @@ export function DrivetrainEfficiencyCalculator() {
 
         const lossWatts = inputPower * (1 - efficiency);
 
-        let advice = "您的传动系统处于竞技状态。";
-        if (efficiency < 0.95) advice = "注意：传动系统损耗严重，建议更换链条并优化走线。";
-        if (alignment === 'cross') advice = "大盘对大规（交叉链条）导致了显著的机械摩擦，建议降档。";
+        let advice = t('advice.perfect');
+        if (efficiency < 0.95) advice = t('advice.worn');
+        if (alignment === 'cross') advice = t('advice.cross');
 
         return { efficiency, lossWatts, advice };
-    }, [inputPower, lubeType, chainCondition, alignment]);
+    }, [inputPower, lubeType, chainCondition, alignment, t]);
 
     return (
         <div className="pro-card space-y-6">
             <div className="flex justify-between items-start">
                 <div>
-                    <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">传动效率模拟 (DRIVETRAIN LOSS)</h2>
-                    <p className="text-[10px] text-muted-foreground uppercase mt-1">分析链条、润滑与走线对功率的影响</p>
+                    <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('title')}</h2>
+                    <p className="text-[10px] text-muted-foreground uppercase mt-1">{t('subtitle')}</p>
                 </div>
                 <div className="p-2 bg-blue-500/10 rounded-full text-blue-500">
                     <Wrench size={20} />
@@ -70,7 +72,7 @@ export function DrivetrainEfficiencyCalculator() {
                 {/* Power Input */}
                 <div className="space-y-3">
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
-                        <div className="flex items-center gap-1"><Zap size={10} /> 输入功率 (Watts)</div>
+                        <div className="flex items-center gap-1"><Zap size={10} /> {t('inputPower')} (Watts)</div>
                         <span className="text-blue-400">{inputPower}W</span>
                     </div>
                     <input
@@ -83,43 +85,43 @@ export function DrivetrainEfficiencyCalculator() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Lube Type */}
                     <div className="space-y-2">
-                        <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">润滑类型</label>
+                        <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">{t('lubeType')}</label>
                         <select
                             value={lubeType}
                             onChange={(e) => setLubeType(e.target.value as any)}
                             className="w-full liquid-select text-xs"
                         >
-                            <option value="wax">链条蜡 (Performance Wax)</option>
-                            <option value="dry">干性油 (Standard Dry)</option>
-                            <option value="wet">湿性油 (Heavy Wet)</option>
+                            <option value="wax">{t('lubes.wax')}</option>
+                            <option value="dry">{t('lubes.dry')}</option>
+                            <option value="wet">{t('lubes.wet')}</option>
                         </select>
                     </div>
 
                     {/* Chain Condition */}
                     <div className="space-y-2">
-                        <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">链条状态</label>
+                        <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">{t('chainCondition')}</label>
                         <select
                             value={chainCondition}
                             onChange={(e) => setChainCondition(e.target.value as any)}
                             className="w-full liquid-select text-xs"
                         >
-                            <option value="new">全新 / 低损耗 (&lt;0.5%)</option>
-                            <option value="worn">磨损 / 建议关注 (0.5%-0.75%)</option>
-                            <option value="bad">极差 / 需更换 (&gt;0.75%)</option>
+                            <option value="new">{t('conditions.new')}</option>
+                            <option value="worn">{t('conditions.worn')}</option>
+                            <option value="bad">{t('conditions.bad')}</option>
                         </select>
                     </div>
 
                     {/* Alignment */}
                     <div className="space-y-2">
-                        <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">链线条位 (Alignment)</label>
+                        <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">{t('alignment')}</label>
                         <select
                             value={alignment}
                             onChange={(e) => setAlignment(e.target.value as any)}
                             className="w-full liquid-select text-xs"
                         >
-                            <option value="straight">平直 (无偏移)</option>
-                            <option value="moderate">适中 (4-5片偏移)</option>
-                            <option value="cross">交叉 (Big-Big / Small-Small)</option>
+                            <option value="straight">{t('alignments.straight')}</option>
+                            <option value="moderate">{t('alignments.moderate')}</option>
+                            <option value="cross">{t('alignments.cross')}</option>
                         </select>
                     </div>
                 </div>
@@ -133,7 +135,7 @@ export function DrivetrainEfficiencyCalculator() {
                     </div>
                     <div className="flex items-center gap-2 text-blue-500">
                         <Zap size={14} />
-                        <span className="text-[10px] font-black uppercase">功率损耗</span>
+                        <span className="text-[10px] font-black uppercase">{t('loss')}</span>
                     </div>
                     <div className="flex items-baseline gap-1">
                         <span className="text-4xl font-black italic tracking-tighter text-white pr-2">-{result.lossWatts.toFixed(1)}</span>
@@ -146,7 +148,7 @@ export function DrivetrainEfficiencyCalculator() {
                     </div>
                     <div className="flex items-center gap-2 text-cyan-400">
                         <Info size={14} />
-                        <span className="text-[10px] font-black uppercase">传递效率</span>
+                        <span className="text-[10px] font-black uppercase">{t('efficiency')}</span>
                     </div>
                     <div className="flex items-baseline gap-1">
                         <span className="text-4xl font-black italic tracking-tighter text-white pr-2">{(result.efficiency * 100).toFixed(1)}</span>
@@ -163,10 +165,10 @@ export function DrivetrainEfficiencyCalculator() {
                 </div>
                 <div>
                     <p className={`text-xs font-bold mb-1 ${result.efficiency < 0.95 ? 'text-orange-400' : 'text-blue-400'}`}>
-                        {result.efficiency < 0.95 ? '机械警告' : '效能诊断'}
+                        {result.efficiency < 0.95 ? t('adviceWarning') : t('adviceTitle')}
                     </p>
                     <p className="text-[10px] text-white/50 leading-relaxed font-medium">
-                        {result.advice} 请记住，干净的传动系统是提升速度“最廉价”的方式。
+                        {result.advice}{t('advice.footer')}
                     </p>
                 </div>
             </div>

@@ -4,8 +4,10 @@ import { useStore, MaintenanceLog } from "@/store/useStore";
 import { History, Plus, Trash2, Calendar, FileText, Activity } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from 'next-intl';
 
 export function MaintenanceLogManager() {
+    const t = useTranslations('MaintenanceLog');
     const { bikes, activeBikeIndex, addMaintenanceLog, removeMaintenanceLog } = useStore();
     const bike = bikes[activeBikeIndex];
 
@@ -26,7 +28,7 @@ export function MaintenanceLogManager() {
         setIsAdding(false);
         setTitle("");
         setDesc("");
-        toast.success("纪录已保存至维护日志");
+        toast.success(t('success'));
     };
 
     return (
@@ -34,13 +36,13 @@ export function MaintenanceLogManager() {
             <div className="flex items-center justify-between px-1">
                 <div className="section-header mb-0">
                     <div className="section-indicator orange" />
-                    <h2 className="section-title">全寿命维护日志 ({bike?.maintenanceLogs?.length || 0})</h2>
+                    <h2 className="section-title">{t('title', { count: bike?.maintenanceLogs?.length || 0 })}</h2>
                 </div>
                 <button
                     onClick={() => setIsAdding(true)}
                     className="liquid-tag cursor-pointer hover:scale-105 transition-transform"
                 >
-                    <Plus size={10} /> 记录维护
+                    <Plus size={10} /> {t('add')}
                 </button>
             </div>
 
@@ -48,18 +50,18 @@ export function MaintenanceLogManager() {
                 <div className="pro-card p-5 border-orange-500/50 space-y-4">
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">项目标题 (如：更换密封轴承)</label>
+                            <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">{t('placeholderTitle')}</label>
                             <input
-                                placeholder="输入操作描述"
+                                placeholder={t('inputTitle')}
                                 value={title}
                                 onChange={e => setTitle(e.target.value)}
                                 className="liquid-input text-xs"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">备注内容</label>
+                            <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">{t('inputDesc')}</label>
                             <textarea
-                                placeholder="细节记录..."
+                                placeholder={t('placeholderDesc')}
                                 value={desc}
                                 onChange={e => setDesc(e.target.value)}
                                 className="liquid-input text-xs min-h-[100px] py-3 leading-relaxed"
@@ -67,8 +69,10 @@ export function MaintenanceLogManager() {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={() => setIsAdding(false)} className="flex-1 py-2 text-[10px] font-bold text-white/30 hover:text-white transition-colors">取消</button>
-                        <button onClick={handleAdd} className="flex-1 liquid-button-primary py-2 text-[10px] font-bold">持久化存储</button>
+                        <button onClick={() => setIsAdding(false)} className="flex-1 py-2 text-[10px] font-bold text-white/30 hover:text-white transition-colors">
+                            {useTranslations('Common')('cancel')}
+                        </button>
+                        <button onClick={handleAdd} className="flex-1 liquid-button-primary py-2 text-[10px] font-bold">{t('save')}</button>
                     </div>
                 </div>
             )}
@@ -77,7 +81,7 @@ export function MaintenanceLogManager() {
                 {bike?.maintenanceLogs?.length === 0 ? (
                     <div className="py-12 text-center border border-dashed border-white/5 rounded-3xl group">
                         <History size={32} className="mx-auto text-white/5 mb-3 group-hover:text-orange-500/20 transition-colors" />
-                        <p className="text-[10px] text-white/20 uppercase font-bold tracking-widest">点击右上角记录第一次大修或零部件更换</p>
+                        <p className="text-[10px] text-white/20 uppercase font-bold tracking-widest">{t('empty')}</p>
                     </div>
                 ) : (
                     bike?.maintenanceLogs.map((log) => (

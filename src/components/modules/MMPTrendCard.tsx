@@ -11,8 +11,10 @@ import {
 } from "recharts";
 import { Trophy, TrendingUp, Info, Edit3, Check, Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslations } from 'next-intl';
 
 export function MMPTrendCard() {
+    const t = useTranslations('MMP');
     const { user, updateUser } = useStore();
     const [isEditing, setIsEditing] = useState(false);
     const [tempMmp, setTempMmp] = useState(user?.mmp || { "5s": 0, "1m": 0, "5m": 0, "20m": 0 });
@@ -21,10 +23,10 @@ export function MMPTrendCard() {
         // Fallback for missing MMP record in persisted store
         const mmp = user?.mmp || { "5s": 0, "1m": 0, "5m": 0, "20m": 0 };
         return [
-            { key: "5s", label: "5s (Sprint)", power: mmp["5s"] },
-            { key: "1m", label: "1m (Anaerobic)", power: mmp["1m"] },
-            { key: "5m", label: "5m (VO2Max)", power: mmp["5m"] },
-            { key: "20m", label: "20m (FTP)", power: mmp["20m"] },
+            { key: "5s", label: t('labels.sprint'), power: mmp["5s"] },
+            { key: "1m", label: t('labels.anaerobic'), power: mmp["1m"] },
+            { key: "5m", label: t('labels.vo2'), power: mmp["5m"] },
+            { key: "20m", label: t('labels.ftp'), power: mmp["20m"] },
         ].map(d => {
             const dur = d.key === "5s" ? 5 : d.key === "1m" ? 60 : d.key === "5m" ? 300 : 1200;
             const weight = user?.weight || 70;
@@ -59,7 +61,7 @@ export function MMPTrendCard() {
                         <Trophy size={14} className="text-orange-500" />
                     </div>
                     <h2 className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em]">
-                        MMP 功率维度曲线 / Power Profile
+                        {t('title')}
                     </h2>
                 </div>
                 <button
@@ -112,7 +114,7 @@ export function MMPTrendCard() {
                                     d.rank === 'Pro' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' :
                                         'bg-slate-800 text-slate-400'
                                     }`}>
-                                    {d.rank}
+                                    {t(`ranks.${d.rank}`)}
                                 </span>
                             </div>
                         </div>
@@ -123,12 +125,12 @@ export function MMPTrendCard() {
             <div className="pt-4 border-t border-slate-800/50">
                 <div className="flex items-center gap-2 mb-2">
                     <TrendingUp size={12} className="text-emerald-400" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">战力评价 / Analysis</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('analysis')}</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-400 italic">
                     {mmpData.some(d => d.rank === 'WorldTour' || d.rank === 'Pro')
-                        ? "检测到顶级运动员级别的功率输出。当前数据已与官方段位表完成对标。"
-                        : "你的功率表现处于稳定增长期。建议重点强化 20m 稳态输出以提升整体段位。"}
+                        ? t('insights.pro')
+                        : t('insights.improving')}
                 </p>
             </div>
         </div>
