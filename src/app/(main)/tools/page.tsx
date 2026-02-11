@@ -6,8 +6,9 @@ import { RouteAnalyzer } from "@/components/modules/RouteAnalyzer";
 import { TirePressureCalculator } from "@/components/modules/TirePressureCalculator";
 import { NutritionCalculator } from "@/components/modules/NutritionCalculator";
 import { SweatRateCalculator } from "@/components/modules/SweatRateCalculator";
+import { DrivetrainEfficiencyCalculator } from "@/components/modules/DrivetrainEfficiencyCalculator";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
-import { Wrench, Info, Zap, Map, Gauge, Utensils, Sparkles, Droplets } from "lucide-react";
+import { Wrench, Info, Zap, Map, Gauge, Utensils, Sparkles, Droplets, Link2 } from "lucide-react";
 
 export default function ToolsPage() {
     return (
@@ -41,6 +42,10 @@ export default function ToolsPage() {
 
                 <CollapsibleSection title="训练强度参考" icon={<Zap size={14} className="text-yellow-400" />}>
                     <PowerZoneCard />
+                </CollapsibleSection>
+
+                <CollapsibleSection title="传动效能与功率损耗" icon={<Link2 size={14} className="text-blue-500" />}>
+                    <DrivetrainEfficiencyCalculator />
                 </CollapsibleSection>
 
                 <CollapsibleSection title="齿比选择与模拟" icon={<Wrench size={14} className="text-blue-400" />}>

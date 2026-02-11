@@ -6,6 +6,7 @@ import { PMCTrendCard } from "@/components/modules/PMCTrendCard";
 import { SegmentChallengeCard } from "@/components/modules/SegmentChallengeCard";
 import { MMPTrendCard } from "@/components/modules/MMPTrendCard";
 import { HeartRateZoneCard } from "@/components/modules/HeartRateZoneCard";
+import { RiderLevelCard } from "@/components/modules/RiderLevelCard";
 import { BarChart3, TrendingUp, Activity, Sparkles } from "lucide-react";
 
 export default function AnalyticsPage() {
@@ -49,6 +50,7 @@ export default function AnalyticsPage() {
                     </div>
                     <h2 className="section-title">生理引擎 / Physiological Engine</h2>
                 </div>
+                <RiderLevelCard />
                 <HeartRateZoneCard />
             </section>
 

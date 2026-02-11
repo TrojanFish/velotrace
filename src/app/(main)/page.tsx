@@ -7,7 +7,7 @@ import { FuelCard } from "@/components/modules/FuelCard";
 import { BikeCard } from "@/components/modules/BikeCard";
 import { RouteWindForecastCard } from "@/components/modules/RouteWindForecastCard";
 import { AIBriefingCard } from "@/components/modules/AIBriefingCard";
-import { Maximize2, User } from "lucide-react";
+import { Maximize2, User, Zap } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/lib/utils";
 import { useSession } from "next-auth/react";
@@ -52,31 +52,40 @@ export default function Home() {
             {mounted ? today : "--"}
           </p>
         </div>
-        <Link
-          href="/pilot-office"
-          className="relative group transition-transform hover:scale-105"
-        >
-          <div className="relative">
-            {session?.user?.image ? (
-              <div className="w-10 h-10 rounded-xl border-2 border-white/10 overflow-hidden">
-                <Image
-                  src={session.user.image}
-                  alt={session.user.name || "User"}
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="liquid-icon p-2.5">
-                <User size={18} />
-              </div>
-            )}
-            {session && (
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-orange-400 border-2 border-[#050810] rounded-full animate-status-blink" />
-            )}
-          </div>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/ride"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            <Zap size={12} fill="currentColor" />
+            <span>执行出击</span>
+          </Link>
+          <Link
+            href="/pilot-office"
+            className="relative group transition-transform hover:scale-105"
+          >
+            <div className="relative">
+              {session?.user?.image ? (
+                <div className="w-10 h-10 rounded-xl border-2 border-white/10 overflow-hidden">
+                  <Image
+                    src={session.user.image}
+                    alt={session.user.name || "User"}
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="liquid-icon p-2.5">
+                  <User size={18} />
+                </div>
+              )}
+              {session && (
+                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-orange-400 border-2 border-[#050810] rounded-full animate-status-blink" />
+              )}
+            </div>
+          </Link>
+        </div>
       </header>
 
       {/* 0. 战术智脑 [AI BRIEFING] */}
