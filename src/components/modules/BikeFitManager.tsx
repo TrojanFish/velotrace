@@ -33,7 +33,7 @@ export function BikeFitManager() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <div className="flex items-center justify-between mb-2">
                 <div>
                     <h3 className="text-sm font-bold text-white/90 uppercase tracking-widest">{t('title')}</h3>
@@ -47,9 +47,9 @@ export function BikeFitManager() {
                 </button>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                 {/* Stack & Reach */}
-                <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
+                <div className="pro-card p-2 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-cyan-400">
                         <Ruler size={14} />
                         <span className="text-[10px] font-black uppercase tracking-wider">{t('core')}</span>
@@ -62,7 +62,7 @@ export function BikeFitManager() {
                                     type="number"
                                     value={tempFit.stack || ""}
                                     onChange={(e) => handleChange('stack', parseInt(e.target.value))}
-                                    className="liquid-input h-9 text-xs text-center font-mono"
+                                    className="liquid-input h-8 text-xs text-center font-mono px-2 py-1"
                                 />
                                 <span className="text-[8px] font-bold text-white/10">MM</span>
                             </div>
@@ -74,7 +74,7 @@ export function BikeFitManager() {
                                     type="number"
                                     value={tempFit.reach || ""}
                                     onChange={(e) => handleChange('reach', parseInt(e.target.value))}
-                                    className="liquid-input h-9 text-xs text-center font-mono"
+                                    className="liquid-input h-8 text-xs text-center font-mono px-2 py-1"
                                 />
                                 <span className="text-[8px] font-bold text-white/10">MM</span>
                             </div>
@@ -83,7 +83,7 @@ export function BikeFitManager() {
                 </div>
 
                 {/* Cockpit */}
-                <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
+                <div className="pro-card p-2 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-purple-400">
                         <Layers size={14} />
                         <span className="text-[10px] font-black uppercase tracking-wider">{t('cockpit')}</span>
@@ -96,7 +96,7 @@ export function BikeFitManager() {
                                     type="number"
                                     value={tempFit.saddleHeight || ""}
                                     onChange={(e) => handleChange('saddleHeight', parseInt(e.target.value))}
-                                    className="liquid-input h-9 text-xs text-center font-mono text-purple-400"
+                                    className="liquid-input h-8 text-xs text-center font-mono text-purple-400 px-2 py-1"
                                 />
                                 <span className="text-[8px] font-bold text-white/10">MM</span>
                             </div>
@@ -108,7 +108,7 @@ export function BikeFitManager() {
                                     type="number"
                                     value={tempFit.saddleOffset || ""}
                                     onChange={(e) => handleChange('saddleOffset', parseInt(e.target.value))}
-                                    className="liquid-input h-9 text-xs text-center font-mono"
+                                    className="liquid-input h-8 text-xs text-center font-mono px-2 py-1"
                                 />
                                 <span className="text-[8px] font-bold text-white/10">MM</span>
                             </div>
@@ -117,7 +117,7 @@ export function BikeFitManager() {
                 </div>
 
                 {/* Handlebar & Crank */}
-                <div className="pro-card p-4 space-y-3 border-dashed border-white/10">
+                <div className="pro-card p-2 space-y-3 border-dashed border-white/10">
                     <div className="flex items-center gap-2 text-emerald-400">
                         <Activity size={14} />
                         <span className="text-[10px] font-black uppercase tracking-wider">{t('touch')}</span>
@@ -130,7 +130,7 @@ export function BikeFitManager() {
                                     type="number"
                                     value={tempFit.handlebarWidth || ""}
                                     onChange={(e) => handleChange('handlebarWidth', parseInt(e.target.value))}
-                                    className="liquid-input h-9 text-xs text-center font-mono"
+                                    className="liquid-input h-8 text-xs text-center font-mono px-2 py-1"
                                 />
                                 <span className="text-[8px] font-bold text-white/10">MM</span>
                             </div>
@@ -143,7 +143,7 @@ export function BikeFitManager() {
                                     step="0.5"
                                     value={tempFit.crankLength || ""}
                                     onChange={(e) => handleChange('crankLength', parseFloat(e.target.value))}
-                                    className="liquid-input h-9 text-xs text-center font-mono"
+                                    className="liquid-input h-8 text-xs text-center font-mono px-2 py-1"
                                 />
                                 <span className="text-[8px] font-bold text-white/10">MM</span>
                             </div>

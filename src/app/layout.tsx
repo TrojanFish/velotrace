@@ -41,9 +41,10 @@ export default async function RootLayout({
   const locale = await getLocale();
 
   return (
-    <html lang={locale} className="dark">
+    <html lang={locale} className="dark" suppressHydrationWarning>
       <body
         className={`${inter.variable} antialiased min-h-[100dvh] selection:bg-cyan-500/30`}
+        suppressHydrationWarning
       >
         <I18nProvider>
           {children}

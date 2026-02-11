@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import { env } from "@/config/env";
 
 export async function POST(req: Request) {
+    let isChinese = false;
     try {
         const data = await req.json();
-        const { user, weather, bike, tsb, locale = 'zh-CN' } = data;
-
-        const isChinese = locale === 'zh-CN';
+        const { user, weather, bike, tsb, locale = 'en-US' } = data;
+        isChinese = locale.toLowerCase().startsWith('zh');
 
         // Enhanced Context: Including maintenance alerts in AI context
         const chainLubeStatus = isChinese
@@ -120,13 +120,13 @@ export async function POST(req: Request) {
         return NextResponse.json({
             session: temp > 28
                 ? (isChinese ? "热适应专项训练" : "Heat Acclimation")
-                : (isChinese ? "Z2 有氧耐力" : "Z2 Endurance"),
+                : (isChinese ? "Z2 基础有氧" : "Base Endurance"),
             intensity: `${Math.round(user.ftp * 0.65)}W - 60 ${isChinese ? '分钟' : 'min'}`,
             goal: temp > 28
                 ? (isChinese ? "强化热耐受能力" : "Improve heat tolerance")
-                : (isChinese ? "有氧系统日常维护" : "Aerobic maintenance"),
+                : (isChinese ? "有氧系统维护" : "Aerobic maintenance"),
             advice: isChinese
-                ? `今日气温${temp}°C，TSB为${tsb ?? 0}。建议进行基础耐力骑行。每一瓦特输出都有其意义。`
+                ? `今日气温${temp}°C，TSB为${tsb ?? 0}。建议进行基础耐力骑行。每一瓦特的输出都有其意义。`
                 : `Temp is ${temp}°C, TSB is ${tsb ?? 0}. Base endurance ride suggested. Every watt counts.`,
             logic: isChinese
                 ? `基于 TSB(${tsb ?? 0}) 及实时气温(${temp}°C) 进行的基准战术推演。`
@@ -135,11 +135,11 @@ export async function POST(req: Request) {
 
     } catch {
         return NextResponse.json({
-            session: "OFFLINE",
-            intensity: "Z2 Base",
-            goal: "Maintenance",
-            advice: "Connection error. Stay in Z2 for base maintenance.",
-            logic: "Offline fallback."
+            session: isChinese ? "离线同步" : "OFFLINE",
+            intensity: isChinese ? "Z2 基础有氧" : "Z2 Base",
+            goal: isChinese ? "生理基础维护" : "Maintenance",
+            advice: isChinese ? "连接超时。系统已启用离线基准策略。" : "Connection error. Stay in Z2 for base maintenance.",
+            logic: isChinese ? "智脑同步: 离线" : "Offline fallback."
         });
     }
 }

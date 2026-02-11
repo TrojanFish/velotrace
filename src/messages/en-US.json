@@ -64,6 +64,9 @@
         "title": "PILOT OFFICE",
         "subtitle": "Biometrics, performance modeling and equipment management",
         "unitSystem": "Unit System",
+        "metric": "Metric",
+        "imperial": "Imperial",
+        "toggle": "Toggle System",
         "language": "Language",
         "stravaSync": "Strava Sync",
         "stravaLink": "Link Strava",
@@ -133,10 +136,10 @@
             "damaged": "Critical Exhaustion"
         },
         "labels": {
-            "session": "Tactical Advice",
-            "target": "Intensity Target",
-            "focus": "Strategic Focus",
-            "logic": "Logic Stream"
+            "session": "Advice",
+            "target": "Target",
+            "focus": "Focus",
+            "logic": "Logic"
         },
         "actions": {
             "generate": "Analyze Today's Tactics",
@@ -156,7 +159,14 @@
             "comms": "Comms Channel 01",
             "tacticalSimulation": "Tactical Simulation",
             "now": "Now",
-            "forecast": "Forecast +{hour}H"
+            "forecast": "Forecast +{hour}H",
+            "environment": "Environment",
+            "temp": "Temperature",
+            "windGusts": "Wind Gusts",
+            "kit": "Kit Config",
+            "targetMode": "Target Mode",
+            "logicStream": "Logic Stream",
+            "logicStable": "Logic: Stable"
         },
         "export": {
             "title": "TACTICAL INTEL REPORT",
@@ -166,6 +176,9 @@
         },
         "offline": {
             "session": "OFFLINE MODE",
+            "intensity": "Z2 Endurance",
+            "goal": "Base Maintenance",
+            "defaultAdvice": "Maintain rhythm, every watt is an investment for the future.",
             "advice": "⚠️ Connection timeout. Offline baseline strategy enabled.",
             "logic": "Bio-Sync: Offline"
         }
@@ -174,6 +187,8 @@
         "title": "WEATHER ALERTS",
         "feelsLike": "Feels {temp}",
         "maxGust": "Max Gust",
+        "sunrise": "Sunrise",
+        "sunset": "Sunset",
         "windSpeed": "Wind Speed",
         "precipitation": "Precipitation",
         "uvIndex": "UV Index",
@@ -228,16 +243,16 @@
         "hours": "{duration} Hours",
         "intensity": "Target Intensity",
         "gels": "{count} Gels",
-        "water": "{count} Bottles",
+        "water": "{amount} Bottles",
         "intensities": {
-            "social": "Recovery",
-            "tempo": "Tempo",
-            "threshold": "Threshold",
-            "race": "Race"
+            "social": "AR",
+            "tempo": "EM",
+            "threshold": "LT",
+            "race": "SST"
         }
     },
     "Bike": {
-        "pressure": "Pressure Strategy",
+        "pressure": "Pressure",
         "lifecycle": "Lifecycle",
         "activeWheelset": "Active Wheelset",
         "psi": "PSI (F/R)",
@@ -307,8 +322,9 @@
         "intensity": "INTENSITY (RPE)",
         "temperature": "TEMPERATURE",
         "inventory": "SELECT YOUR FUEL INVENTORY",
-        "carbsDemand": "TOTAL CARBS DEMAND",
-        "fluidDemand": "TOTAL FLUID DEMAND",
+        "carbsDemand": "Carbs Demand",
+        "fluidDemand": "Fluid Demand",
+        "fluidUnit": "Bottles",
         "packingList": "SUGGESTED PACKING LIST",
         "perUnit": "Per {unit}: {carbs}g Carbs",
         "sodium": " • {sodium}mg Sodium",
@@ -390,9 +406,12 @@
         },
         "ranks": {
             "WorldTour": "World Tour",
-            "Pro": "Pro",
-            "Advanced": "Advanced",
-            "Regular": "Regular"
+            "Pro": "Professional",
+            "Cat1": "Cat 1",
+            "Cat2": "Cat 2",
+            "Cat3": "Cat 3",
+            "Cat4": "Cat 4",
+            "Cat5": "Cat 5"
         },
         "insights": {
             "pro": "Detected elite athlete level power output. Benchmarks synchronized with official standards.",
@@ -458,10 +477,20 @@
     "RideInsight": {
         "title": "Activity Insights",
         "engineTitle": "Physics Engine Review",
-        "ifLabel": "IF",
-        "zonesLabel": "Zones",
-        "recoveryTitle": "Recovery",
-        "nextTitle": "Next Session",
+        "ifLabel": "IF Factor",
+        "zonesLabel": "Power Distribution (Zones)",
+        "fitness": "Fitness (CTL)",
+        "fatigue": "Fatigue (ATL)",
+        "balance": "Balance (TSB)",
+        "peak15s": "⚡ 15s Peak",
+        "peak1m": "⚡ 1min Peak",
+        "load": "📊 Load (TSS)",
+        "fuelSystem": "Fuel System",
+        "fat": "FAT",
+        "carb": "CARB",
+        "vCda": "Virtual CdA",
+        "recoveryTitle": "Recovery Advice",
+        "nextTitle": "Next Recommendation",
         "hours": "{count} Hours",
         "nextAdvice": {
             "recovery": "Low intensity recovery ride",
@@ -576,5 +605,47 @@
         "empty": "No local records. Click '+' or quick-import from standards.",
         "specified": "Specified Torque",
         "success": "Torque setting added"
+    },
+    "Dashboard": {
+        "sections": {
+            "environment": "ENVIRONMENT",
+            "prep": "PREP"
+        }
+    },
+    "Analytics": {
+        "title": "DATA HUB",
+        "subtitle": "Biometric Insights & Long-term Analytics",
+        "sections": {
+            "load": "TRAINING LOAD",
+            "segments": "RECENT SEGMENT INTEL",
+            "engine": "PHYSIOLOGICAL ENGINE",
+            "power": "POWER PROFILE"
+        }
+    },
+    "WindField": {
+        "title": "Aerodynamics Simulation",
+        "subtitle": "Real-time CFD Visualization",
+        "selectRoute": "Select Route",
+        "demoMode": "DEMO MODE: Using Synthetic Loop",
+        "syncing": "SYNCING DATA...",
+        "localSim": "LOCAL SIM",
+        "routes": "{count} Routes"
+    },
+    "FuelProducts": {
+        "sis-gel": "SiS GO Isotonic Gel",
+        "sis-beta-gel": "SiS Beta Fuel Gel",
+        "maurten-100": "Maurten Gel 100",
+        "maurten-160": "Maurten Gel 160",
+        "precision-30": "PF 30 Gel",
+        "precision-90": "PF 90 Gel",
+        "gu-gel": "GU Energy Gel",
+        "salt-pill": "Electrolyte Salt Pill",
+        "drink-mix-40": "Standard Drink Mix (Single Bottle)",
+        "drink-mix-80": "High Energy Drink Mix (Beta Fuel)",
+        "units": {
+            "支": "Gel",
+            "瓶": "Bottle",
+            "颗": "Pill"
+        }
     }
 }

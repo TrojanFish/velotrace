@@ -111,14 +111,14 @@ export function WeatherCard() {
                         <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                             <Sunrise size={12} className="text-amber-400" />
                             <div className="flex flex-col -space-y-0.5">
-                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">Sunrise</span>
+                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">{t('sunrise')}</span>
                                 <span className="text-[11px] font-mono font-black text-white/90">{data.sunrise || "--:--"}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                             <Sunset size={12} className="text-orange-500" />
                             <div className="flex flex-col -space-y-0.5">
-                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">Sunset</span>
+                                <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter">{t('sunset')}</span>
                                 <span className="text-[11px] font-mono font-black text-white/90">{data.sunset || "--:--"}</span>
                             </div>
                         </div>

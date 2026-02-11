@@ -64,7 +64,7 @@ export interface AIBriefingCache {
 }
 
 export interface StravaCache {
-    data: any; // Strava's complex API response, keeping as any for now but documented
+    data: unknown; // Strava's complex API response, keeping as unknown for now but documented
     timestamp: number;
 }
 

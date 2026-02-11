@@ -64,6 +64,9 @@
         "title": "车手办公室",
         "subtitle": "生理特征、体能模型与器材资产管理",
         "unitSystem": "度量衡系统",
+        "metric": "公制",
+        "imperial": "英制",
+        "toggle": "切换单位制",
         "language": "语言设置",
         "stravaSync": "Strava 数据同步",
         "stravaLink": "连接 Strava",
@@ -132,10 +135,10 @@
             "damaged": "战损状态"
         },
         "labels": {
-            "session": "推演建议",
-            "target": "强度指标",
-            "focus": "战略目标",
-            "logic": "推演逻辑"
+            "session": "建议",
+            "target": "强度",
+            "focus": "目标",
+            "logic": "逻辑"
         },
         "actions": {
             "generate": "点击推演今日战术",
@@ -153,26 +156,38 @@
             "simulation": "推演模拟中 // {time}",
             "physioStatus": "生理状态反馈",
             "comms": "通讯频道 01",
-            "tacticalSimulation": "战术预测推演",
-            "now": "现在",
-            "forecast": "预测 +{hour}H"
+            "tacticalSimulation": "战术模拟",
+            "now": "当前",
+            "forecast": "预报 +{hour}H",
+            "environment": "环境数据",
+            "temp": "实时气温",
+            "windGusts": "阵风风速",
+            "kit": "装备建议",
+            "targetMode": "目标模式",
+            "logicStream": "逻辑流",
+            "logicStable": "逻辑层: 稳定"
         },
         "export": {
             "title": "战术情报报告",
-            "logic": "战术逻辑",
-            "formStatus": "当前体能形态 (TSB)",
-            "scoreDesc": "分值基于 EWMA 加权移动平均分析"
+            "logic": "战术细节",
+            "formStatus": "当前体能状态 (TSB)",
+            "scoreDesc": "基准分值通过 EWMA 算法加权推演"
         },
         "offline": {
             "session": "离线模式",
+            "intensity": "Z2 基础有氧",
             "advice": "⚠️ 智脑连接超时。系统已启用离线基准策略。",
-            "logic": "智脑同步: 离线"
+            "logic": "智脑同步: 离线",
+            "goal": "生理基础维护",
+            "defaultAdvice": "保持节奏，每一瓦特的输出都是对未来的投资。"
         }
     },
     "Weather": {
         "title": "今日预警",
         "feelsLike": "体感 {temp}",
         "maxGust": "最大阵风",
+        "sunrise": "日出",
+        "sunset": "日落",
         "windSpeed": "风速指标",
         "precipitation": "降水概率",
         "uvIndex": "紫外线指数",
@@ -227,11 +242,11 @@
         "hours": "{duration} 小时",
         "intensity": "计划强度",
         "gels": "{count} 支能量胶",
-        "water": "{count} 壶水",
+        "water": "{amount} 瓶",
         "intensities": {
             "social": "养生",
             "tempo": "甜区",
-            "threshold": "拉爆",
+            "threshold": "节奏",
             "race": "竞赛"
         }
     },
@@ -307,7 +322,8 @@
         "temperature": "环境温度",
         "inventory": "选择您拥有的补给品",
         "carbsDemand": "总碳水需求",
-        "fluidDemand": "总水分需求",
+        "fluidDemand": "总补给量",
+        "fluidUnit": "瓶",
         "packingList": "建议物资清单 (Packing List)",
         "perUnit": "每{unit}含 {carbs}g 碳水",
         "sodium": " • {sodium}mg 钠",
@@ -390,8 +406,11 @@
         "ranks": {
             "WorldTour": "世巡赛级",
             "Pro": "职业选手",
-            "Advanced": "业余顶尖",
-            "Regular": "大众骑友"
+            "Cat1": "一级 (Cat 1)",
+            "Cat2": "二级 (Cat 2)",
+            "Cat3": "三级 (Cat 3)",
+            "Cat4": "四级 (Cat 4)",
+            "Cat5": "五级 (Cat 5)"
         },
         "insights": {
             "pro": "检测到顶级运动员级别的功率输出. 当前数据已与官方段位表完成对标。",
@@ -459,6 +478,16 @@
         "engineTitle": "物理引擎复盘",
         "ifLabel": "强度系数 IF",
         "zonesLabel": "功率分区分布 (Zones)",
+        "fitness": "体能 (CTL)",
+        "fatigue": "疲劳 (ATL)",
+        "balance": "平衡 (TSB)",
+        "peak15s": "⚡ 15s 峰值",
+        "peak1m": "⚡ 1min 峰值",
+        "load": "📊 负荷 (TSS)",
+        "fuelSystem": "燃油系统",
+        "fat": "脂肪",
+        "carb": "碳水",
+        "vCda": "虚拟感应 CdA",
         "recoveryTitle": "恢复建议",
         "nextTitle": "下次建议",
         "hours": "{count} 小时",
@@ -470,7 +499,7 @@
             "title": "暂无骑行数据",
             "desc": "请完成首次运动同步或检查 STRAVA 连接",
             "retry": "点击重试",
-            "error": "同步同步遇到问题",
+            "error": "同步遇到问题",
             "errorDetail": "错误详情: {error}"
         }
     },
@@ -492,12 +521,12 @@
         "core": "核心参数",
         "cockpit": "座舱系统",
         "touch": "身体接触",
-        "stack": "Stack (堆叠)",
-        "reach": "Reach (前伸)",
-        "saddleHeight": "Saddle Height (高度)",
-        "saddleOffset": "Saddle Offset (偏移量)",
-        "barWidth": "Bar Width (车把宽度)",
-        "crank": "Crank (曲柄长度)",
+        "stack": "堆叠",
+        "reach": "前伸",
+        "saddleHeight": "座高",
+        "saddleOffset": "座位偏移量",
+        "barWidth": "车把宽度",
+        "crank": "曲柄长度",
         "notice": "* 注意：修改 Stack/Reach 等核心参数仅作为数字化资产存档。物理调整建议咨询专业 Fitter。"
     },
     "MaintenanceLog": {
@@ -575,5 +604,47 @@
         "empty": "暂无本地记录，点击上方“+”或快速导入常用参数",
         "specified": "指定扭矩",
         "success": "已添加扭矩参数"
+    },
+    "Dashboard": {
+        "sections": {
+            "environment": "战术气象",
+            "prep": "准备就绪"
+        }
+    },
+    "Analytics": {
+        "title": "DATA HUB",
+        "subtitle": "生理洞察与长周期分析",
+        "sections": {
+            "load": "训练负荷",
+            "segments": "最近分段快讯",
+            "engine": "生理引擎",
+            "power": "战力解构"
+        }
+    },
+    "WindField": {
+        "title": "气流动力学模拟",
+        "subtitle": "Real-time CFD Visualization",
+        "selectRoute": "选择骑行路线 / Select Route",
+        "demoMode": "演示模式: 使用模拟环线",
+        "syncing": "正在同步路线数据...",
+        "localSim": "本地模拟",
+        "routes": "{count} 条路线"
+    },
+    "FuelProducts": {
+        "sis-gel": "SiS GO Isotonic Gel",
+        "sis-beta-gel": "SiS Beta Fuel Gel",
+        "maurten-100": "Maurten Gel 100",
+        "maurten-160": "Maurten Gel 160",
+        "precision-30": "PF 30 Gel",
+        "precision-90": "PF 90 Gel",
+        "gu-gel": "GU Energy Gel",
+        "salt-pill": "电解质盐丸",
+        "drink-mix-40": "标准运动饮料 (单瓶)",
+        "drink-mix-80": "高能运动饮料 (Beta)",
+        "units": {
+            "支": "支",
+            "瓶": "瓶",
+            "颗": "颗"
+        }
     }
 }

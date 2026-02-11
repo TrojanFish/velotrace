@@ -6,7 +6,7 @@ interface StravaProfile {
     firstname: string;
     lastname: string;
     profile: string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export const authOptions: NextAuthOptions = {

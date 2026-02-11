@@ -19,6 +19,8 @@ const getTSBHeadingKey = (tsb: number) => {
 
 export function AIBriefingCard() {
     const t = useTranslations('AIBriefing');
+    const tKit = useTranslations('Kit');
+    const tCommon = useTranslations('Common');
     const locale = useLocale();
     const { user, bikes, activeBikeIndex, aiBriefingCache, setAIBriefingCache } = useStore();
     const { data: weather, loading: weatherLoading } = useWeather();
@@ -97,8 +99,8 @@ export function AIBriefingCard() {
             setAIBriefingCache({
                 data: {
                     session: t('offline.session'),
-                    intensity: "Z2 Endurance",
-                    goal: "生理基础维护",
+                    intensity: t('offline.intensity'),
+                    goal: t('offline.goal'),
                     advice: t('offline.advice'),
                     logic: t('offline.logic')
                 },
@@ -202,16 +204,16 @@ export function AIBriefingCard() {
                             <div className="space-y-4">
                                 <div className="p-6 bg-white/[0.03] border border-white/[0.1] rounded-2xl">
                                     <p className="text-base font-bold text-white/90 leading-relaxed italic">
-                                        "{structuredData?.advice || "保持节奏，每一瓦特的输出都是对未来的投资。"}"
+                                        "{structuredData?.advice || t('offline.defaultAdvice')}"
                                     </p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="p-4 bg-white/[0.03] border border-white/5 rounded-xl">
-                                        <p className="text-[8px] font-black text-white/30 uppercase mb-2">Target intensity</p>
-                                        <p className="text-sm font-black text-cyan-400 italic">{structuredData?.intensity || "Z2 Endurance"}</p>
+                                        <p className="text-[8px] font-black text-white/30 uppercase mb-2">{t('labels.target')}</p>
+                                        <p className="text-sm font-black text-cyan-400 italic">{structuredData?.intensity || t('offline.intensity')}</p>
                                     </div>
                                     <div className="p-4 bg-white/[0.03] border border-white/5 rounded-xl">
-                                        <p className="text-[8px] font-black text-white/30 uppercase mb-2">Strategic goal</p>
+                                        <p className="text-[8px] font-black text-white/30 uppercase mb-2">{t('labels.focus')}</p>
                                         <p className="text-sm font-black text-purple-400 italic">{structuredData?.goal || "Base Maintenance"}</p>
                                     </div>
                                 </div>
@@ -224,15 +226,15 @@ export function AIBriefingCard() {
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <Wind size={12} className="text-white/40" />
-                                <h4 className="text-[9px] font-black text-white/40 uppercase tracking-widest italic">Environment</h4>
+                                <h4 className="text-[9px] font-black text-white/40 uppercase tracking-widest italic">{t('hud.environment')}</h4>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between items-baseline">
-                                    <span className="text-[10px] font-bold text-white/30 uppercase">Temperature</span>
+                                    <span className="text-[10px] font-bold text-white/30 uppercase">{t('hud.temp')}</span>
                                     <span className="text-lg font-black text-white">{weather?.temp}°C</span>
                                 </div>
                                 <div className="flex justify-between items-baseline">
-                                    <span className="text-[10px] font-bold text-white/30 uppercase">Wind Gusts</span>
+                                    <span className="text-[10px] font-bold text-white/30 uppercase">{t('hud.windGusts')}</span>
                                     <span className="text-lg font-black text-white">{weather?.windSpeed} kmh</span>
                                 </div>
                             </div>
@@ -240,12 +242,12 @@ export function AIBriefingCard() {
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <Zap size={12} className="text-white/40" />
-                                <h4 className="text-[9px] font-black text-white/40 uppercase tracking-widest italic">Kit Config</h4>
+                                <h4 className="text-[9px] font-black text-white/40 uppercase tracking-widest italic">{t('hud.kit')}</h4>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-xs font-black text-cyan-400 uppercase italic truncate">{kit?.jersey || "短袖车衣"}</p>
-                                <p className="text-[9px] font-bold text-white/50 uppercase truncate">+{kit?.baseLayer || "排汗内衣"}</p>
-                                <p className="text-[9px] font-bold text-white/30 uppercase truncate">{kit?.accessories?.[0] || "标准配件"}</p>
+                                <p className="text-xs font-black text-cyan-400 uppercase italic truncate">{kit?.jersey ? tKit(kit.jersey) : tKit('shortJersey')}</p>
+                                <p className="text-[9px] font-bold text-white/50 uppercase truncate">+{kit?.baseLayer ? tKit(kit.baseLayer) : tKit('sleeveless')}</p>
+                                <p className="text-[9px] font-bold text-white/30 uppercase truncate">{kit?.accessories?.[0] ? tKit(kit.accessories[0]) : tCommon('active')}</p>
                             </div>
                         </div>
                     </div>
@@ -291,7 +293,7 @@ export function AIBriefingCard() {
                         {tsbHeading.title}
                     </p>
                     <p className="text-[8px] font-bold text-white/30 uppercase mt-1 tracking-widest leading-none">
-                        {t('statusHeadline')} / Bio-Dynamic Status
+                        {t('statusHeadline')}
                     </p>
                 </div>
 
@@ -309,7 +311,7 @@ export function AIBriefingCard() {
                             {/* Session */}
                             <div className="flex items-center gap-4 group/row">
                                 <div className="liquid-tag purple w-16 justify-center text-[8px] py-1">
-                                    Session
+                                    {t('labels.session')}
                                 </div>
                                 <span className="flex-1 text-sm font-bold text-white/90 tracking-tight truncate pr-4 group-hover/row:text-purple-300 transition-colors uppercase">
                                     {structuredData.session}
@@ -318,7 +320,7 @@ export function AIBriefingCard() {
                             {/* Target */}
                             <div className="flex items-center gap-4 group/row">
                                 <div className="liquid-tag success w-16 justify-center text-[8px] py-1">
-                                    Target
+                                    {t('labels.target')}
                                 </div>
                                 <span className="flex-1 text-sm font-mono font-bold text-white/70 tracking-tighter truncate pr-4">
                                     {structuredData.intensity}
@@ -327,7 +329,7 @@ export function AIBriefingCard() {
                             {/* Focus */}
                             <div className="flex items-center gap-4 group/row">
                                 <div className="liquid-tag w-16 justify-center text-[8px] py-1">
-                                    Focus
+                                    {t('labels.focus')}
                                 </div>
                                 <span className="flex-1 text-sm font-medium text-white/50 tracking-tight italic uppercase truncate pr-4">
                                     {structuredData.goal}
@@ -341,7 +343,7 @@ export function AIBriefingCard() {
                                 className="liquid-button text-[10px] uppercase tracking-widest"
                             >
                                 <Sparkles size={12} className="mr-2" />
-                                点击推演今日战术
+                                {t('actions.generate')}
                             </button>
                         </div>
                     )}
@@ -393,18 +395,9 @@ export function AIBriefingCard() {
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[1000] bg-black flex flex-col overflow-hidden transform-gpu"
                     >
-                        {/* 1. Immersive Topographic Background */}
-                        <div className="absolute inset-0 pointer-events-none opacity-20">
-                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-                            <div className="absolute top-0 left-0 right-0 h-[50vh] bg-gradient-to-b from-purple-500/20 to-transparent" />
-                            <div className="absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-cyan-500/20 to-transparent" />
-
-                            {/* Scanning Line Effect */}
-                            <motion.div
-                                animate={{ y: ['0%', '100%'] }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                className="absolute left-0 right-0 h-[1px] bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-                            />
+                        {/* 1. Minimal Background */}
+                        <div className="absolute inset-0 pointer-events-none">
+                            <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-3xl" />
                         </div>
 
                         {/* Top HUD Bar */}
@@ -429,200 +422,82 @@ export function AIBriefingCard() {
                             </button>
                         </div>
 
-                        {/* Scrolling System Logs (New) */}
-                        <div className="relative z-10 px-6 overflow-hidden h-4 flex items-center gap-4">
-                            <div className="text-[7px] font-mono text-cyan-400/40 uppercase tracking-[0.2em] whitespace-nowrap animate-infinite-scroll">
-                                INITIALIZING TACTICAL OVERLAY... SYNCING BIO-SENSORS... FETCHING ATMOSPHERIC DATA... GPS LOCK: 39.9042° N, 116.4074° E... ENGINE STATUS: OPTIMAL...
-                            </div>
-                        </div>
 
-                        {/* 2. Central Tactical Orbit */}
-                        <div className="relative flex-1 flex flex-col items-center justify-center min-h-[350px]">
-                            {/* Decorative Background HUD Brackets */}
-                            <div className="absolute inset-x-8 top-10 bottom-10 border-x border-white/5 pointer-events-none">
-                                <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-white/5 to-transparent" />
-                                <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-white/5 to-transparent" />
-                            </div>
 
-                            <div className="relative w-80 h-80 flex items-center justify-center">
-                                {/* Outer Sensor Ring (New) */}
-                                <motion.div
-                                    animate={{ rotate: -360 }}
-                                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                                    className="absolute -inset-10 border border-white/[0.03] rounded-full"
-                                >
-                                    {[0, 90, 180, 270].map(deg => (
-                                        <div
-                                            key={deg}
-                                            style={{ transform: `rotate(${deg}deg) translateY(-100%)` }}
-                                            className="absolute top-1/2 left-1/2 w-1 h-3 bg-cyan-500/20 -translate-x-1/2"
-                                        />
-                                    ))}
-                                </motion.div>
-
-                                {/* Rotating Rings */}
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-0 border-[0.5px] border-dashed border-white/10 rounded-full"
-                                />
-                                <motion.div
-                                    animate={{ rotate: -360 }}
-                                    transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-6 border-[0.5px] border-white/5 rounded-full"
-                                />
-
-                                {/* The Central Visualization */}
-                                <div className="relative z-10 text-center space-y-2">
-                                    <div className="relative">
-                                        <motion.div
-                                            animate={{ scale: displayWeather?.isSimulating ? [1, 1.1, 1] : [1, 1.05, 1] }}
-                                            transition={{ duration: displayWeather?.isSimulating ? 1 : 4, repeat: Infinity }}
-                                            className={`text-7xl font-black italic tracking-tighter ${tsbHeading.color} drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]`}
-                                        >
+                        {/* 2. Tactical Content Stack */}
+                        <div className="relative z-10 flex-1 overflow-y-auto px-6 py-6 space-y-8 scrollbar-hide">
+                            {/* Key Performance Indicators */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-6 pro-card bg-white/[0.03] space-y-2">
+                                    <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest">{t('metrics.form')}</p>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className={`text-4xl font-black italic ${(user.tsb ?? 0) > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                                             {(user.tsb ?? 0) > 0 ? '+' : ''}{user.tsb ?? 0}
-                                        </motion.div>
-                                        <div className="absolute -top-4 -right-10">
-                                            <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] border border-white/10 px-2 py-0.5 rounded backdrop-blur-md">FORM</span>
+                                        </span>
+                                        <span className="text-xs font-bold text-white/20">TSB</span>
+                                    </div>
+                                    <p className="text-[9px] font-bold text-white/40 uppercase tracking-tighter">{t('hud.physioStatus')}</p>
+                                </div>
+                                <div className="grid grid-rows-2 gap-4">
+                                    <div className="p-4 pro-card bg-white/[0.03] flex justify-between items-center">
+                                        <div className="flex items-center gap-2">
+                                            <ThermometerSun size={14} className="text-amber-400" />
+                                            <span className="text-[10px] font-bold text-white/40 uppercase">{t('metrics.feel')}</span>
                                         </div>
+                                        <span className="text-lg font-black text-white">{displayWeather?.temp || '--'}°C</span>
                                     </div>
-                                    <div className="flex flex-col items-center">
-                                        <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.5em] px-4 py-1.5 bg-white/5 rounded backdrop-blur-xl border border-white/10">
-                                            {t('hud.physioStatus')}
-                                        </p>
-                                        {/* Status Subtext Indicator */}
-                                        <motion.div
-                                            animate={{ opacity: [0.3, 0.6, 0.3] }}
-                                            transition={{ duration: 2, repeat: Infinity }}
-                                            className="text-[7px] font-mono text-cyan-400 mt-2 tracking-widest uppercase"
-                                        >
-                                            &gt;&gt; Live Telemetry Feed &lt;&lt;
-                                        </motion.div>
+                                    <div className="p-4 pro-card bg-white/[0.03] flex justify-between items-center">
+                                        <div className="flex items-center gap-2">
+                                            <Wind size={14} className="text-blue-400" />
+                                            <span className="text-[10px] font-bold text-white/40 uppercase">{t('metrics.wind')}</span>
+                                        </div>
+                                        <span className="text-lg font-black text-white">{displayWeather?.windSpeed || '--'}<span className="text-[10px] ml-1 opacity-30">KMH</span></span>
                                     </div>
-                                </div>
-
-                                {/* HUD Corner Indicators */}
-                                <div className="absolute top-0 left-0 p-4 font-mono text-[10px] text-cyan-400/80 flex flex-col">
-                                    <span className="border-l-2 border-t-2 border-cyan-400/40 pl-3 pt-2 uppercase tracking-tighter opacity-50">Wind Speed</span>
-                                    <span className={`pl-3 font-black mt-1 transition-all text-sm ${displayWeather?.isSimulating ? 'text-cyan-400 scale-110' : 'text-white'}`}>
-                                        {displayWeather?.windSpeed || '--'} <span className="text-[8px] opacity-40">km/h</span>
-                                    </span>
-                                </div>
-                                <div className="absolute top-0 right-0 p-4 font-mono text-[10px] text-purple-400/80 flex flex-col items-end text-right">
-                                    <span className="border-r-2 border-t-2 border-purple-400/40 pr-3 pt-2 uppercase tracking-tighter opacity-50">Temperature</span>
-                                    <span className={`pr-3 font-black mt-1 transition-all text-sm ${displayWeather?.isSimulating ? 'text-purple-400 scale-110' : 'text-white'}`}>
-                                        {displayWeather?.temp || '--'}<span className="text-[8px] opacity-40">°C</span>
-                                    </span>
-                                </div>
-                                <div className="absolute bottom-0 left-0 p-4 font-mono text-[10px] text-emerald-400/80 flex flex-col">
-                                    <span className="border-l-2 border-b-2 border-emerald-400/40 pl-3 pb-2 uppercase tracking-tighter opacity-50">Engine FTP</span>
-                                    <span className="pl-3 font-black text-white mt-1 text-sm">{user.ftp}<span className="text-[8px] opacity-40">W</span></span>
-                                </div>
-                                <div className="absolute bottom-0 right-0 p-4 font-mono text-[10px] text-amber-400/80 flex flex-col items-end text-right">
-                                    <span className="border-r-2 border-b-2 border-amber-400/40 pr-3 pb-2 uppercase tracking-tighter opacity-50">Mass Class</span>
-                                    <span className="pr-3 font-black text-white mt-1 text-sm">{user.weight}<span className="text-[8px] opacity-40">kg</span></span>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* 3. Radio Comms Briefing */}
-                        <div className="relative z-10 px-6 pb-6 space-y-4">
-                            {/* Decorative HUD Separator (New) */}
-                            <div className="flex items-center gap-2 opacity-10">
-                                <div className="h-[1px] flex-1 bg-white" />
-                                <div className="w-1 h-1 bg-white rotate-45" />
-                                <div className="h-[1px] w-12 bg-white" />
-                                <div className="w-1 h-1 bg-white rotate-45" />
-                                <div className="h-[1px] flex-1 bg-white" />
-                            </div>
-
-                            <div className="relative group">
-                                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                                <div className="relative bg-[#050810]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6  space-y-4 shadow-2xl">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="liquid-icon purple p-1.5 rounded-lg border border-purple-500/20">
-                                                <Brain size={12} className="text-purple-400" />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] italic">{t('hud.comms')}</span>
-                                                <span className="text-white/20 text-[6px] font-mono uppercase tracking-[0.3em]">Encrypted-Auth-Link</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-0.5 items-end h-6">
-                                            {[1, 2, 3, 4, 5, 2, 1].map((i, idx) => (
-                                                <motion.div
-                                                    key={idx}
-                                                    animate={{ height: displayWeather?.isSimulating ? [6, 16, 6] : [4, i * 3, 4] }}
-                                                    transition={{ duration: 0.4, repeat: Infinity, delay: idx * 0.05 }}
-                                                    className={`w-0.5 rounded-full ${displayWeather?.isSimulating ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.6)]' : 'bg-purple-500/40'}`}
-                                                />
-                                            ))}
-                                        </div>
+                            <div className="pro-card bg-white/[0.03] p-6 space-y-6">
+                                <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                                    <div className="liquid-icon purple p-2">
+                                        <Brain size={16} />
                                     </div>
-
-                                    <div className="space-y-4">
-                                        <div className="relative">
-                                            <Quote size={24} className="absolute -top-2 -left-3 text-white/[0.03] rotate-12" />
-                                            <p className="relative z-10 text-sm font-bold text-white/90 leading-relaxed italic border-l-2 border-purple-500/40 pl-4 py-1">
-                                                {isLoading ? t('actions.details') : `"${structuredData?.advice || "Keep it up."}"`}
-                                            </p>
+                                    <span className="text-xs font-black text-white/90 uppercase tracking-widest italic">{t('hud.comms')}</span>
+                                </div>
+                                <div className="space-y-4">
+                                    <p className="text-lg font-bold text-white/90 leading-relaxed italic border-l-2 border-purple-500/40 pl-4">
+                                        {isLoading ? t('actions.details') : `"${structuredData?.advice || "..."}"`}
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">{t('hud.targetMode')}</span>
+                                            <p className="text-sm font-black text-cyan-400 italic">{structuredData?.intensity || tCommon('loading')}</p>
                                         </div>
-
-                                        <div className="grid grid-cols-2 gap-3 pt-1">
-                                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
-                                                <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Target Mode</span>
-                                                <span className="block text-xs font-black text-cyan-400 italic leading-none">{structuredData?.intensity || "Loading..."}</span>
-                                            </div>
-                                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
-                                                <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Logic Stream</span>
-                                                <span className="block text-[10px] font-medium text-white/50 italic leading-snug line-clamp-1 truncate">{structuredData?.logic || "AI 推演成功"}</span>
-                                            </div>
+                                        <div className="space-y-1">
+                                            <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">{t('hud.logicStream')}</span>
+                                            <p className="text-[10px] font-medium text-white/50 italic">{structuredData?.logic || t('hud.logicStable')}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Simulation Scrubber */}
-                            <div className="p-5 bg-white/[0.03] border border-white/10 rounded-2xl space-y-4 shadow-xl">
-                                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-white/40">
+                            <div className="pro-card bg-white/[0.03] p-6 space-y-6">
+                                <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2">
-                                        <Zap size={10} className={simulatedHour > 0 ? 'text-cyan-400' : ''} />
-                                        <span>{t('hud.tacticalSimulation')}</span>
+                                        <ThermometerSun size={14} className={simulatedHour > 0 ? 'text-cyan-400' : 'text-white/30'} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{t('hud.tacticalSimulation')}</span>
                                     </div>
-                                    <span className={`${simulatedHour > 0 ? 'text-cyan-400 animate-pulse' : 'text-white/20'}`}>
+                                    <span className={`text-[10px] font-black ${simulatedHour > 0 ? 'text-cyan-400' : 'text-white/20'}`}>
                                         {simulatedHour > 0 ? t('hud.forecast', { hour: simulatedHour }) : t('hud.now')}
                                     </span>
                                 </div>
-                                <div className="relative group px-1">
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="8"
-                                        value={simulatedHour}
-                                        onChange={(e) => setSimulatedHour(parseInt(e.target.value))}
-                                        className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-cyan-400 hover:accent-cyan-300 transition-all"
-                                    />
-                                    <div className="flex justify-between mt-2 font-mono text-[8px] text-white/30 uppercase tracking-tighter">
-                                        <span className={simulatedHour === 0 ? 'text-cyan-400 font-black' : ''}>Now</span>
-                                        <span className={simulatedHour === 4 ? 'text-cyan-400 font-black' : ''}>+4H</span>
-                                        <span className={simulatedHour === 8 ? 'text-cyan-400 font-black' : ''}>+8H</span>
-                                    </div>
-                                </div>
+                                <input
+                                    type="range" min="0" max="8"
+                                    value={simulatedHour}
+                                    onChange={(e) => setSimulatedHour(parseInt(e.target.value))}
+                                    className="w-full"
+                                />
                             </div>
-
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="flex items-center gap-4 pt-1 pb-2 opacity-30"
-                            >
-                                <div className="flex-1 h-[0.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-                                <div className="text-[8px] font-black italic text-white uppercase tracking-[0.5em] shrink-0">
-                                    VeloTrace Tactical Engine Pro
-                                </div>
-                                <div className="flex-1 h-[0.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-                            </motion.div>
                         </div>
 
                         {/* Safe Area Spacer */}

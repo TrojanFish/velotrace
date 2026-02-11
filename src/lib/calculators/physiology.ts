@@ -101,7 +101,7 @@ export function calculateIdealRacingWeight(heightCm: number, sex: 'male' | 'fema
     status: string
 } {
     // Hamwi Formula as a baseline for cyclists
-    let base = sex === 'male' ? 48 : 45.5;
+    const base = sex === 'male' ? 48 : 45.5;
     const additionalH = Math.max(0, (heightCm - 152.4) / 2.54);
     const weightBase = base + (additionalH * 2.7);
 

@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Skeleton } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useTranslations, useLocale } from 'next-intl';
 
 // Lazy load heavy canvas component
 const DynamicWindFieldMap = dynamic(
@@ -29,8 +30,10 @@ const DynamicWindFieldMap = dynamic(
 export default function Home() {
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const t = useTranslations('Dashboard');
+  const locale = useLocale();
 
-  const today = new Date().toLocaleDateString('zh-CN', {
+  const today = new Date().toLocaleDateString(locale, {
     month: 'long',
     day: 'numeric',
     weekday: 'long'
@@ -87,7 +90,7 @@ export default function Home() {
         <div className="section-header">
           <div className="section-indicator" />
           <h2 className="section-title">
-            战术气象 / Environment
+            {t('sections.environment')}
           </h2>
         </div>
         <div className="grid grid-cols-1 gap-5">
@@ -102,7 +105,7 @@ export default function Home() {
         <div className="section-header">
           <div className="section-indicator orange" />
           <h2 className="section-title">
-            准备就绪 / Prep
+            {t('sections.prep')}
           </h2>
         </div>
         <div className="grid grid-cols-1 gap-5">

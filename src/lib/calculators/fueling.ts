@@ -41,6 +41,6 @@ export function calculateFueling({
         carbs: totalCarbs,
         water: totalWater,
         suggestedGels: gelsNeeded,
-        summary: `${totalCarbs}g 碳水 / ${totalWater}ml 水分`
+        summary: `${totalCarbs}g 碳水 / ${Math.ceil(totalWater / 500)} 瓶 水分`
     };
 }

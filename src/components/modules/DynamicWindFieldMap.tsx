@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Wind, Navigation, Loader2, AlertTriangle, ChevronDown } from "lucide-react";
 import polyline from "polyline-encoded";
 import { useStore } from "@/store/useStore";
+import { useTranslations } from 'next-intl';
 
 interface Particle {
     x: number;
@@ -27,25 +28,27 @@ interface StravaRoute {
 }
 
 export function DynamicWindFieldMap() {
+    const t = useTranslations('WindField');
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { stravaRoutesCache, setStravaRoutesCache } = useStore();
     const [is3D, setIs3D] = useState(true);
     const [routePoints, setRoutePoints] = useState<Point[]>([]);
     const [isLoading, setIsLoading] = useState(!stravaRoutesCache);
-    const [allRoutes, setAllRoutes] = useState<StravaRoute[]>(stravaRoutesCache?.data || []);
+    const [allRoutes, setAllRoutes] = useState<StravaRoute[]>((stravaRoutesCache?.data as StravaRoute[]) || []);
     const [activeRouteIndex, setActiveRouteIndex] = useState<number>(0);
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [showSelector, setShowSelector] = useState(false);
 
     // Initial projection if cache exists
     useEffect(() => {
-        if (stravaRoutesCache?.data && stravaRoutesCache.data.length > 0) {
-            decodeAndProject(stravaRoutesCache.data[0].polyline);
+        const cachedRoutes = stravaRoutesCache?.data as StravaRoute[];
+        if (cachedRoutes && cachedRoutes.length > 0) {
+            decodeAndProject(cachedRoutes[0].polyline);
         } else if (stravaRoutesCache) {
             // Cache exists but is empty
             useDemoRoute();
         }
-    }, []);
+    }, [stravaRoutesCache]);
 
     const useDemoRoute = () => {
         setRoutePoints([
@@ -55,7 +58,7 @@ export function DynamicWindFieldMap() {
             { x: 300, y: 100 },
             { x: 350, y: 150 }
         ]);
-        setStatusMessage("DEMO MODE: Using Synthetic Loop");
+        setStatusMessage(t('demoMode'));
     };
 
     useEffect(() => {
@@ -222,7 +225,7 @@ export function DynamicWindFieldMap() {
                         </button>
                     ) : (
                         <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
-                            {isLoading ? 'SYNCING DATA...' : 'VeloTrace Demo Loop'}
+                            {isLoading ? t('syncing') : 'VeloTrace Demo Loop'}
                         </h2>
                     )}
 
@@ -230,7 +233,7 @@ export function DynamicWindFieldMap() {
                     {showSelector && allRoutes.length > 0 && (
                         <div className="absolute top-full left-0 mt-2 w-60 liquid-modal p-2 z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
                             <p className="px-2 py-1.5 text-[8px] font-bold text-white/30 uppercase tracking-widest border-b border-white/[0.05] mb-2">
-                                选择骑行路线 / Select Route
+                                {t('selectRoute')}
                             </p>
                             <div className="max-h-48 overflow-y-auto space-y-1">
                                 {allRoutes.map((route, idx) => (
@@ -312,16 +315,16 @@ export function DynamicWindFieldMap() {
                         <Wind size={14} />
                     </div>
                     <div>
-                        <p className="text-[10px] font-bold text-white/70 uppercase tracking-wider">气流动力学模拟</p>
-                        <p className="text-[8px] text-white/30 uppercase">Real-time CFD Visualization</p>
+                        <p className="text-[10px] font-bold text-white/70 uppercase tracking-wider">{t('title')}</p>
+                        <p className="text-[8px] text-white/30 uppercase">{t('subtitle')}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="liquid-tag text-[7px]">
-                        {allRoutes[activeRouteIndex]?.distance ? `${(allRoutes[activeRouteIndex].distance / 1000).toFixed(1)}KM` : 'LOCAL SIM'}
+                        {allRoutes[activeRouteIndex]?.distance ? `${(allRoutes[activeRouteIndex].distance / 1000).toFixed(1)}KM` : t('localSim')}
                     </span>
                     <span className="liquid-tag purple text-[7px]">
-                        {allRoutes.length} Routes
+                        {t('routes', { count: allRoutes.length })}
                     </span>
                 </div>
             </div>

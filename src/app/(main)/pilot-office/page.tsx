@@ -209,7 +209,7 @@ export default function GaragePage() {
                     </button>
                 </div>
 
-                <div className={`pro-card space-y-5 transition-all ${!isPhysioLocked ? 'border-rose-500/30' : ''}`}>
+                <div className={`pro-card space-y-5 transition-all ${!isPhysioLocked ? 'border-rose-500/30' : ''}`.trim()}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 text-[8px] font-bold text-white/30 uppercase tracking-widest">
@@ -370,15 +370,22 @@ export default function GaragePage() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-white/80">{t('unitSystem')}</p>
-                                    <p className="text-[10px] text-white/30 uppercase font-bold tracking-widest">{user.unitSystem === 'metric' ? 'Metric' : 'Imperial'}</p>
                                 </div>
                             </div>
-                            <button
-                                onClick={toggleUnitSystem}
-                                className="liquid-button py-2 px-6 text-[10px] font-black uppercase tracking-widest"
-                            >
-                                {commonT('refresh')}
-                            </button>
+                            <div className="liquid-segment p-0.5">
+                                <button
+                                    onClick={() => user.unitSystem !== 'metric' && toggleUnitSystem()}
+                                    className={`liquid-segment-button py-1 px-3 text-[9px] ${user.unitSystem === 'metric' ? 'active' : ''}`}
+                                >
+                                    {t('metric')}
+                                </button>
+                                <button
+                                    onClick={() => user.unitSystem !== 'imperial' && toggleUnitSystem()}
+                                    className={`liquid-segment-button py-1 px-3 text-[9px] ${user.unitSystem === 'imperial' ? 'active' : ''}`}
+                                >
+                                    {t('imperial')}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -513,7 +520,7 @@ export default function GaragePage() {
                         </button>
                     </div>
 
-                    <div className="p-5">
+                    <div className="p-2">
                         {assetTab === 'wheelset' && (
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">

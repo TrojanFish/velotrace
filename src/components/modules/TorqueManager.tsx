@@ -35,9 +35,9 @@ export function TorqueManager() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             {/* Header / Standard References */}
-            <div className="pro-card p-4 border-cyan-500/20 bg-cyan-500/5">
+            <div className="pro-card p-3 border-cyan-500/20 bg-cyan-500/5">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="liquid-icon info p-1.5">
                         <ShieldCheck size={14} />
@@ -84,7 +84,7 @@ export function TorqueManager() {
                         </div>
                     ) : (
                         bike?.torqueSettings.map((s) => (
-                            <div key={s.id} className="pro-card p-4 flex items-center justify-between group">
+                            <div key={s.id} className="pro-card p-3 flex items-center justify-between group">
                                 <div className="space-y-1">
                                     <p className="text-xs font-bold text-white/80 uppercase">{s.component}</p>
                                     <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest leading-none">{t('specified')}</p>
@@ -106,7 +106,7 @@ export function TorqueManager() {
 
             {/* Custom Add Modal-like (Simulated) */}
             {isAdding && (
-                <div className="pro-card p-5 border-cyan-500/50 space-y-4">
+                <div className="pro-card p-4 border-cyan-500/50 space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                         <input
                             placeholder={t('placeholderComponent')}

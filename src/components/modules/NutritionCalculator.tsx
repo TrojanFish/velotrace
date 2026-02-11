@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 
 export function NutritionCalculator() {
     const t = useTranslations('NutritionCalculator');
+    const tFuel = useTranslations('FuelProducts');
     const { user } = useStore();
 
     const [duration, setDuration] = useState(2);
@@ -85,11 +86,17 @@ export function NutritionCalculator() {
                         <div className="flex items-center gap-1"><Clock size={10} /> {t('duration')}</div>
                         <span className="text-amber-400">{duration}h</span>
                     </div>
-                    <input
-                        type="range" min="0.5" max="8" step="0.5"
-                        value={duration} onChange={(e) => setDuration(parseFloat(e.target.value))}
-                        className="w-full h-1.5"
-                    />
+                    <div className="relative h-6 flex items-center">
+                        <input
+                            type="range" min="0.5" max="8" step="0.5"
+                            value={duration} onChange={(e) => setDuration(parseFloat(e.target.value))}
+                            className="w-full relative z-10"
+                        />
+                        <div
+                            className="absolute left-0 h-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 pointer-events-none opacity-60 transition-all"
+                            style={{ width: `${((duration - 0.5) / 7.5) * 100}%` }}
+                        />
+                    </div>
                 </div>
 
                 <div className="space-y-3">
@@ -97,11 +104,17 @@ export function NutritionCalculator() {
                         <div className="flex items-center gap-1"><Zap size={10} /> {t('intensity')}</div>
                         <span className="text-amber-400">{intensity}%</span>
                     </div>
-                    <input
-                        type="range" min="20" max="100" step="5"
-                        value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))}
-                        className="w-full h-1.5"
-                    />
+                    <div className="relative h-6 flex items-center">
+                        <input
+                            type="range" min="20" max="100" step="5"
+                            value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))}
+                            className="w-full relative z-10"
+                        />
+                        <div
+                            className="absolute left-0 h-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 pointer-events-none opacity-60 transition-all"
+                            style={{ width: `${((intensity - 20) / 80) * 100}%` }}
+                        />
+                    </div>
                 </div>
 
                 <div className="space-y-3">
@@ -109,11 +122,17 @@ export function NutritionCalculator() {
                         <div className="flex items-center gap-1"><Thermometer size={10} /> {t('temperature')}</div>
                         <span className="text-amber-400">{temp}°C</span>
                     </div>
-                    <input
-                        type="range" min="0" max="40" step="1"
-                        value={temp} onChange={(e) => setTemp(parseInt(e.target.value))}
-                        className="w-full h-1.5"
-                    />
+                    <div className="relative h-6 flex items-center">
+                        <input
+                            type="range" min="0" max="40" step="1"
+                            value={temp} onChange={(e) => setTemp(parseInt(e.target.value))}
+                            className="w-full relative z-10"
+                        />
+                        <div
+                            className="absolute left-0 h-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 pointer-events-none opacity-60 transition-all"
+                            style={{ width: `${(temp / 40) * 100}%` }}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -135,7 +154,7 @@ export function NutritionCalculator() {
                         >
                             <span className="flex items-center gap-1.5">
                                 {selectedProductIds.includes(product.id) && <Check size={10} />}
-                                {product.name}
+                                {tFuel(product.id)}
                             </span>
                         </button>
                     ))}
@@ -166,8 +185,8 @@ export function NutritionCalculator() {
                         <span className="text-[10px] font-black uppercase">{t('fluidDemand')}</span>
                     </div>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-black italic tracking-tighter text-white pr-2">{result.totalFluid}</span>
-                        <span className="text-xs font-bold text-white/30 uppercase">ml</span>
+                        <span className="text-4xl font-black italic tracking-tighter text-white pr-2">{result.bottleCount}</span>
+                        <span className="text-xs font-bold text-white/30 uppercase">{t('fluidUnit')}</span>
                     </div>
                 </div>
             </div>
@@ -187,16 +206,16 @@ export function NutritionCalculator() {
                                     {item.product.type === 'drink' ? <Droplets size={16} /> : <Zap size={16} />}
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-white/90">{item.product.name}</p>
+                                    <p className="text-xs font-bold text-white/90">{tFuel(item.product.id)}</p>
                                     <p className="text-[9px] text-white/30 font-medium uppercase tracking-tighter">
-                                        {t('perUnit', { unit: item.product.unit, carbs: item.product.carbs })}
+                                        {t('perUnit', { unit: tFuel(`units.${item.product.unit}`), carbs: item.product.carbs })}
                                         {item.product.sodium ? t('sodium', { sodium: item.product.sodium }) : ''}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-lg font-black italic text-amber-400">x{item.count}</span>
-                                <span className="text-[9px] text-white/30 font-bold uppercase">{item.product.unit}</span>
+                                <span className="text-[9px] text-white/30 font-bold uppercase">{tFuel(`units.${item.product.unit}`)}</span>
                             </div>
                         </div>
                     )) : (

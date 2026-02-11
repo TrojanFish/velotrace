@@ -170,16 +170,16 @@ export function RideInsightCard() {
                     <div className="flex justify-between items-center px-1">
                         <div className="flex gap-4">
                             <div className="flex flex-col">
-                                <span className="text-[7px] text-slate-500 uppercase font-black tracking-widest">Fitness (CTL)</span>
+                                <span className="text-[7px] text-slate-500 uppercase font-black tracking-widest">{t('fitness')}</span>
                                 <span className="text-xs font-black italic text-purple-400">{trainingStatus.fitness}</span>
                             </div>
                             <div className="flex flex-col border-l border-slate-800 pl-4">
-                                <span className="text-[7px] text-slate-500 uppercase font-black tracking-widest">Fatigue (ATL)</span>
+                                <span className="text-[7px] text-slate-500 uppercase font-black tracking-widest">{t('fatigue')}</span>
                                 <span className="text-xs font-black italic text-orange-400">{trainingStatus.fatigue}</span>
                             </div>
                             <div className="flex flex-col border-l border-slate-800 pl-4">
-                                <span className="text-[7px] text-slate-500 uppercase font-black tracking-widest">Balance (TSB)</span>
-                                <span className="text-xs font-black italic text-emerald-400">+{trainingStatus.form}</span>
+                                <span className="text-[7px] text-slate-500 uppercase font-black tracking-widest">{t('balance')}</span>
+                                <span className="text-xs font-black italic text-emerald-400">{(trainingStatus.form > 0 ? '+' : '') + trainingStatus.form}</span>
                             </div>
                         </div>
                     </div>
@@ -206,15 +206,15 @@ export function RideInsightCard() {
                     {/* Peak Power Row */}
                     <div className="grid grid-cols-3 gap-2">
                         <div className="flex flex-col items-center justify-center p-2 bg-slate-900/40 rounded-lg border border-slate-800/40">
-                            <span className="text-[8px] font-bold text-slate-500 uppercase">⚡ 15s Peak</span>
+                            <span className="text-[8px] font-bold text-slate-500 uppercase">{t('peak15s')}</span>
                             <span className="text-xs font-black italic text-slate-200">{activity.maxPower ? Math.round(activity.maxPower * 0.9) : '--'}w</span>
                         </div>
                         <div className="flex flex-col items-center justify-center p-2 bg-slate-900/40 rounded-lg border border-slate-800/40">
-                            <span className="text-[8px] font-bold text-slate-500 uppercase">⚡ 1min Peak</span>
+                            <span className="text-[8px] font-bold text-slate-500 uppercase">{t('peak1m')}</span>
                             <span className="text-xs font-black italic text-slate-200">{activity.averagePower ? Math.round(activity.averagePower * 1.25) : '--'}w</span>
                         </div>
                         <div className="flex flex-col items-center justify-center p-2 bg-slate-900/40 rounded-lg border border-slate-800/40">
-                            <span className="text-[8px] font-bold text-slate-500 uppercase">📊 Load (TSS)</span>
+                            <span className="text-[8px] font-bold text-slate-500 uppercase">{t('load')}</span>
                             <span className="text-xs font-black italic text-cyan-400">{tss || '--'}</span>
                         </div>
                     </div>
@@ -241,7 +241,7 @@ export function RideInsightCard() {
                                 <div className="flex justify-between items-end mb-1">
                                     <div className="flex items-center gap-1.5">
                                         <Flame size={12} className="text-orange-500" />
-                                        <span className="text-[8px] font-black text-slate-300 uppercase italic">Fuel System</span>
+                                        <span className="text-[8px] font-black text-slate-300 uppercase italic">{t('fuelSystem')}</span>
                                     </div>
                                 </div>
                                 <div className="flex h-1.5 w-full rounded-full bg-slate-900 overflow-hidden p-0.5">
@@ -249,8 +249,8 @@ export function RideInsightCard() {
                                     <div className="h-full bg-cyan-500 rounded-full ml-0.5" style={{ width: `${metabolism.carbPercent}%` }} />
                                 </div>
                                 <div className="flex justify-between text-[7px] font-bold uppercase mt-1">
-                                    <span className="text-orange-500">FAT {metabolism.fatPercent}%</span>
-                                    <span className="text-cyan-400">CARB {metabolism.carbPercent}%</span>
+                                    <span className="text-orange-500">{t('fat')} {metabolism.fatPercent}%</span>
+                                    <span className="text-cyan-400">{t('carb')} {metabolism.carbPercent}%</span>
                                 </div>
                             </div>
                         )}
@@ -260,7 +260,7 @@ export function RideInsightCard() {
                                 <div className="flex justify-between items-end mb-1">
                                     <div className="flex items-center gap-1.5">
                                         <Zap size={12} className="text-cyan-400" />
-                                        <span className="text-[8px] font-black text-slate-300 uppercase italic">Virtual CdA</span>
+                                        <span className="text-[8px] font-black text-slate-300 uppercase italic">{t('vCda')}</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-col">

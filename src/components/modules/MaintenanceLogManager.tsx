@@ -32,7 +32,7 @@ export function MaintenanceLogManager() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
                 <div className="section-header mb-0">
                     <div className="section-indicator orange" />
@@ -47,7 +47,7 @@ export function MaintenanceLogManager() {
             </div>
 
             {isAdding && (
-                <div className="pro-card p-5 border-orange-500/50 space-y-4">
+                <div className="pro-card p-4 border-orange-500/50 space-y-4">
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest">{t('placeholderTitle')}</label>
@@ -86,7 +86,7 @@ export function MaintenanceLogManager() {
                 ) : (
                     bike?.maintenanceLogs.map((log) => (
                         <div key={log.id} className="pro-card p-0 overflow-hidden group">
-                            <div className="p-4 border-b border-white/5 bg-white/[0.01] flex items-center justify-between">
+                            <div className="p-3 border-b border-white/5 bg-white/[0.01] flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="liquid-icon warning p-1.5 grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
                                         <Activity size={14} />
@@ -104,7 +104,7 @@ export function MaintenanceLogManager() {
                                 </button>
                             </div>
                             {log.description && (
-                                <div className="p-4">
+                                <div className="p-3">
                                     <p className="text-[10px] text-white/50 leading-relaxed italic">{log.description}</p>
                                 </div>
                             )}

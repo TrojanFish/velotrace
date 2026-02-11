@@ -8,17 +8,20 @@ import { MMPTrendCard } from "@/components/modules/MMPTrendCard";
 import { HeartRateZoneCard } from "@/components/modules/HeartRateZoneCard";
 import { RiderLevelCard } from "@/components/modules/RiderLevelCard";
 import { BarChart3, TrendingUp, Activity, Sparkles } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export default function AnalyticsPage() {
+    const t = useTranslations('Analytics');
+
     return (
         <main className="space-y-8 pb-12">
             {/* Header */}
             <header className="mb-6">
                 <h1 className="text-3xl font-black text-gradient-aurora italic tracking-tighter leading-none mb-1">
-                    DATA HUB
+                    {t('title')}
                 </h1>
                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] ml-0.5">
-                    生理洞察与长周期分析
+                    {t('subtitle')}
                 </p>
             </header>
 
@@ -26,7 +29,7 @@ export default function AnalyticsPage() {
             <section className="space-y-5">
                 <div className="section-header">
                     <div className="section-indicator purple" />
-                    <h2 className="section-title">训练负荷 / Training Load</h2>
+                    <h2 className="section-title">{t('sections.load')}</h2>
                 </div>
                 <PMCTrendCard />
                 <WeeklyStatsCard />
@@ -37,7 +40,7 @@ export default function AnalyticsPage() {
                 <RideInsightCard />
                 <div className="section-header">
                     <div className="section-indicator pink" />
-                    <h2 className="section-title">最近分段快讯</h2>
+                    <h2 className="section-title">{t('sections.segments')}</h2>
                 </div>
                 <SegmentChallengeCard />
             </section>
@@ -48,7 +51,7 @@ export default function AnalyticsPage() {
                     <div className="liquid-icon danger p-1.5">
                         <Activity size={12} />
                     </div>
-                    <h2 className="section-title">生理引擎 / Physiological Engine</h2>
+                    <h2 className="section-title">{t('sections.engine')}</h2>
                 </div>
                 <RiderLevelCard />
                 <HeartRateZoneCard />
@@ -60,7 +63,7 @@ export default function AnalyticsPage() {
                     <div className="liquid-icon warning p-1.5">
                         <TrendingUp size={12} />
                     </div>
-                    <h2 className="section-title">战力解构 / Power Profile</h2>
+                    <h2 className="section-title">{t('sections.power')}</h2>
                 </div>
                 <MMPTrendCard />
             </section>

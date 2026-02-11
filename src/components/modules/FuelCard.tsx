@@ -49,7 +49,7 @@ export function FuelCard() {
                     <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider">{t('duration')}</span>
                     <span className="text-sm font-bold text-gradient-cyan">{t('hours', { duration })}</span>
                 </div>
-                <div className="relative">
+                <div className="relative h-6 flex items-center">
                     <input
                         type="range"
                         min="0.5"
@@ -57,11 +57,11 @@ export function FuelCard() {
                         step="0.5"
                         value={duration}
                         onChange={(e) => setDuration(parseFloat(e.target.value))}
-                        className="w-full"
+                        className="w-full relative z-10"
                     />
                     {/* Progress overlay */}
                     <div
-                        className="absolute top-1/2 left-0 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 pointer-events-none -translate-y-1/2 opacity-60"
+                        className="absolute left-0 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 pointer-events-none opacity-60 transition-all"
                         style={{ width: `${((duration - 0.5) / 11.5) * 100}%` }}
                     />
                 </div>
@@ -93,7 +93,7 @@ export function FuelCard() {
                     </div>
                     <div className="liquid-tag">
                         <Droplet size={10} />
-                        {t('water', { count: Math.round(fuel.water / 500) })}
+                        {t('water', { amount: Math.ceil(fuel.water / 500) })}
                     </div>
                 </div>
             </div>

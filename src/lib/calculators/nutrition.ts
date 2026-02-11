@@ -30,6 +30,6 @@ export function calculateNutrition(input: NutritionInput) {
         needsElectrolytes,
         // Suggested items (standard counts)
         gelCount: Math.ceil(totalCarbs / 25), // 25g per gel
-        bottleCount: Math.ceil(totalFluid / 600), // 600ml per bottle
+        bottleCount: Math.ceil(totalFluid / 500), // 500ml per bottle
     };
 }

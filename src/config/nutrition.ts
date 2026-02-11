@@ -18,6 +18,6 @@ export const FUEL_PRODUCTS: FuelProduct[] = [
     { id: 'precision-90', name: 'PF 90 Gel', brand: 'Precision', carbs: 90, type: 'gel', unit: '支' },
     { id: 'gu-gel', name: 'GU Energy Gel', brand: 'GU', carbs: 22, type: 'gel', unit: '支' },
     { id: 'salt-pill', name: '电解质盐丸', brand: 'Generic', carbs: 0, sodium: 250, type: 'salt-pill', unit: '颗' },
-    { id: 'drink-mix-40', name: '标准运动饮料 (单壶)', brand: 'Generic', carbs: 40, type: 'drink', unit: '壶' },
-    { id: 'drink-mix-80', name: '高能运动饮料 (Beta)', brand: 'Generic', carbs: 80, type: 'drink', unit: '壶' },
+    { id: 'drink-mix-40', name: '标准运动饮料 (单瓶)', brand: 'Generic', carbs: 40, type: 'drink', unit: '瓶' },
+    { id: 'drink-mix-80', name: '高能运动饮料 (Beta)', brand: 'Generic', carbs: 80, type: 'drink', unit: '瓶' },
 ];
