@@ -61,7 +61,7 @@
         }
     },
     "PilotOffice": {
-        "title": "车手办公室",
+        "title": "PILOT OFFICE",
         "subtitle": "生理特征、体能模型与器材资产管理",
         "unitSystem": "度量衡系统",
         "metric": "公制",
@@ -310,7 +310,7 @@
         "slope": "平均坡度",
         "wind": "路线风速",
         "adviceTitle": "实时交互建议",
-        "advice": "已加载动态风向矢量场. 地图上的 <span className=\"text-cyan-400/80\">青色箭头</span> 代表当前路线各个位置的瞬时风向。箭头越不透明，代表风力对通过该处的影响越显著。",
+        "advice": "已加载动态风向矢量场. 地图上的 <cyan>青色箭头</cyan> 代表当前路线各个位置的瞬时风向。箭头越不透明，代表风力对通过该处的影响越显著。",
         "loadingMap": "地图加载中...",
         "unnamed": "未命名路线"
     },

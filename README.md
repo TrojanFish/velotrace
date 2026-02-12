@@ -87,8 +87,9 @@ If you encounter "Failed to sync" or "Sign in error":
 - [x] Version 1: Strava Sync & Basic Metrics
 - [x] Version 2: PMC Trends & Virtual CdA
 - [x] Version 3: IndexedDB & Multi-Wheelset Support
-- [ ] Version 4: AI Tactical Briefing (GPT-powered)
-- [ ] Version 5: 3D Wind-Field Mapping
+- [x] Version 4: AI Tactical Briefing (GPT-powered Bio-Dynamic Status)
+- [x] Version 5: 3D Wind-Field Mapping & Simulation
+- [ ] Version 6: Social Leaderboards & Training Plan Generator
 
 ---
 

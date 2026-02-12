@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 
 export function MaintenanceLogManager() {
     const t = useTranslations('MaintenanceLog');
+    const tCommon = useTranslations('Common');
     const { bikes, activeBikeIndex, addMaintenanceLog, removeMaintenanceLog } = useStore();
     const bike = bikes[activeBikeIndex];
 
@@ -70,7 +71,7 @@ export function MaintenanceLogManager() {
                     </div>
                     <div className="flex gap-2">
                         <button onClick={() => setIsAdding(false)} className="flex-1 py-2 text-[10px] font-bold text-white/30 hover:text-white transition-colors">
-                            {useTranslations('Common')('cancel')}
+                            {tCommon('cancel')}
                         </button>
                         <button onClick={handleAdd} className="flex-1 liquid-button-primary py-2 text-[10px] font-bold">{t('save')}</button>
                     </div>

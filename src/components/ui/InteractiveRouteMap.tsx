@@ -70,14 +70,14 @@ function WindFieldOverlay({ points, windDeg, windSpeed }: { points: Point[], win
     return (
         <>
             {sampledPoints.map((p, i) => (
-                <CircleMarker
-                    key={i}
-                    center={[p.lat, p.lon]}
-                    radius={1}
-                    pathOptions={{ color: '#22d3ee', fillOpacity: 0.2, stroke: false }}
-                >
+                <div key={i}>
+                    <CircleMarker
+                        center={[p.lat, p.lon]}
+                        radius={1}
+                        pathOptions={{ color: '#22d3ee', fillOpacity: 0.2, stroke: false }}
+                    />
                     <WindVector lat={p.lat} lon={p.lon} deg={windDeg} speed={windSpeed} />
-                </CircleMarker>
+                </div>
             ))}
         </>
     );
@@ -85,17 +85,19 @@ function WindFieldOverlay({ points, windDeg, windSpeed }: { points: Point[], win
 
 function WindVector({ lat, lon, deg, speed }: { lat: number; lon: number; deg: number; speed: number }) {
     // We can't easily draw SVG arrows in standard Leaflet markers without custom icons
-    // So we use a DivIcon
+    // So we use a DivIcon and force the color via stroke attribute directly
+    const opacity = Math.min(1.0, Math.max(0.4, speed / 10));
+
     const arrowIcon = L.divIcon({
-        html: `<div style="transform: rotate(${deg}deg); opacity: ${Math.min(0.8, speed / 25)}; color: #22d3ee;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        html: `<div style="transform: rotate(${deg}deg);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity: ${opacity}; filter: drop-shadow(0 0 2px rgba(34,211,238,0.5));">
                     <line x1="12" y1="19" x2="12" y2="5"></line>
                     <polyline points="5 12 12 5 19 12"></polyline>
                 </svg>
                </div>`,
-        className: 'wind-arrow-icon',
-        iconSize: [16, 16],
-        iconAnchor: [8, 8]
+        className: 'wind-arrow-icon flex items-center justify-center',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
     });
 
     return <Marker position={[lat, lon]} icon={arrowIcon} />;

@@ -194,7 +194,7 @@ https://your-domain.vercel.app/api/auth/callback/strava
 **你的项目已经 98% 准备就绪！**
 
 ### 立即行动:
-1. ✅ 生成 PWA 图标（唯一阻断项）
+1. ✅ 生成 PWA 图标 (已完成)
 2. ✅ 提交代码到 GitHub
 3. ✅ 部署到 Vercel
 4. ✅ 配置 Strava 回调 URL

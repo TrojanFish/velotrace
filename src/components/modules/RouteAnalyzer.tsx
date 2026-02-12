@@ -127,7 +127,7 @@ export function RouteAnalyzer() {
                             <p className="text-xs font-bold text-cyan-400">{t('adviceTitle')}</p>
                             <p className="text-[10px] text-white/40 leading-relaxed font-medium">
                                 {t.rich('advice', {
-                                    span: (chunks) => <span className="text-cyan-400/80">{chunks}</span>
+                                    cyan: (chunks) => <span className="text-cyan-400/80">{chunks}</span>
                                 })}
                             </p>
                         </div>

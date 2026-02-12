@@ -48,15 +48,24 @@ VeloTrace/
     │       ├── ai/              # AI 功能 (简报生成)
     │       └── strava/          # Strava API 集成 (同步、历史、统计等)
     │
+    ├── messages/ - 国际化资源
+    │   ├── en-US.json           # 英文翻译
+    │   └── zh-CN.json           # 中文翻译
+    │
     ├── components/ - React 组件
     │   ├── Navigation.tsx       # 底部导航栏
     │   ├── Providers.tsx        # Context Providers
     │   │
     │   ├── modules/ - 功能模块组件
     │   │   ├── AIBriefingCard.tsx
-    │   │   ├── BikeCard.tsx
+    │   │   ├── DynamicWindFieldMap.tsx # 3D 风场可视化
+    │   │   ├── RouteWindForecastCard.tsx # 路线风向分析
     │   │   ├── WeatherCard.tsx
     │   │   └── ... (其他 20+ 功能卡片)
+
+... (rest of the file content)
+
+**最后更新**: 2026-02-11
     │   │
     │   └── ui/ - 基础 UI 组件
     │       ├── Card.tsx

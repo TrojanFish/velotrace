@@ -68,8 +68,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned Features (Roadmap)
-- [ ] AI Tactical Briefing with GPT-powered personalized insights
-- [ ] 3D Wind-Field Mapping for route visualization
 - [ ] Advanced training plan generator
 - [ ] Social features and leaderboards
 - [ ] Export functionality for training data
+
+## [0.2.0] - 2026-02-11
+
+### 🚀 Major Features
+- **AI Tactical Briefing (Bio-Dynamic Status)**:
+  - Added new `AIBriefingCard` component providing personalized daily riding advice.
+  - Implemented bilingual support (English/Chinese) for status headlines (e.g., "BIO-DYNAMIC STATUS" / "生理动态状态").
+  - Integrated TSB (Training Stress Balance) based mood/form analysis.
+- **Dynamic 3D Wind Field**:
+  - New `DynamicWindFieldMap` component visualization for route wind analysis.
+  - `RouteWindForecastCard` providing wind direction matching and tactical advice for planned routes.
+- **Internationalization (i18n) Overhaul**:
+  - Complete bilingual support for `RideInsightCard` (Fitness, Fatigue, Load, Fuel System, CdA metrics).
+  - Localized Weather Card (Sunrise/Sunset labels) and Fueling recommendations.
+
+### ✨ Improvements
+- **Nutrition Calculator Optimization**:
+  - Standardized fluid intake unit to **Bottles (500ml)** across `NutritionCalculator`, `FuelCard`, and `fueling.ts`.
+  - Replaced abstract "Liters" with actionable bottle counts for better user experience.
+- **Code Quality & Type Safety**:
+  - Hardened `StravaRoute` and `StravaCache` types in `useStore.ts` and components, replacing `any` with `unknown` + casting.
+  - Resolved multiple linting warnings in `physiology.ts` and `proxy.ts`.
+  - Fixed "TSB Balance" display logic to show `+` sign for positive values.
+
+### 🐛 Fixed
+- Fixed localization fallbacks for weather and wind direction labels.
+- Addressed potential hydration miscalculations by enforcing 500ml bottle standard.
+- Cleaned up unused variables in `proxy.ts` and component logic.
