@@ -4,7 +4,7 @@ import { useStore } from "@/store/useStore";
 import { useWeather } from "@/hooks/useWeather";
 import { Brain, Sparkles, ChevronRight, Loader2, ThermometerSun, Wind, Zap, X, Quote } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
-import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
+import { getKitRecommendation } from "@velotrace/logic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslations, useLocale } from 'next-intl';

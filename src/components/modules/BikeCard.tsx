@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore, MaintenanceState } from "@/store/useStore";
-import { calculateTirePressure, SurfaceType } from "@/lib/calculators/tirePressure";
+import { calculateTirePressure, SurfaceType } from "@velotrace/logic";
 import { MAINTENANCE_CONFIG, SURFACE_CONDITIONS } from "@/config/bike";
 import {
     AlertTriangle,

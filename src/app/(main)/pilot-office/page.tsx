@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore, Wheelset } from "@/store/useStore";
-import { calculateBMR, getRiderCategory, estimateVO2Max, calculateIdealRacingWeight } from "@/lib/calculators/physiology";
+import { calculateBMR, getRiderCategory, estimateVO2Max, calculateIdealRacingWeight } from "@velotrace/logic";
 import { useStravaSync } from "@/hooks/useStravaSync";
 import { converters } from "@/lib/converters";
 import Image from "next/image";

@@ -1,7 +1,7 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
-import { calculateTSS } from "@/lib/calculators/activityInsight";
+import { calculateTSS } from "@velotrace/logic";
 
 export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
