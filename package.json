@@ -18,7 +18,8 @@
     "bike"
   ],
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "dev": "next dev --webpack",
@@ -50,7 +51,8 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.3.6",
-    "zustand": "^5.0.11"
+    "zustand": "^5.0.11",
+    "@swc/helpers": "0.5.19"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
