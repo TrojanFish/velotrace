@@ -1,7 +1,7 @@
 "use client";
 
 import { useWeather } from "@/hooks/useWeather";
-import { getKitRecommendation } from "@/lib/calculators/kitAdvisor";
+import { getKitRecommendation } from "@velotrace/logic";
 import { useStore } from "@/store/useStore";
 import { Skeleton } from "@/lib/utils";
 import { converters } from "@/lib/converters";

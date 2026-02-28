@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useStore } from "@/store/useStore";
-import { calculateNutrition } from "@/lib/calculators/nutrition";
+import { calculateNutrition } from "@velotrace/logic";
 import { FUEL_PRODUCTS, FuelProduct } from "@/config/nutrition";
 import { Utensils, Droplets, Zap, Clock, Thermometer, Info, Package, Check } from "lucide-react";
 import { useTranslations } from 'next-intl';

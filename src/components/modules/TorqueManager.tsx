@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore, TorqueSetting } from "@/store/useStore";
-import { COMMON_TORQUES } from "@/lib/calculators/torqueStandards";
+import { COMMON_TORQUES } from "@velotrace/logic";
 import { Wrench, Plus, Trash2, ShieldCheck, ChevronDown, Save } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

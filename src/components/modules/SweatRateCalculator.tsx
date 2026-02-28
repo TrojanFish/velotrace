@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { calculateSweatRate, SweatRateInput } from "@/lib/calculators/sweatRate";
+import { calculateSweatRate, SweatRateInput } from "@velotrace/logic";
 import { Droplets, Info, AlertTriangle, CheckCircle2, Scale, Clock, Beer } from "lucide-react";
 import { useTranslations } from 'next-intl';
 

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useStore } from "@/store/useStore";
-import { calculateHRZones } from "@/lib/calculators/physiology";
+import { calculateHRZones } from "@velotrace/logic";
 import { Activity, Info, Heart } from "lucide-react";
 import { useTranslations } from 'next-intl';
 

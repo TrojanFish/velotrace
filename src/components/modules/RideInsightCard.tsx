@@ -20,8 +20,14 @@ import {
     Download
 } from "lucide-react";
 import { useTranslations } from 'next-intl';
-import { calculateMetabolism, getRecoveryTime, simulatePowerZones, calculateTSS } from "@/lib/calculators/activityInsight";
-import { calculateCdA, getCdARating } from "@/lib/calculators/aerodynamics";
+import {
+    calculateMetabolism,
+    getRecoveryTime,
+    simulatePowerZones,
+    calculateTSS,
+    calculateCdA,
+    getCdARating
+} from "@velotrace/logic";
 import { Skeleton } from "@/lib/utils";
 
 interface ActivityInsight {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@/store/useStore";
-import { getRiderCategory, estimateVO2Max, getRiderNextRank } from "@/lib/calculators/physiology";
+import { getRiderCategory, estimateVO2Max, getRiderNextRank } from "@velotrace/logic";
 import { ShieldCheck, Zap, Activity, TrendingUp, Info } from "lucide-react";
 import { useTranslations } from 'next-intl';
 

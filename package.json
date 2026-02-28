@@ -17,6 +17,9 @@
     "weather",
     "bike"
   ],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { calculateSpeed, COMMON_GEARS } from "@/lib/calculators/gearRatio";
+import { calculateSpeed, COMMON_GEARS } from "@velotrace/logic";
 import { ChevronRight, Gauge } from "lucide-react";
 import { useTranslations } from 'next-intl';
 

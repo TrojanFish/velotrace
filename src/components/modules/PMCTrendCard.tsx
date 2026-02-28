@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState, useMemo } from "react";
 import { useStore, DailyLoad, PMCData } from "@/store/useStore";
-import { calculatePMC } from "@/lib/calculators/pmc";
+import { calculatePMC } from "@velotrace/logic";
 import {
     LineChart,
     Line,

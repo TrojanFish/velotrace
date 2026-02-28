@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useStore } from "@/store/useStore";
-import { calculatePowerZones } from "@/lib/calculators/powerZones";
+import { calculatePowerZones } from "@velotrace/logic";
 import { Zap, Info } from "lucide-react";
 import { useTranslations } from 'next-intl';
 

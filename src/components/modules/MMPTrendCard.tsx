@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@/store/useStore";
-import { COGGAN_STANDARDS, getRank } from "@/lib/calculators/powerProfiles";
+import { COGGAN_STANDARDS, getRank } from "@velotrace/logic";
 import {
     ResponsiveContainer,
     Radar,

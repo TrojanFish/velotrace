@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { calculateFueling, Intensity } from "@/lib/calculators/fueling";
+import { calculateFueling, Intensity } from "@velotrace/logic";
 import { useStore } from "@/store/useStore";
 import { Fuel, Droplet, Cookie } from "lucide-react";
 import { useTranslations } from 'next-intl';

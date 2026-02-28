@@ -1,0 +1,14 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@velotrace/logic/*": [
+        "../../packages/logic/src/*"
+      ],
+      "@velotrace/logic": [
+        "../../packages/logic/src/index.ts"
+      ]
+    }
+  }
+}

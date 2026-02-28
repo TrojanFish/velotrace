@@ -30,12 +30,12 @@ describe('Physiology 2.0 Calculators', () => {
     describe('getRiderCategory', () => {
         it('should classify a pro rider correctly', () => {
             // 400W / 65kg = 6.15 W/kg
-            expect(getRiderCategory(400, 65, 'male')).toBe('World Tour / Pro');
+            expect(getRiderCategory(400, 65, 'male')).toBe('worldTour');
         });
 
         it('should classify a novice rider correctly', () => {
             // 150W / 75kg = 2.0 W/kg
-            expect(getRiderCategory(150, 75, 'male')).toBe('Recreational');
+            expect(getRiderCategory(150, 75, 'male')).toBe('recreational');
         });
     });
 

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Wind, Navigation, ChevronLeft, ChevronRight, Shield, MapPin } from "lucide-react";
 import { Skeleton } from "@/lib/utils";
-import { decodePolyline, calculateBearing, scoreWindAlignment } from "@/lib/calculators/routeIntel";
+import { decodePolyline, calculateBearing, scoreWindAlignment } from "@velotrace/logic";
 import { useStore } from "@/store/useStore";
 import { useTranslations } from 'next-intl';
 

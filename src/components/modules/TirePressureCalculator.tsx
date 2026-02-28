@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useStore } from "@/store/useStore";
-import { calculateTirePressure, SurfaceType } from "@/lib/calculators/tirePressure";
+import { calculateTirePressure, SurfaceType } from "@velotrace/logic";
 import { Gauge, Info, CloudRain, Sun, Activity } from "lucide-react";
 import { useTranslations } from 'next-intl';
 
