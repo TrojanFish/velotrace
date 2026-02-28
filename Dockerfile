@@ -3,7 +3,10 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+# In a monorepo setup, we need the package files for all workspaces to run npm ci correctly
 COPY package.json package-lock.json ./
+COPY packages/logic/package.json ./packages/logic/
+COPY apps/mobile/package.json ./apps/mobile/
 RUN npm ci
 
 # Stage 2: Rebuild the source code only when needed
